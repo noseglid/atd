@@ -28,7 +28,7 @@ MetaManager::event(const float& elapsed)
 		std::stringstream ss;
 		ss.precision(4);
 		ss << "FPS: " << current_fps;
-		Text::render(ss.str(), 10, 10);
+		Text::overlay(ss.str(), 10, 10);
 	}
 }
 

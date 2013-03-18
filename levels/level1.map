@@ -3,8 +3,8 @@
 	"height" : 20,
 
 	"textures" : [
-		"textures/grass.jpg",
-		"textures/stone.jpg"
+		"/grass.jpg",
+		"/stone.jpg"
 	],
 
 	"paths" : [

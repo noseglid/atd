@@ -1,6 +1,6 @@
 #include "ImageLoader.h"
 #include "Debug.h"
-#include "ILException.h"
+#include "Exception.h"
 #include "jpeg.h"
 #include "tga.h"
 
@@ -15,28 +15,16 @@ BEGIN_NAMESPACE_IL
 GLuint
 GL::texture(std::string path, FILETYPE t)
 {
-	DBG("Loading texture from: " << path);
 	std::string trimmed(path.begin(), remove_if(path.begin(), path.end(), [](char c) {
 		return isspace(c);
 	}));
 
-	path = trimmed;
-	if (path.substr(0, 1) == "/") {
-		/*
-		Some exporters erraneously make '/' the first char even though it's relative
-		See if this is the case and make relative if so
-		*/
-		std::string ptest = path.substr(1);
-		std::ifstream ftest(ptest.c_str());
-		if (!ftest.good()) {
-			throw Exception("Could not find file: " + path);
-		}
-
-		path = ptest;
-	}
+	path = "textures" + path;
+	DBG("Loading texture from: " << path);
 
 	GLuint texid;
-	glGenTextures(2, &texid);
+	glGenTextures(1, &texid);
+
 	glBindTexture(GL_TEXTURE_2D, texid);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);

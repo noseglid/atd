@@ -1,5 +1,5 @@
 #include "jpeg.h"
-#include "ILException.h"
+#include "Exception.h"
 
 #include <stdio.h>
 #include <jpeglib.h>
@@ -14,7 +14,7 @@ read_jpeg(const char *path, unsigned int *width, unsigned int *height, unsigned 
 	struct jpeg_error_mgr jerr;
 	FILE *fp = fopen(path, "r");
 	if (NULL == fp) {
-		throw IL::Exception(std::string("Could not open JPEG file: ") + path);
+		throw Exception(std::string("Could not open JPEG file: ") + path);
 	}
 
 	cinfo.err = jpeg_std_error(&jerr);

@@ -1,4 +1,5 @@
 #include "Model.h"
+#include "Debug.h"
 #include "ModelException.h"
 #include "ImageLoader.h"
 
@@ -73,7 +74,7 @@ Model::Model(std::string file)
 		num_vertices += scene->mMeshes[i]->mNumVertices;
 	}
 
-	std::cout << "Loaded '" << file << "', " << num_vertices << " vertices." << std::endl;
+	DBG("Loaded '" << file << "', " << num_vertices << " vertices.");
 }
 
 Model::~Model()
@@ -156,7 +157,7 @@ mtlpart(const aiMaterial *mtl, GLenum gltype, const char *pKey, unsigned int typ
 		return;
 	}
 
-	glMaterialfv(GL_FRONT_AND_BACK, gltype, (float*)&clr);
+	glMaterialfv(GL_FRONT, gltype, (GLfloat*)&clr);
 }
 
 void
@@ -169,7 +170,7 @@ Model::apply_material(const aiMaterial *mtl)
 
 	GLfloat shininess = 64.0;
 	mtl->Get(AI_MATKEY_SHININESS, shininess);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, &shininess);
+	glMaterialfv(GL_FRONT, GL_SHININESS, &shininess);
 }
 
 unsigned int
@@ -276,6 +277,10 @@ Model::rrender(const aiNode *node)
 {
 	glPushMatrix();
 
+	aiMatrix4x4 trafo = node->mTransformation;
+	trafo.Transpose();
+	glMultMatrixf((GLfloat*)&trafo);
+
 	for (unsigned int n = 0; n < node->mNumMeshes; ++n) {
 		const aiMesh *mesh = scene->mMeshes[node->mMeshes[n]];
 		const aiMaterial *mtl = scene->mMaterials[mesh->mMaterialIndex];
@@ -318,9 +323,6 @@ Model::rrender(const aiNode *node)
 
 				resultPos[vertexId] += (weight.mWeight * (posTrafo * srcPos));
 				resultNrm[vertexId] += weight.mWeight * (nrmTrafo * srcNrm);
-
-				/* FIXME: is this really correct? */
-				//resultNrm[vertexId] *= -1.0f;
 			}
 		}
 
@@ -330,7 +332,8 @@ Model::rrender(const aiNode *node)
 			glBegin(GL_TRIANGLES);
 			for (unsigned int i = 0; i < face->mNumIndices; ++i) {
 				int index = face->mIndices[i];
-				glTexCoord3fv((GLfloat*)&mesh->mTextureCoords[0][index]);
+				if (mesh->HasTextureCoords(0))
+					glTexCoord3fv((GLfloat*)&mesh->mTextureCoords[0][index]);
 				glNormal3fv((GLfloat*)&resultNrm[index]);
 				glVertex3fv((GLfloat*)&resultPos[index]);
 			}
@@ -406,13 +409,11 @@ cont:
 void
 Model::normalize()
 {
-	glTranslatef(0.0, 0.45, 0.0);
 	GLfloat tmp = scene_max.x - scene_min.x;
 	tmp = aisgl_max(scene_max.y - scene_min.y, tmp);
 	tmp = aisgl_max(scene_max.z - scene_min.z, tmp);
 	tmp = 1.f / tmp;
 	glScalef(tmp, tmp, tmp);
-	glTranslatef(-scene_center.x, -scene_center.y, -scene_center.z);
 }
 
 void
@@ -461,9 +462,6 @@ Model::rrenderbones(const aiNode *node)
 	glEnd();
 
 	glColor3f(0.5, 0.5, 0.5);
-	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_LIGHTING);
-	glEnable(GL_DEPTH_TEST);
 }
 
 void

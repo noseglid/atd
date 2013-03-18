@@ -29,7 +29,7 @@ Vector3::normalize()
 	z = z / len;
 }
 
-Vector3
+Vector3&
 Vector3::operator/=(const float& rhs)
 {
 	x /= rhs;
@@ -39,6 +39,16 @@ Vector3::operator/=(const float& rhs)
 }
 
 Vector3
+Vector3::operator+(const Vector3& rhs) const
+{
+	return Vector3(
+		x + rhs.x,
+		y + rhs.y,
+		z + rhs.z
+	);
+}
+
+Vector3&
 Vector3::operator+=(const Vector3& rhs)
 {
 	x += rhs.x;
@@ -48,11 +58,30 @@ Vector3::operator+=(const Vector3& rhs)
 }
 
 Vector3
+Vector3::operator-(const Vector3& rhs) const
+{
+	return Vector3(
+		x - rhs.x,
+		y - rhs.y,
+		z - rhs.z
+	);
+}
+
+Vector3&
 Vector3::operator-=(const Vector3& rhs)
 {
 	x -= rhs.x;
 	y -= rhs.y;
 	z -= rhs.z;
+	return *this;
+}
+
+Vector3&
+Vector3::operator*=(const Vector3 &rhs)
+{
+	x *= rhs.x;
+	y *= rhs.y;
+	z *= rhs.z;
 	return *this;
 }
 
@@ -77,13 +106,19 @@ Vector3::operator*(const double& rhs) const
 }
 
 Vector3
-Vector3::operator+(const Vector3& rhs) const
+Vector3::operator/(const float& rhs) const
 {
 	return Vector3(
-		x + rhs.x,
-		y + rhs.y,
-		z + rhs.z
+		x/rhs,
+		y/rhs,
+		z/rhs
 	);
+}
+
+bool
+Vector3::operator<(const Vector3& rhs) const
+{
+	return this->length() < rhs.length();
 }
 
 std::ostream&

@@ -26,7 +26,6 @@ public:
 		TGA
 	};
 
-	static void initiate();
 	static GLuint texture(std::string path, FILETYPE t = GUESS);
 
 private:

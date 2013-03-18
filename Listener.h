@@ -13,8 +13,16 @@ enum ListenerEvents
 	LE_TICK = 1000
 };
 
+enum ListenerPriority
+{
+	LP_LOW,
+	LP_MEDIUM,
+	LP_HIGH
+};
+
 class Listener
 {
+
 public:
 	virtual ~Listener() {};
 
@@ -45,17 +53,16 @@ public:
 struct ListenerEntry {
 	Listener *listener;
 	std::vector<unsigned short> events;
+	ListenerPriority priority;
 
 	ListenerEntry& operator<<(unsigned int event) {
 		events.push_back(event);
-		DBG("'" << typeid(*listener).name() << "' subscribed on: " << event);
 		return *this;
 	}
 
 	ListenerEntry& operator<<(enum ListenerEvents event)
 	{
 		events.push_back(event);
-		DBG("'" << typeid(*listener).name() << "' subscribed on: " << event);
 		return *this;
 	}
 };

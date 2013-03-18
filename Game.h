@@ -6,7 +6,7 @@
 #include "Debug.h"
 
 #include <SDL/SDL.h>
-#include <vector>
+#include <map>
 
 class Game
 {
@@ -15,7 +15,7 @@ class Game
 	float elapsed;
 	bool running;
 
-	std::vector<ListenerEntry *> listeners;
+	std::multimap<ListenerPriority, ListenerEntry *> listeners;
 
 	Game();
 	void operator=(Game const&);
@@ -32,7 +32,7 @@ public:
 
 	static Game& instance();
 
-	ListenerEntry& register_listener(Listener *listener);
+	ListenerEntry& register_listener(Listener *listener, enum ListenerPriority priority = LP_LOW);
 };
 
 #endif

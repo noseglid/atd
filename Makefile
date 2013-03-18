@@ -1,16 +1,17 @@
 CC      = clang++
-CFLAGS  = -O0 -g3 -c -Wall -pedantic $(shell sdl-config --cflags) -std=c++11
-CFLAGS  += -I/opt/local/include -DDEBUG
+CFLAGS  = -O0 -g3 -c -Wall -pedantic $(shell sdl-config --cflags)
+CFLAGS  += -DDEBUG -std=c++11 -stdlib=libc++
+CFLAGS  += -I/Users/noseglid/opt/include/
 
-LDFLAGS  = -L/opt/local/lib -L/usr/local/lib $(shell sdl-config --libs)
-LDFLAGS += -framework OpenGL -lassimp -ljpeg -ltga -lSDL_ttf -lpjson
+LDFLAGS  = $(shell /Users/noseglid/opt/bin/sdl-config --libs)
+LDFLAGS += -L/Users/noseglid/opt/lib/
+LDFLAGS += -lassimp -ljpeg -ltga -lSDL_ttf -lpjson -framework OpenGL -stdlib=libc++
 
 SRCS  = main.cpp Model.cpp ImageLoader.cpp jpeg.cpp tga.cpp Camera.cpp Text.cpp
-SRCS += Map.cpp Path.cpp
-SRCS += Game.cpp
+SRCS += Player.cpp Game.cpp Map.cpp Projectile.cpp
+SRCS += Path.cpp TowerManager.cpp Tower.cpp CreepManager.cpp Creep.cpp SphereCreep.cpp
 SRCS += KeyboardHandler.cpp MetaManager.cpp
-SRCS += CreepManager.cpp Creep.cpp BoxCreep.cpp
-SRCS += Math.cpp Vector2.cpp Vector3.cpp Matrix4.cpp
+SRCS += Math.cpp Vector2.cpp Vector3.cpp Matrix4.cpp GLTransform.cpp
 
 OBJS := $(SRCS:.cpp=.o)
 DEPS := $(OBJS:.o=.d)
@@ -35,8 +36,8 @@ all: $(BIN)
 		sed -e 's/^ *//' -e 's/$$/:/' >> $*.d
 	@rm -f $*.d.tmp
 
-$(BIN): $(OBJS) $(CWC_OBJECTS)
-	$(CC) $(LDFLAGS) $^ -o $@
+$(BIN): $(OBJS)
+	$(CC) $^ $(LDFLAGS) -o $@ 
 
 clean:
 	rm -f $(OBJS) $(DEPS) $(BIN)

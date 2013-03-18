@@ -2,6 +2,7 @@
 #include "Debug.h"
 #include "Listener.h"
 #include "Model.h"
+#include "Text.h"
 
 #include <sys/time.h>
 
@@ -19,13 +20,15 @@ Game::Game() : running(true)
 void
 Game::run_ticks()
 {
-	for (ListenerEntry *entry : listeners) {
-		auto event_list = entry->events;
-		if (event_list.end() != find(event_list.begin(), event_list.end(), LE_TICK)) {
-			glPushMatrix();
-			entry->listener->event(elapsed);
-			glPopMatrix();
+	for (std::pair<ListenerPriority, ListenerEntry*> entry : listeners) {
+		auto event_list = entry.second->events;
+		if (event_list.end() == find(event_list.begin(), event_list.end(), LE_TICK)) {
+			continue;
 		}
+
+		glPushMatrix();
+		entry.second->listener->event(elapsed);
+		glPopMatrix();
 	}
 }
 
@@ -57,13 +60,16 @@ Game::handle_event(const SDL_Event& ev)
 	}
 
 
-	for (ListenerEntry *entry : listeners) {
-		auto event_list = entry->events;
-		if (event_list.end() != find(event_list.begin(), event_list.end(), ev.type)) {
-			if (ke) (entry->listener)->event(*ke);
-			if (mme) (entry->listener)->event(*mme);
-			if (mbe) (entry->listener)->event(*mbe);
+	for (std::pair<ListenerPriority, ListenerEntry*> entry : listeners) {
+		auto event_list = entry.second->events;
+		if (event_list.end() == find(event_list.begin(), event_list.end(), ev.type)) {
+			continue;
 		}
+
+		Listener *l = entry.second->listener;
+		if (ke)  l->event(*ke);
+		if (mme) l->event(*mme);
+		if (mbe) l->event(*mbe);
 	}
 }
 
@@ -93,8 +99,7 @@ Game::run()
 
 		glPushMatrix();
 		{
-			glTranslatef(0.0, 1.0, 0.0);
-			GLfloat pos[] = { 0.0, 0.8, 1.0, 0.0 };
+			GLfloat pos[] = { 0.2, 0.5, 0.5, 0.0 };
 			glLightfv(GL_LIGHT0, GL_POSITION, pos);
 		}
 		glPopMatrix();
@@ -115,11 +120,12 @@ Game::stop()
 }
 
 ListenerEntry&
-Game::register_listener(Listener *listener)
+Game::register_listener(Listener *listener, enum ListenerPriority priority)
 {
 	ListenerEntry *entry = new ListenerEntry;
 	entry->listener = listener;
-	listeners.push_back(entry);
+	entry->priority = priority;
+	listeners.insert(std::make_pair(priority, entry));
 
 	DBG("Registered listener '" << typeid(*listener).name() << "'");
 	return *entry;

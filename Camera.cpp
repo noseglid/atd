@@ -6,15 +6,15 @@
 #include <iostream>
 #include <cmath>
 
-#define MAX_HEIGHT 8
+#define MAX_HEIGHT 40
 #define MIN_HEIGHT 1
 
 Camera::Camera() : mouse_buttons_active(0)
 {
-	pos.x = 5;
+	pos.x = 10;
 	pos.y = 8;
 	pos.z = 18;
-	dir.x = 0;
+	dir.x = -0.50;
 	dir.y = -0.71;
 	dir.z = -0.51;
 	up.x = 0;
@@ -67,11 +67,15 @@ Camera::event(const SDL_MouseMotionEvent& event)
 {
 	SDLMod mod = SDL_GetModState();
 
-	if ((SDL_BUTTON_LEFT & mouse_buttons_active) && !(mod & KMOD_LCTRL)) {
+	if (((SDL_BUTTON_LEFT & mouse_buttons_active) ||
+			(SDL_BUTTON_MIDDLE & mouse_buttons_active))
+			&& !(mod & KMOD_LALT)) {
 		hover(event.xrel/60.0f, event.yrel/60.0f);
 	}
 
-	if ((SDL_BUTTON_LEFT & mouse_buttons_active) && (mod & KMOD_LCTRL)) {
+	if (((SDL_BUTTON_LEFT & mouse_buttons_active) ||
+			(SDL_BUTTON_MIDDLE & mouse_buttons_active))
+			&& (mod & KMOD_LALT)) {
 		look(deg2rad(event.xrel)/5.0f, -deg2rad(event.yrel)/5.0f);
 	}
 }

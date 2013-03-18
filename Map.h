@@ -14,11 +14,9 @@
 
 class Map : public Listener
 {
-	struct {
-		int x, y;
-	} highlighted;
-
 	size_t width, height;
+	Vector2 highlighted;
+	bool draw_meta;
 
 	Path *path;
 	std::vector<GLint> textures;
@@ -38,6 +36,7 @@ public:
 	void load(const std::string& file);
 	void event(const float& elapsed);
 	void event(const SDL_MouseMotionEvent& event);
+	void event(const SDL_KeyboardEvent& event);
 
 	void draw() const;
 	void draw_normals() const;
@@ -45,6 +44,7 @@ public:
 	const Path * get_path() const;
 
 	void set_hightlight(const int& x, const int& y);
+	Vector2 get_highlight() const;
 };
 
 #endif

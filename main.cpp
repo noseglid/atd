@@ -1,9 +1,11 @@
-#include "CreepManager.h"
 #include "Game.h"
 #include "Text.h"
-#include "KeyboardHandler.h"
-#include "MetaManager.h"
 #include "Map.h"
+#include "Player.h"
+#include "MetaManager.h"
+#include "KeyboardHandler.h"
+#include "CreepManager.h"
+#include "TowerManager.h"
 
 #include <SDL/SDL.h>
 #include <OpenGL/gl.h>
@@ -22,26 +24,32 @@ static int screen_width = 1024, screen_height = 768;
 
 Map *map;
 MetaManager *meta_manager;
-CreepManager *creep_manager;
 KeyboardHandler *keyboard;
+CreepManager *creep_manager;
+TowerManager *tower_manager;
 
 void
 init_ATD()
 {
+	DBG("Initing ATD...");
+
 	map = new Map();
 	map->load("levels/level1.map");
 
-	meta_manager  = new MetaManager();
-	creep_manager = new CreepManager(map);
+	tower_manager = new TowerManager(map);
+	CreepManager::instance().init(map);
+
 	keyboard      = new KeyboardHandler();
+	meta_manager  = new MetaManager();
 
 	Game::instance().init();
-
+	Player::instance().alter_gold(200);
 }
 
 void
 init_SDL()
 {
+	DBG("Initing SDL...");
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
 		throw std::exception();
 	}
@@ -59,7 +67,7 @@ init_SDL()
 void
 init_OpenGL()
 {
-	glEnable(GL_TEXTURE_2D);
+	DBG("Initing OpenGL...");
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_LINE_SMOOTH);
@@ -85,20 +93,19 @@ init_OpenGL()
 	glEnable(GL_FOG);
 
 	glClearColor(fog_color[0], fog_color[1], fog_color[2], fog_color[3]);
-	GLfloat ambient[] = { 0.2, 0.2, 0.2, 1.0 };
-	GLfloat white_light[] = { 0.7, 0.7, 0.7, 1.0 };
 
 	glEnable(GL_LIGHTING);
-	glEnable(GL_NORMALIZE);
-	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambient);
+	GLfloat ambient[] = { 0.2, 0.2, 0.2, 1.0 };
+	GLfloat diffuse[] = { 0.4, 0.4, 0.4, 1.0 };
+	GLfloat specular[] = { 0.8, 0.8, 0.8, 1.0 };
+
+	GLfloat lmodel_ambient[] = { 0.1, 0.1, 0.1, 1.0 };
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
 
 	glEnable(GL_LIGHT0);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, white_light);
-	glLightfv(GL_LIGHT0, GL_AMBIENT, white_light);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, white_light);
-
-	glEnable(GL_COLOR_MATERIAL);
-	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
 }
 
 int main(int argc, char *argv[])

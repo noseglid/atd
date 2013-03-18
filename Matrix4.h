@@ -22,6 +22,7 @@ struct Matrix4
 	Vector3 operator*(const Vector3& v);
 	Matrix4 operator*(const float& s);
 
+	Vector3 translation() const;
 
 	static Matrix4 rotatex(const float& rad);
 	static Matrix4 rotatey(const float& rad);

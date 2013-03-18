@@ -11,13 +11,16 @@
 
 #define SQSIZE 1.0f /* ALTERING NOT SUPPORTED YET */
 
-
 Map::Map()
 {
+	draw_meta = false;
 	highlighted.x = 20;
 	highlighted.y = 10;
 
-	Game::instance().register_listener(this) << LE_TICK << SDL_MOUSEMOTION;
+	Game::instance().register_listener(this)
+		<< LE_TICK
+		<< SDL_MOUSEMOTION
+		<< SDL_KEYDOWN;
 }
 
 Map::~Map()
@@ -73,7 +76,7 @@ Map::create_heightmap()
 	for (size_t h = 0; h < height; ++h) {
 		heightmap[h] = new float[width];
 		for (size_t w = 0; w < width; ++w) {
-			heightmap[h][w] = (rand() / (float)RAND_MAX) / 6.0f;
+			heightmap[h][w] = (rand() / (float)RAND_MAX) / 5.0f;
 		}
 	}
 }
@@ -114,7 +117,17 @@ Map::generate_normals()
 void
 Map::event(const float& elapsed)
 {
-	Map::draw();
+	this->draw();
+	if (draw_meta) this->draw_normals();
+}
+
+void
+Map::event(const SDL_KeyboardEvent& event)
+{
+	switch (event.keysym.sym) {
+		case SDLK_m: draw_meta = !draw_meta; break;
+		default: break;
+	}
 }
 
 void
@@ -136,10 +149,11 @@ Map::draw_square(const int& x, const int& y) const
 		{ 1.0f, 1.0f }
 	};
 
-	glColor4f(0.5, 0.5, 0.5, 1.0);
+	GLfloat emission[] = { 0.5f, 0.5f, 0.5f, 1.0f };
 	if (y == highlighted.y && x == highlighted.x) {
-		glColor4f(0.5, 0.7, 0.9, 1.0);
+		emission[0] = emission[1] = emission[2] = 0.8f;
 	}
+	glMaterialfv(GL_FRONT, GL_EMISSION, emission);
 
 	int textureid = (path->has_coord(x, y)) ? path->textureid : 0;
 	glBindTexture(GL_TEXTURE_2D, textures[textureid]);
@@ -167,8 +181,17 @@ void
 Map::draw() const
 {
 	glEnable(GL_LIGHTING);
-	glEnable(GL_COLOR_MATERIAL);
 	glEnable(GL_TEXTURE_2D);
+	glDisable(GL_COLOR_MATERIAL);
+
+	GLfloat
+		diffuse[]  = { 0.8f, 0.8f, 0.8f, 1.0f },
+		specular[] = { 0.0f, 0.0f, 0.0f, 1.0f },
+		ambient[]  = { 0.1f, 0.1f, 0.1f, 1.0f };
+
+	glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
+	glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
 
 	for (size_t h = 0; h < height - 1; ++h) {
 		for (size_t w = 0; w < width - 1; ++w) {
@@ -229,4 +252,10 @@ Map::set_hightlight(const int& x, const int& y)
 
 	highlighted.x = x;
 	highlighted.y = y;
+}
+
+Vector2
+Map::get_highlight() const
+{
+	return highlighted;
 }

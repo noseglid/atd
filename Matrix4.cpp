@@ -74,6 +74,12 @@ Matrix4::operator*(const float& s)
 	);
 }
 
+Vector3
+Matrix4::translation() const
+{
+	return Vector3(c4r1, c4r2, c4r3);
+}
+
 Matrix4
 Matrix4::rotatex(const float& rad)
 {
