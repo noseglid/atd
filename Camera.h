@@ -2,11 +2,10 @@
 #define __CAMERA_H__
 
 #include "Math.h"
-#include "Listener.h"
 
 #include <OpenGL/gl.h>
 
-class Camera : public Listener
+class Camera
 {
 	Vector3 pos, dir, up;
 	GLdouble xzangle;
@@ -22,8 +21,8 @@ public:
 	void look(GLdouble dx, GLdouble dy);
 	void zoom(GLdouble delta);
 
-	void event(const SDL_MouseMotionEvent& event);
-	void event(const SDL_MouseButtonEvent& event);
+	void mousebutton();
+	void mousemotion();
 };
 
 #endif

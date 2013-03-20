@@ -1,10 +1,9 @@
 #ifndef __PLAYER_H__
 #define __PLAYER_H__
 
-#include "Listener.h"
 #include "Purchasable.h"
 
-class Player : public Listener
+class Player
 {
 	int gold;
 
@@ -18,7 +17,7 @@ public:
 	void alter_gold(int delta);
 
 	bool purchase(Purchasable *p);
-	void event(const float& elapsed);
+	void tick();
 };
 
 #endif

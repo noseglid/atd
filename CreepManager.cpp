@@ -22,12 +22,13 @@ CreepManager::init(Map *map)
 {
   this->map = map;
 
-	Game::instance().register_listener(this) << LE_TICK;
+	Game::instance().on("tick", std::bind(&CreepManager::tick, this));
 }
 
 void
-CreepManager::event(const float& elapsed)
+CreepManager::tick()
 {
+	float elapsed = Game::instance().get_elapsed();
 	if ((elapsed > (float)last_spawn + SPAWN_INTERVAL) && spawned < COUNT) {
 		++spawned;
 		SphereCreep *creep = new SphereCreep(map, 73);

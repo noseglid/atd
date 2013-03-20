@@ -14,7 +14,7 @@ std::vector<WorldText> Text::scrollings = std::vector<WorldText>();
 
 Text::Text()
 {
-	Game::instance().register_listener(this, LP_HIGH) << LE_TICK;
+	Game::instance().on("tick_nodepth", std::bind(&Text::tick, this));
 }
 
 void
@@ -62,7 +62,7 @@ Text::create_texture(const std::string& text, int& w, int& h)
 }
 
 void
-Text::event(const float& elapsed)
+Text::tick()
 {
 	glDisable(GL_LIGHTING);
 	glDisable(GL_DEPTH_TEST);

@@ -5,12 +5,13 @@
 
 KeyboardHandler::KeyboardHandler()
 {
-	Game::instance().register_listener(this) << SDL_KEYDOWN;
+	Game::instance().on("keydown", std::bind(&KeyboardHandler::keydown, this));
 }
 
 void
-KeyboardHandler::event(const SDL_KeyboardEvent& event)
+KeyboardHandler::keydown()
 {
+	SDL_KeyboardEvent event = Game::instance().last_keyboard_event();
 	switch	(event.keysym.sym) {
 		case SDLK_f:
 			GLboolean fog;

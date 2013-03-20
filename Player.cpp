@@ -6,8 +6,7 @@
 
 Player::Player() : gold(0)
 {
-	Game::instance().register_listener(this)
-		<< LE_TICK;
+	Game::instance().on("tick", std::bind(&Player::tick, this));
 }
 
 Player&
@@ -34,7 +33,7 @@ Player::purchase(Purchasable *p)
 }
 
 void
-Player::event(const float& elapsed)
+Player::tick()
 {
 	std::stringstream overlay;
 	overlay << "Gold: " << this->gold;

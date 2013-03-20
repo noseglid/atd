@@ -22,10 +22,10 @@ Camera::Camera() : mouse_buttons_active(0)
 	up.z = 0;
 
 	xzangle = asin(dir.x);
-	Game::instance().register_listener(this)
-		<< SDL_MOUSEBUTTONDOWN
-		<< SDL_MOUSEBUTTONUP
-		<< SDL_MOUSEMOTION;
+	Game& g = Game::instance();
+	g.on("mousedown", std::bind(&Camera::mousebutton, this));
+	g.on("mouseup", std::bind(&Camera::mousebutton, this));
+	g.on("mousemotion", std::bind(&Camera::mousemotion, this));
 }
 
 Camera::~Camera()
@@ -53,8 +53,10 @@ Camera::hover(GLdouble dx, GLdouble dz)
 }
 
 void
-Camera::event(const SDL_MouseButtonEvent& event)
+Camera::mousebutton()
 {
+	SDL_MouseButtonEvent event = Game::instance().last_mouse_button_event();
+
 	mouse_buttons_active ^= event.button;
 
 	if (4 == event.button || 5 == event.button) {
@@ -63,8 +65,10 @@ Camera::event(const SDL_MouseButtonEvent& event)
 }
 
 void
-Camera::event(const SDL_MouseMotionEvent& event)
+Camera::mousemotion()
 {
+	SDL_MouseMotionEvent event = Game::instance().last_mouse_motion_event();
+
 	SDLMod mod = SDL_GetModState();
 
 	if (((SDL_BUTTON_LEFT & mouse_buttons_active) ||

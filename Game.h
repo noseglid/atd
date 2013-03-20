@@ -2,26 +2,27 @@
 #define __GAME_H__
 
 #include "Camera.h"
-#include "Listener.h"
 #include "Debug.h"
 
+#include <de.h>
 #include <SDL/SDL.h>
 #include <map>
 
-class Game
+class Game : public de::Emitter
 {
 	Camera *camera;
 	struct timeval start_time;
 	float elapsed;
 	bool running;
 
-	std::multimap<ListenerPriority, ListenerEntry *> listeners;
+	SDL_MouseMotionEvent mouse_motion_event;
+	SDL_MouseButtonEvent mouse_button_event;
+	SDL_KeyboardEvent keyboard_event;
 
 	Game();
 	void operator=(Game const&);
 	Game(const Game&);
 
-	void run_ticks();
 	void handle_event(const SDL_Event& ev);
 	void handle_mouse_event(const SDL_Event& ev);
 
@@ -30,9 +31,12 @@ public:
 	void run();
 	void stop();
 
-	static Game& instance();
+	SDL_MouseMotionEvent last_mouse_motion_event() const;
+	SDL_MouseButtonEvent last_mouse_button_event() const;
+	SDL_KeyboardEvent last_keyboard_event() const;
+	float get_elapsed() const;
 
-	ListenerEntry& register_listener(Listener *listener, enum ListenerPriority priority = LP_LOW);
+	static Game& instance();
 };
 
 #endif

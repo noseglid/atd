@@ -2,11 +2,10 @@
 #define __CREEPMANAGER_H__
 
 #include "Creep.h"
-#include "Listener.h"
 
 #include <list>
 
-class CreepManager : public Listener
+class CreepManager
 {
 	Map *map;
 	float last_spawn;
@@ -19,7 +18,8 @@ class CreepManager : public Listener
 
 public:
 	void init(Map *map);
-	void event(const float& elapsed);
+	void tick();
+
 	void remove_creep(Creep *creep);
 
 	std::vector<Creep*> creeps_inside_circle(Vector3 center, float radius);

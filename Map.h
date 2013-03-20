@@ -3,7 +3,6 @@
 
 #include "Path.h"
 #include "Math.h"
-#include "Listener.h"
 
 #include <fstream>
 #include <iostream>
@@ -12,7 +11,7 @@
 
 #include <pjson.hpp>
 
-class Map : public Listener
+class Map
 {
 	size_t width, height;
 	Vector2 highlighted;
@@ -34,9 +33,9 @@ public:
 	~Map();
 
 	void load(const std::string& file);
-	void event(const float& elapsed);
-	void event(const SDL_MouseMotionEvent& event);
-	void event(const SDL_KeyboardEvent& event);
+	void tick();
+	void mousemotion();
+	void keydown();
 
 	void draw() const;
 	void draw_normals() const;

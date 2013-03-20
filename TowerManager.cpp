@@ -6,10 +6,10 @@
 
 TowerManager::TowerManager(Map *map) : map(map)
 {
-	Game::instance().register_listener(this)
-		<< LE_TICK
-		<< SDL_MOUSEBUTTONUP
-		<< SDL_MOUSEBUTTONDOWN;
+	Game& g = Game::instance();
+	g.on("tick", std::bind(&TowerManager::tick, this));
+	g.on("mousedown", std::bind(&TowerManager::mousedown, this));
+	g.on("mouseup", std::bind(&TowerManager::mouseup, this));
 
 	Tower::init();
 }
@@ -27,30 +27,35 @@ TowerManager::purchase_tower(Vector3 pos)
 }
 
 void
-TowerManager::event(const SDL_MouseButtonEvent& event)
+TowerManager::mousedown()
 {
-	static int x, y;
+	SDL_MouseButtonEvent event = Game::instance().last_mouse_button_event();
+	click.x = event.x;
+	click.y = event.y;
+}
 
-	if (SDL_MOUSEBUTTONDOWN == event.type) {
-		x = event.x;
-		y = event.y;
-	} else if (SDL_MOUSEBUTTONUP == event.type) {
-		if (event.button == SDL_BUTTON_LEFT &&
-				abs(event.x - x) < 3 &&
-				abs(event.y - y) < 3) {
-			/* Since coordinates didn't change, it was a `click`, not a `drag` */
-			Vector2 hl = map->get_highlight();
-			Vector3 pos(hl.x + 0.5f, 0.0f, hl.y + 0.5f);
-			if (towers.end() == towers.find(pos) && hl.x != -1 && hl.y != -1) {
-				purchase_tower(pos);
-			}
+void
+TowerManager::mouseup()
+{
+	SDL_MouseButtonEvent event = Game::instance().last_mouse_button_event();
+
+	if (event.button == SDL_BUTTON_LEFT &&
+			abs(event.x - click.x) < 3 &&
+			abs(event.y - click.y) < 3) {
+		/* Since coordinates didn't change, it was a `click`, not a `drag` */
+		Vector2 hl = map->get_highlight();
+		Vector3 pos(hl.x + 0.5f, 0.0f, hl.y + 0.5f);
+		if (towers.end() == towers.find(pos) && hl.x != -1 && hl.y != -1) {
+			purchase_tower(pos);
 		}
 	}
 }
 
 void
-TowerManager::event(const float& elapsed)
+TowerManager::tick()
 {
+	float elapsed = Game::instance().get_elapsed();
+
 	for (std::pair<Vector3, Tower*> t : towers) {
 
 		t.second->shoot_if(elapsed);

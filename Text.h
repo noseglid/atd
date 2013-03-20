@@ -1,7 +1,6 @@
 #ifndef __TEXT_H__
 #define __TEXT_H__
 
-#include "Listener.h"
 #include "Math.h"
 
 #include <string>
@@ -18,7 +17,7 @@ struct WorldText
 	int width, height;
 };
 
-class Text : public Listener
+class Text
 {
 	static Text instance;
 	static TTF_Font *font;
@@ -36,7 +35,7 @@ class Text : public Listener
 
 public:
 
-	void event(const float& elapsed);
+	void tick();
 
 	static void init(const int& screen_width, const int& screen_height);
 
