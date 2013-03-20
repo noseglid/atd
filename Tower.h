@@ -7,6 +7,7 @@
 #include "Projectile.h"
 #include "Purchasable.h"
 
+#include <de.h>
 #include <list>
 
 class Tower : public Purchasable
@@ -24,7 +25,8 @@ public:
 	Tower(Vector3 pos);
 	void draw(const float& elapsed) const;
 	void remove_projectile(Projectile *p);
-	void update_projectile_target(Projectile *p);
+	void projectile_hit(Projectile *p, Creep *c, de::Emitter::id_t event);
+	void projectile_notarget(Projectile *p);
 	void update_projectiles(const float& elapsed);
 	void shoot_if(const float& elapsed);
 

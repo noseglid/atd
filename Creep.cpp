@@ -30,9 +30,9 @@ Creep::travel_to(const PathCoord& target)
 }
 
 void
-Creep::alter_health(float dh)
+Creep::strike(Projectile *p)
 {
-	this->current_health += dh;
+	this->current_health -= p->get_damage();
 	if (this->current_health <= 0.0f) {
 		Player::instance().alter_gold(this->reward);
 

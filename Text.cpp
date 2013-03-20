@@ -14,7 +14,6 @@ std::vector<WorldText> Text::scrollings = std::vector<WorldText>();
 
 Text::Text()
 {
-	DBG("Creating text");
 	Game::instance().register_listener(this, LP_HIGH) << LE_TICK;
 }
 

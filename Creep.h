@@ -3,10 +3,12 @@
 
 #include "Map.h"
 #include "Math.h"
+#include "Targetable.h"
+#include "Projectile.h"
 
 #include <de.h>
 
-class Creep : public de::Emitter
+class Creep : public de::Emitter, public Targetable
 {
 	void travel_to(const PathCoord& target);
 
@@ -24,9 +26,9 @@ protected:
 public:
 	virtual ~Creep();
 
-	void alter_health(float dh);
-
+	virtual void strike(Projectile *p);
 	Vector3 get_position() const;
+
 	float get_health() const;
 
 	virtual void draw(const float& elapsed) const;

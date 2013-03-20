@@ -36,7 +36,8 @@ CreepManager::event(const float& elapsed)
 		last_spawn = elapsed;
 	}
 
-	for (Creep *c : creeps) {
+	std::list<Creep *> tmp = creeps;
+	for (Creep *c : tmp) {
 		glPushMatrix();
 		c->draw(elapsed);
 		glPopMatrix();

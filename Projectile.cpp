@@ -1,9 +1,11 @@
 #include "Projectile.h"
+#include "Debug.h"
 
-Projectile::Projectile(Creep *target, Vector3 pos, float damage) :
-	target(NULL), pos(pos), damage(damage)
+#include <OpenGL/gl.h>
+
+Projectile::Projectile(Targetable *target, Vector3 pos, float damage) :
+	target(target), pos(pos), target_pos(target->get_position()), damage(damage)
 {
-	set_target(target);
 }
 
 Projectile::~Projectile()
@@ -11,11 +13,21 @@ Projectile::~Projectile()
 }
 
 void
-Projectile::set_target(Creep *itarget)
+Projectile::set_target(Targetable *itarget)
 {
-  auto creep_death_cb = std::bind(&Projectile::creep_death, this);
 	target = itarget;
-	if (target) death_event = target->on("death", creep_death_cb);
+}
+
+Vector3
+Projectile::get_target_pos() const
+{
+	return target_pos;
+}
+
+float
+Projectile::get_damage() const
+{
+	return damage;
 }
 
 void
@@ -23,27 +35,22 @@ Projectile::tick()
 {
 	if(NULL == target) return;
 
-	Vector3 creep_pos = target->get_position();
-	Vector3 dest(creep_pos.x, creep_pos.y + 0.5, creep_pos.z);
+	target_pos = target->get_position();
+	if (target_pos.length() < 1) {
+		DBG("Found it: " << target_pos);
+	}
+
+	Vector3 dest(target_pos.x, target_pos.y + 0.5, target_pos.z);
 	Vector3 dir = dest - pos;
 	if (dir.length() < 0.1) {
-		target->off(death_event);
-		target->alter_health(-damage);
-
 		emit("hit");
+		target->strike(this);
 		return;
 	}
 
 	dir.normalize();
-	dir /= 15.0f;
+	dir /= 8.0f;
 	pos += dir;
-}
-
-void
-Projectile::creep_death()
-{
-	set_target(NULL);
-	emit("notarget");
 }
 
 void

@@ -1,6 +1,7 @@
 #include "Tower.h"
 #include "Text.h"
 #include "CreepManager.h"
+#include "DummyCreep.h"
 
 #include <OpenGL/gl.h>
 
@@ -10,9 +11,9 @@ Tower::Tower(Vector3 pos) :
 	Purchasable(100),
 	pos(pos),
 	last_shot(0.0f),
-	reload_time(0.8f),
+	reload_time(1.2f),
 	range(2.0f),
-	damage(22.0)
+	damage(20.0)
 {
 }
 
@@ -54,7 +55,7 @@ Tower::draw(const float& elapsed) const
 	glPushMatrix();
 	glTranslatef(pos.x, pos.y, pos.z);
 	model->draw(elapsed);
-	draw_range_circle();
+	//draw_range_circle();
 	glPopMatrix();
 
 	for (Projectile *p : projectiles) {
@@ -90,15 +91,19 @@ Tower::remove_projectile(Projectile *p)
 }
 
 void
-Tower::update_projectile_target(Projectile *p)
+Tower::projectile_hit(Projectile *p, Creep *c, de::Emitter::id_t event)
 {
-	Creep *target = get_target();
-	if (NULL == target) {
-		remove_projectile(p);
-		return;
-	}
+	if (c) c->off(event);
+	remove_projectile(p);
+}
 
+void
+Tower::projectile_notarget(Projectile *p)
+{
+	DummyCreep *target = new DummyCreep(p->get_target_pos());
 	p->set_target(target);
+	p->disable("hit");
+	p->on("hit", std::bind(&Tower::remove_projectile, this, p));
 }
 
 void
@@ -106,16 +111,20 @@ Tower::shoot_if(const float& elapsed)
 {
 	if (elapsed - last_shot < reload_time) return;
 
+	Creep *target = get_target();
+	if (NULL == target) return;
+
 	Projectile *p = new Projectile(
-		get_target(),
+		target,
 		Vector3(pos.x, pos.y + 1.0f, pos.z),
 		damage
 	);
 
-	auto remove_cb = std::bind(&Tower::remove_projectile, this, p);
-	auto update_cb = std::bind(&Tower::update_projectile_target, this, p);
-	p->on("notarget", update_cb);
-	p->on("hit", remove_cb);
+	auto death_cb = std::bind(&Tower::projectile_notarget, this, p);
+	de::Emitter::id_t death_event = target->on("death", death_cb);
+
+	auto hit_cb = std::bind(&Tower::projectile_hit, this, p, target, death_event);
+	p->on("hit", hit_cb);
 
 	projectiles.push_back(p);
 
