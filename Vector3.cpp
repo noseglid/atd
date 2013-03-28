@@ -125,9 +125,18 @@ Vector3::operator/(const float& rhs) const
 }
 
 bool
-Vector3::operator<(const Vector3& rhs) const
+Vector3::operator==(const Vector3& rhs) const
 {
-	return this->length() < rhs.length();
+	return x == rhs.x && y == rhs.y && z == rhs.z;
+}
+
+bool
+Vector3cmp::operator()(const Vector3& lhs, const Vector3& rhs) const
+{
+	if (lhs.z < rhs.z) return true;
+	if (lhs.z == rhs.z && lhs.y < rhs.y) return true;
+	if (lhs.z == rhs.z && lhs.y == rhs.y && lhs.x < rhs.x) return true;
+	return false;
 }
 
 std::ostream&

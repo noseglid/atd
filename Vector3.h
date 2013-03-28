@@ -25,7 +25,12 @@ struct Vector3
 	Vector3 operator*(const double& rhs) const;
 	Vector3 operator/(const float& rhs) const;
 
-	bool operator<(const Vector3& rhs) const;
+	bool operator==(const Vector3& rhs) const;
+};
+
+struct Vector3cmp
+{
+	bool operator()(const Vector3& lhs, const Vector3& rhs) const;
 };
 
 std::ostream& operator<<(std::ostream& out, Vector3 v);

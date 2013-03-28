@@ -9,7 +9,7 @@
 class TowerManager
 {
 	Map *map;
-	std::map<Vector3, Tower*> towers;
+	std::map<Vector3, Tower*, Vector3cmp> towers;
 	struct {
 		int x, y;
 	} click;
