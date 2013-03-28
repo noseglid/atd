@@ -109,6 +109,8 @@ Map::generate_normals()
 			Vector3 v14 = v4 * v1;
 
 			normals[h][w] = v21 + v32 + v43 + v14;
+			normals[h][w].x *= 10;
+			normals[h][w].z *= 10;
 			normals[h][w].normalize();
 		}
 	}
