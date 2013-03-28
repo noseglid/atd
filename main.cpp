@@ -83,17 +83,6 @@ init_OpenGL()
 	glMatrixMode(GL_MODELVIEW);
 	glPointSize(3);
 
-	glFogi(GL_FOG_MODE, GL_LINEAR);
-	GLfloat fog_color[] = { 0.53, 0.81, 0.92, 1.0 };
-	glFogfv(GL_FOG_COLOR, fog_color);
-	glFogf(GL_FOG_DENSITY, 0.35f);
-	glHint(GL_FOG_HINT, GL_DONT_CARE);
-	glFogf(GL_FOG_START, 15.0f);
-	glFogf(GL_FOG_END, 25.0f);
-	glEnable(GL_FOG);
-
-	glClearColor(fog_color[0], fog_color[1], fog_color[2], fog_color[3]);
-
 	glEnable(GL_LIGHTING);
 	GLfloat ambient[] = { 0.2, 0.2, 0.2, 1.0 };
 	GLfloat diffuse[] = { 0.4, 0.4, 0.4, 1.0 };
