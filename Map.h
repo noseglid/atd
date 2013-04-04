@@ -40,7 +40,9 @@ public:
 	void draw() const;
 	void draw_normals() const;
 	Vector3 get_center_of(int x, int y) const;
-	const Path * get_path() const;
+	const Path *get_path() const;
+	size_t get_width() const;
+	size_t get_height() const;
 
 	void set_hightlight(const int& x, const int& y);
 	Vector2 get_highlight() const;

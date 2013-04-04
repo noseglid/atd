@@ -51,9 +51,14 @@ Game::handle_event(const SDL_Event& ev)
 }
 
 void
-Game::init()
+Game::init(Map *map)
 {
 	camera = new Camera();
+	camera->set_limits(
+		0.0f, (float)map->get_width(),
+		0.5f, 8.0f,
+		0.0f, (float)map->get_height()
+	);
 }
 
 void
@@ -63,7 +68,7 @@ Game::run()
 	struct timeval now;
 
 	gettimeofday(&start_time, NULL);
-	while(running) {
+	while (running) {
 		while (SDL_PollEvent(&ev)) {
 			handle_event(ev);
 		}

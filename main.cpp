@@ -42,7 +42,7 @@ init_ATD()
 	keyboard      = new KeyboardHandler();
 	meta_manager  = new MetaManager();
 
-	Game::instance().init();
+	Game::instance().init(map);
 	Player::instance().alter_gold(200);
 }
 

@@ -3,6 +3,7 @@
 
 #include "Camera.h"
 #include "Debug.h"
+#include "Map.h"
 
 #include <de.h>
 #include <SDL/SDL.h>
@@ -11,6 +12,7 @@
 class Game : public de::Emitter
 {
 	Camera *camera;
+	Map *map;
 	struct timeval start_time;
 	float elapsed;
 	bool running;
@@ -27,7 +29,7 @@ class Game : public de::Emitter
 	void handle_mouse_event(const SDL_Event& ev);
 
 public:
-	void init();
+	void init(Map *map);
 	void run();
 	void stop();
 

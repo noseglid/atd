@@ -6,16 +6,13 @@
 #include <iostream>
 #include <cmath>
 
-#define MAX_HEIGHT 40
-#define MIN_HEIGHT 1
-
 Camera::Camera() : mouse_buttons_active(0)
 {
 	pos.x = 10;
 	pos.y = 8;
 	pos.z = 18;
 	dir.x = -0.50;
-	dir.y = -0.71;
+	dir.y = -1.00;
 	dir.z = -0.51;
 	up.x = 0;
 	up.y = 1;
@@ -30,6 +27,17 @@ Camera::Camera() : mouse_buttons_active(0)
 
 Camera::~Camera()
 {
+}
+
+void
+Camera::set_limits(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax)
+{
+	limits.xmin = xmin;
+	limits.xmax = xmax;
+	limits.ymin = ymin;
+	limits.ymax = ymax;
+	limits.zmin = zmin;
+	limits.zmax = zmax;
 }
 
 void
@@ -50,6 +58,11 @@ Camera::hover(GLdouble dx, GLdouble dz)
 
 	pos -= perpendicular * dx * pos.y;
 	pos -= direction * dz * pos.y;
+
+	if (pos.x < limits.xmin) pos.x = limits.xmin;
+	if (pos.x > limits.xmax) pos.x = limits.xmax;
+	if (pos.z < limits.zmin) pos.z = limits.zmin;
+	if (pos.z > limits.zmax) pos.z = limits.zmax;
 }
 
 void
@@ -95,6 +108,8 @@ Camera::look(GLdouble hangle, GLdouble vangle)
 void
 Camera::zoom(GLdouble delta)
 {
-	if ((pos.y < MIN_HEIGHT && delta < 0) || (pos.y > MAX_HEIGHT && delta > 0)) return;
+	if (pos.y < limits.ymin && delta < 0) return;
+	if (pos.y > limits.ymax && delta > 0) return;
+
 	pos -= dir * delta;
 }

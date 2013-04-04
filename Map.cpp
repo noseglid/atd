@@ -188,7 +188,7 @@ Map::draw() const
 	glDisable(GL_COLOR_MATERIAL);
 
 	GLfloat
-		diffuse[]  = { 0.8f, 0.8f, 0.8f, 1.0f },
+		diffuse[]  = { 0.6f, 0.6f, 0.6f, 1.0f },
 		specular[] = { 0.0f, 0.0f, 0.0f, 1.0f },
 		ambient[]  = { 0.1f, 0.1f, 0.1f, 1.0f };
 
@@ -243,6 +243,18 @@ const Path *
 Map::get_path() const
 {
 	return path;
+}
+
+size_t
+Map::get_width() const
+{
+	return width;
+}
+
+size_t
+Map::get_height() const
+{
+	return height;
 }
 
 void
