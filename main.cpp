@@ -43,7 +43,7 @@ init_ATD()
 	meta_manager  = new MetaManager();
 
 	Game::instance().init(map);
-	Player::instance().alter_gold(200);
+	Player::instance().alter_gold(300);
 }
 
 void

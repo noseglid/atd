@@ -9,7 +9,7 @@
 #include <SDL/SDL.h>
 #include <map>
 
-class Game : public de::Emitter
+class Game : public de::Emitter<>
 {
 	Camera *camera;
 	Map *map;

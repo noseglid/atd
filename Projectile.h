@@ -5,7 +5,7 @@
 
 #include <de.h>
 
-class Projectile : public de::Emitter
+class Projectile : public de::Emitter<>
 {
 	Targetable *target;
 	Vector3 pos, target_pos;

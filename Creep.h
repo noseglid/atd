@@ -8,7 +8,7 @@
 
 #include <de.h>
 
-class Creep : public de::Emitter, public Targetable
+class Creep : public de::Emitter<>, public Targetable
 {
 	void travel_to(const PathCoord& target);
 
