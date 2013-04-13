@@ -19,7 +19,7 @@ GL::texture(std::string path, FILETYPE t)
 		return isspace(c);
 	}));
 
-	path = "textures" + path;
+	path = "textures/" + path;
 	DBG("Loading texture from: " << path);
 
 	GLuint texid;

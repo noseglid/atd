@@ -1,4 +1,6 @@
 #include "Creep.h"
+#include "Debug.h"
+#include "Exception.h"
 #include "Player.h"
 #include "CreepManager.h"
 #include "Text.h"
@@ -25,12 +27,12 @@ Creep::travel_to(const PathCoord& target)
 {
 	this->target = target;
 
-	Vector3 target_center = map->get_center_of(target.x, target.y);
-	dir = (target_center - pos) / 40.0f;
+	vtarget = map->get_center_of(target.x, target.y);
+	dir = (vtarget - pos) / 40.0f;
 }
 
 void
-Creep::strike(Projectile *p)
+Creep::struck(Projectile *p)
 {
 	this->current_health -= p->get_damage();
 	if (this->current_health <= 0.0f) {
@@ -47,13 +49,16 @@ Creep::strike(Projectile *p)
 void
 Creep::tick(const float& elapsed)
 {
-	Vector3 tc = map->get_center_of(target.x, target.y);
-	if ((dir.x > 0 && pos.x > tc.x) || (dir.x < 0 && pos.x < tc.x) ||
-	    (dir.z > 0 && pos.z > tc.z) || (dir.z < 0 && pos.z < tc.z)) {
-		travel_to(path->next_coord(target));
-	}
+	try {
+		if ((dir.x > 0 && pos.x > vtarget.x) || (dir.x < 0 && pos.x < vtarget.x) ||
+		    (dir.z > 0 && pos.z > vtarget.z) || (dir.z < 0 && pos.z < vtarget.z)) {
+			travel_to(path->next_coord(target));
+		}
 
-	pos += dir;
+		pos += dir;
+	} catch (const Exception& e) {
+		emit("accomplished");
+	}
 }
 
 Vector3

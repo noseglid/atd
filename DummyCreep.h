@@ -10,7 +10,7 @@ class DummyCreep : public Targetable
 public:
 	DummyCreep(Vector3 pos);
 	virtual Vector3 get_position() const;
-	virtual void strike(Projectile *p);
+	virtual void struck(Projectile *p);
 };
 
 #endif

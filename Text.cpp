@@ -65,7 +65,6 @@ void
 Text::tick()
 {
 	glDisable(GL_LIGHTING);
-	glDisable(GL_DEPTH_TEST);
 
 	auto it = scrollings.begin();
 	while (it != scrollings.end()) {
@@ -84,18 +83,17 @@ Text::tick()
 			glTexCoord2f(1.0f, 0.0f); glVertex3f(width, 0.1f + height, 0.0f);
 			glTexCoord2f(1.0f, 1.0f); glVertex3f(width, 0.1f, 0.0f);
 		glEnd();
-		glPopMatrix();
 		wt.delta.y += 0.02;
 
 		it = (wt.delta.length() >= 1.5f) ? scrollings.erase(it) : it + 1;
+		glPopMatrix();
 	}
-	glEnable(GL_DEPTH_TEST);
 }
 
 void
 Text::overlay(const std::string& text, const int& x, const int& y, bool offbottom)
 {
-	enable2D();
+	GLTransform::enable2D();
 	glEnable(GL_TEXTURE_2D);
 
 	int w, h;
@@ -112,7 +110,7 @@ Text::overlay(const std::string& text, const int& x, const int& y, bool offbotto
 	glEnd();
 	glDeleteTextures(1, &texture);
 
-	disable2D();
+	GLTransform::disable2D();
 }
 
 void
@@ -124,34 +122,4 @@ Text::scrolling(const std::string& text, const Vector3& pos, Vector3 color)
 	wt.color   = color;
 
 	scrollings.push_back(wt);
-}
-
-void
-Text::enable2D()
-{
-	int vport[4];
-	glGetIntegerv(GL_VIEWPORT, vport);
-
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-
-	glOrtho(0, vport[2], 0, vport[3], -1, 1);
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-
-	glLoadIdentity();
-	glDisable(GL_LIGHTING);
-}
-
-void
-Text::disable2D()
-{
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
-
-	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();
-
-	glEnable(GL_LIGHTING);
 }

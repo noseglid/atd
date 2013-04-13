@@ -15,7 +15,10 @@ class Creep : public de::Emitter<>, public Targetable
 protected:
 	Map *map;
 	const Path *path;
+
 	PathCoord target;
+	Vector3 vtarget;
+
 	float total_health, current_health;
 	int reward;
 
@@ -26,7 +29,7 @@ protected:
 public:
 	virtual ~Creep();
 
-	virtual void strike(Projectile *p);
+	virtual void struck(Projectile *p);
 	Vector3 get_position() const;
 
 	float get_health() const;

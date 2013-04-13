@@ -1,6 +1,7 @@
 #include "Map.h"
 #include "Game.h"
 #include "Math.h"
+#include "GLTransform.h"
 #include "ImageLoader.h"
 #include "Exception.h"
 
@@ -72,10 +73,10 @@ Map::load(const std::string& file)
 void
 Map::create_heightmap()
 {
-	heightmap = new float*[height];
-	for (size_t h = 0; h < height; ++h) {
-		heightmap[h] = new float[width];
-		for (size_t w = 0; w < width; ++w) {
+	heightmap = new float*[height + 2];
+	for (size_t h = 0; h < height + 2; ++h) {
+		heightmap[h] = new float[width + 2];
+		for (size_t w = 0; w < width + 2; ++w) {
 			heightmap[h][w] = (rand() / (float)RAND_MAX) / 5.0f;
 		}
 	}
@@ -84,20 +85,20 @@ Map::create_heightmap()
 void
 Map::generate_normals()
 {
-	normals = new Vector3*[height];
-	for (size_t h = 0; h < height; ++h) {
-		normals[h] = new Vector3[width];
+	normals = new Vector3*[height + 2];
+	for (size_t h = 0; h < height + 2; ++h) {
+		normals[h] = new Vector3[width + 2];
 		normals[h][0]         = Vector3(0.0f, 1.0f, 0.0f);
-		normals[h][width - 1] = Vector3(0.0f, 1.0f, 0.0f);
+		normals[h][width + 1] = Vector3(0.0f, 1.0f, 0.0f);
 	}
 
-	for (size_t w = 0; w < width; ++w) {
+	for (size_t w = 0; w < width + 2; ++w) {
 		normals[0][w]          = Vector3(0.0f, 1.0f, 0.0f);
-		normals[height - 1][w] = Vector3(0.0f, 1.0f, 0.0f);
+		normals[height + 1][w] = Vector3(0.0f, 1.0f, 0.0f);
 	}
 
-	for (size_t h = 1; h < height - 1; ++h) {
-		for (size_t w = 1; w < width - 1; ++w) {
+	for (size_t h = 1; h < height + 1; ++h) {
+		for (size_t w = 1; w < width + 1; ++w) {
 			Vector3 v1(0,      heightmap[h - 1][w], SQSIZE);
 			Vector3 v2(SQSIZE, heightmap[h][w + 1], 0);
 			Vector3 v3(0,      heightmap[h + 1][w], -SQSIZE);
@@ -138,7 +139,7 @@ Map::mousemotion()
 {
 	int x, y;
 	SDL_GetMouseState(&x, &y);
-	Vector3 v = unproject(x, y);
+	Vector3 v = GLTransform::unproject(x, y);
 	set_hightlight(floor(v.x), floor(v.z));
 }
 
@@ -196,8 +197,8 @@ Map::draw() const
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
 	glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
 
-	for (size_t h = 0; h < height - 1; ++h) {
-		for (size_t w = 0; w < width - 1; ++w) {
+	for (size_t h = 1; h <= height; ++h) {
+		for (size_t w = 1; w <= width; ++w) {
 			draw_square(w, h);
 		}
 	}
@@ -212,8 +213,8 @@ Map::draw_normals() const
 
 	glColor3f(1.0f, 1.0f, 1.0f);
 
-	for (size_t h = 0; h < height; ++h) {
-		for (size_t w = 0; w < width; ++w) {
+	for (size_t h = 1; h < height + 2; ++h) {
+		for (size_t w = 1; w < width + 2; ++w) {
 			glBegin(GL_LINES);
 			Vector3 n = normals[h][w];
 			n /= 4;
@@ -230,6 +231,9 @@ Map::draw_normals() const
 Vector3
 Map::get_center_of(int x, int y) const
 {
+	if (x > width || y > height)
+		throw Exception("Can't get center of coords out of map boundaries");
+
 	float dx = (float)x + SQSIZE / 2.0f;
 	float dy = (
 		heightmap[y][x] + heightmap[y][x + 1] + heightmap[y + 1][x] + heightmap[y + 1][x + 1]

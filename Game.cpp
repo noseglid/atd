@@ -38,6 +38,7 @@ Game::handle_event(const SDL_Event& ev)
 			mouse_button_event = ev.button;
 			emit("mousedown");
 			break;
+
 		case SDL_MOUSEBUTTONUP:
 			mouse_button_event = ev.button;
 			emit("mouseup");
@@ -91,6 +92,7 @@ Game::run()
 
 		glEnable(GL_DEPTH_TEST);
 		emit("tick");
+
 		glDisable(GL_DEPTH_TEST);
 		emit("tick_nodepth");
 

@@ -11,7 +11,7 @@ SRCS  = main.cpp Model.cpp ImageLoader.cpp jpeg.cpp tga.cpp Camera.cpp Text.cpp
 SRCS += Player.cpp Game.cpp Map.cpp Projectile.cpp
 SRCS += Path.cpp TowerManager.cpp Tower.cpp
 SRCS += CreepManager.cpp Creep.cpp SphereCreep.cpp DummyCreep.cpp
-SRCS += KeyboardHandler.cpp MetaManager.cpp
+SRCS += KeyboardHandler.cpp MetaManager.cpp HUD.cpp
 SRCS += Math.cpp Vector2.cpp Vector3.cpp Matrix4.cpp GLTransform.cpp
 
 OBJS := $(SRCS:.cpp=.o)
@@ -38,7 +38,7 @@ all: $(BIN)
 	@rm -f $*.d.tmp
 
 $(BIN): $(OBJS)
-	$(CC) $^ $(LDFLAGS) -o $@ 
+	$(CC) $^ $(LDFLAGS) -o $@
 
 clean:
 	rm -f $(OBJS) $(DEPS) $(BIN)

@@ -8,7 +8,7 @@ class Targetable
 {
 public:
 	virtual Vector3 get_position() const = 0;
-	virtual void strike(Projectile *p) = 0;
+	virtual void struck(Projectile *p) = 0;
 };
 
 #endif

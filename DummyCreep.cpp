@@ -12,6 +12,6 @@ DummyCreep::get_position() const
 }
 
 void
-DummyCreep::strike(Projectile *p)
+DummyCreep::struck(Projectile *p)
 {
 }

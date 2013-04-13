@@ -6,6 +6,5 @@
 #include "Matrix4.h"
 
 float deg2rad(const float deg);
-Vector3 unproject(const int& x, const int& y);
 
 #endif

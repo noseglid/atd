@@ -44,7 +44,7 @@ Projectile::tick()
 	Vector3 dir = dest - pos;
 	if (dir.length() < 0.1) {
 		emit("hit");
-		target->strike(this);
+		target->struck(this);
 		return;
 	}
 

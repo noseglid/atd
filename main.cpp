@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "Text.h"
+#include "HUD.h"
 #include "Map.h"
 #include "Player.h"
 #include "MetaManager.h"
@@ -33,8 +34,11 @@ init_ATD()
 {
 	DBG("Initing ATD...");
 
+	Text::init(screen_width, screen_height);
+	HUD::init(screen_width, screen_height);
+
 	map = new Map();
-	map->load("levels/level1.map");
+	map->load("levels/test.map");
 
 	tower_manager = new TowerManager(map);
 	CreepManager::instance().init(map);
@@ -104,8 +108,6 @@ int main(int argc, char *argv[])
 	try {
 		init_SDL();
 		init_OpenGL();
-		Text::init(screen_width, screen_height);
-
 		init_ATD();
 
 		Game::instance().run();
