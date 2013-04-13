@@ -6,6 +6,8 @@
 
 #include <vector>
 
+struct GameEvent;
+
 class TowerManager
 {
 	Map *map;
@@ -18,9 +20,9 @@ class TowerManager
 
 public:
 	TowerManager(Map *map);
-	void mouseup();
-	void mousedown();
-	void tick();
+	void mouseup(const GameEvent& ev);
+	void mousedown(const GameEvent& ev);
+	void tick(const GameEvent& ev);
 };
 
 #endif

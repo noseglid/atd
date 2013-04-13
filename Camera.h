@@ -5,6 +5,8 @@
 
 #include <OpenGL/gl.h>
 
+struct GameEvent;
+
 class Camera
 {
 	Vector3 pos, dir, up;
@@ -30,8 +32,8 @@ public:
 	void look(GLdouble dx, GLdouble dy);
 	void zoom(GLdouble delta);
 
-	void mousebutton();
-	void mousemotion();
+	void mousebutton(const GameEvent& ev);
+	void mousemotion(const GameEvent& ev);
 };
 
 #endif

@@ -10,22 +10,20 @@
 MetaManager::MetaManager() : last_measure(0), draw_meta(false)
 {
 	Game& g = Game::instance();
-	g.on("tick", std::bind(&MetaManager::tick, this));
-	g.on("keydown", std::bind(&MetaManager::keydown, this));
+	g.on("tick", std::bind(&MetaManager::tick, this, std::placeholders::_1));
+	g.on("keydown", std::bind(&MetaManager::keydown, this, std::placeholders::_1));
 }
 
 void
-MetaManager::tick()
+MetaManager::tick(const GameEvent& ev)
 {
 	static int frames = 0;
 	frames++;
 
-	float elapsed = Game::instance().get_elapsed();
-
-	if (elapsed - last_measure > FPS_MEASURE_INTERVAL) {
-		current_fps = (float)(frames) / (elapsed - last_measure);
+	if (ev.elapsed - last_measure > FPS_MEASURE_INTERVAL) {
+		current_fps = (float)(frames) / (ev.elapsed - last_measure);
 		frames = 0;
-		last_measure = elapsed;
+		last_measure = ev.elapsed;
 	}
 
 	if (draw_meta) {
@@ -37,9 +35,9 @@ MetaManager::tick()
 }
 
 void
-MetaManager::keydown()
+MetaManager::keydown(const GameEvent& ev)
 {
-	SDL_KeyboardEvent event = Game::instance().last_keyboard_event();
+	SDL_KeyboardEvent event = ev.ev.key;
 	switch (event.keysym.sym) {
 		case SDLK_m: draw_meta = !draw_meta; break;
 		default: break;

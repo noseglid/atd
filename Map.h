@@ -11,6 +11,8 @@
 
 #include <pjson.hpp>
 
+struct GameEvent;
+
 class Map
 {
 	size_t width, height;
@@ -33,9 +35,9 @@ public:
 	~Map();
 
 	void load(const std::string& file);
-	void tick();
-	void mousemotion();
-	void keydown();
+	void tick(const GameEvent& ev);
+	void mousemotion(const GameEvent& ev);
+	void keydown(const GameEvent& ev);
 
 	void draw() const;
 	void draw_normals() const;

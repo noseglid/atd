@@ -7,9 +7,9 @@
 TowerManager::TowerManager(Map *map) : map(map)
 {
 	Game& g = Game::instance();
-	g.on("tick", std::bind(&TowerManager::tick, this));
-	g.on("mousedown", std::bind(&TowerManager::mousedown, this));
-	g.on("mouseup", std::bind(&TowerManager::mouseup, this));
+	g.on("tick", std::bind(&TowerManager::tick, this, std::placeholders::_1));
+	g.on("mousedown", std::bind(&TowerManager::mousedown, this, std::placeholders::_1));
+	g.on("mouseup", std::bind(&TowerManager::mouseup, this, std::placeholders::_1));
 
 	Tower::init();
 }
@@ -27,17 +27,17 @@ TowerManager::purchase_tower(Vector3 pos)
 }
 
 void
-TowerManager::mousedown()
+TowerManager::mousedown(const GameEvent& ev)
 {
-	SDL_MouseButtonEvent event = Game::instance().last_mouse_button_event();
+	SDL_MouseButtonEvent event = ev.ev.button;
 	click.x = event.x;
 	click.y = event.y;
 }
 
 void
-TowerManager::mouseup()
+TowerManager::mouseup(const GameEvent& ev)
 {
-	SDL_MouseButtonEvent event = Game::instance().last_mouse_button_event();
+	SDL_MouseButtonEvent event = ev.ev.button;
 
 	if (event.button == SDL_BUTTON_LEFT &&
 			abs(event.x - click.x) < 3 &&
@@ -52,9 +52,9 @@ TowerManager::mouseup()
 }
 
 void
-TowerManager::tick()
+TowerManager::tick(const GameEvent& ev)
 {
-	float elapsed = Game::instance().get_elapsed();
+	float elapsed = ev.elapsed;
 
 	for (std::pair<Vector3, Tower*> t : towers) {
 

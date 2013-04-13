@@ -19,36 +19,34 @@ Game::Game() : running(true)
 void
 Game::handle_event(const SDL_Event& ev)
 {
+	std::string signal;
 	switch (ev.type) {
 		case SDL_QUIT:
 			stop();
 			return;
 
 		case SDL_KEYDOWN:
-			keyboard_event = ev.key;
-			emit("keydown");
+			signal = "keydown";
 			break;
 
 		case SDL_KEYUP:
-			keyboard_event = ev.key;
-			emit("keyup");
+			signal = "keyup";
 			break;
 
 		case SDL_MOUSEBUTTONDOWN:
-			mouse_button_event = ev.button;
-			emit("mousedown");
+			signal = "mousedown";
 			break;
 
 		case SDL_MOUSEBUTTONUP:
-			mouse_button_event = ev.button;
-			emit("mouseup");
+			signal = "mouseup";
 			break;
 
 		case SDL_MOUSEMOTION:
-			mouse_motion_event = ev.motion;
-			emit("mousemotion");
+			signal = "mousemotion";
 			break;
 	}
+
+	emit(signal, GameEvent(elapsed, ev));
 }
 
 void
@@ -91,10 +89,10 @@ Game::run()
 		elapsed = now.tv_sec - start_time.tv_sec + ((now.tv_usec - start_time.tv_usec) / 1000000.0f);
 
 		glEnable(GL_DEPTH_TEST);
-		emit("tick");
+		emit("tick", GameEvent(elapsed));
 
 		glDisable(GL_DEPTH_TEST);
-		emit("tick_nodepth");
+		emit("tick_nodepth", GameEvent(elapsed));
 
 		SDL_GL_SwapBuffers();
 	}
@@ -104,28 +102,4 @@ void
 Game::stop()
 {
 	running = false;
-}
-
-float
-Game::get_elapsed() const
-{
-	return elapsed;
-}
-
-SDL_MouseMotionEvent
-Game::last_mouse_motion_event() const
-{
-	return mouse_motion_event;
-}
-
-SDL_MouseButtonEvent
-Game::last_mouse_button_event() const
-{
-	return mouse_button_event;
-}
-
-SDL_KeyboardEvent
-Game::last_keyboard_event() const
-{
-	return keyboard_event;
 }

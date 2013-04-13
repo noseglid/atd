@@ -1,6 +1,5 @@
 #include "Camera.h"
 #include "Game.h"
-#include "Math.h"
 
 #include <OpenGL/glu.h>
 #include <iostream>
@@ -20,9 +19,9 @@ Camera::Camera() : mouse_buttons_active(0)
 
 	xzangle = asin(dir.x);
 	Game& g = Game::instance();
-	g.on("mousedown", std::bind(&Camera::mousebutton, this));
-	g.on("mouseup", std::bind(&Camera::mousebutton, this));
-	g.on("mousemotion", std::bind(&Camera::mousemotion, this));
+	g.on("mousedown", std::bind(&Camera::mousebutton, this, std::placeholders::_1));
+	g.on("mouseup", std::bind(&Camera::mousebutton, this, std::placeholders::_1));
+	g.on("mousemotion", std::bind(&Camera::mousemotion, this, std::placeholders::_1));
 }
 
 Camera::~Camera()
@@ -66,9 +65,9 @@ Camera::hover(GLdouble dx, GLdouble dz)
 }
 
 void
-Camera::mousebutton()
+Camera::mousebutton(const GameEvent& ev)
 {
-	SDL_MouseButtonEvent event = Game::instance().last_mouse_button_event();
+	SDL_MouseButtonEvent event = ev.ev.button;
 
 	mouse_buttons_active ^= event.button;
 
@@ -78,9 +77,9 @@ Camera::mousebutton()
 }
 
 void
-Camera::mousemotion()
+Camera::mousemotion(const GameEvent& ev)
 {
-	SDL_MouseMotionEvent event = Game::instance().last_mouse_motion_event();
+	SDL_MouseMotionEvent event = ev.ev.motion;
 
 	SDLMod mod = SDL_GetModState();
 

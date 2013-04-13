@@ -19,9 +19,9 @@ Map::Map()
 	highlighted.y = 10;
 
 	Game& g = Game::instance();
-	g.on("tick", std::bind(&Map::tick, this));
-	g.on("mousemotion", std::bind(&Map::mousemotion, this));
-	g.on("keydown", std::bind(&Map::keydown, this));
+	g.on("tick", std::bind(&Map::tick, this, std::placeholders::_1));
+	g.on("mousemotion", std::bind(&Map::mousemotion, this, std::placeholders::_1));
+	g.on("keydown", std::bind(&Map::keydown, this, std::placeholders::_1));
 }
 
 Map::~Map()
@@ -118,16 +118,16 @@ Map::generate_normals()
 }
 
 void
-Map::tick()
+Map::tick(const GameEvent& ev)
 {
 	this->draw();
 	if (draw_meta) this->draw_normals();
 }
 
 void
-Map::keydown()
+Map::keydown(const GameEvent& ev)
 {
-	SDL_KeyboardEvent event = Game::instance().last_keyboard_event();
+	SDL_KeyboardEvent event = ev.ev.key;
 	switch (event.keysym.sym) {
 		case SDLK_m: draw_meta = !draw_meta; break;
 		default: break;
@@ -135,7 +135,7 @@ Map::keydown()
 }
 
 void
-Map::mousemotion()
+Map::mousemotion(const GameEvent& ev)
 {
 	int x, y;
 	SDL_GetMouseState(&x, &y);

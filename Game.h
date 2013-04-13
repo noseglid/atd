@@ -9,17 +9,24 @@
 #include <SDL/SDL.h>
 #include <map>
 
-class Game : public de::Emitter<>
+struct GameEvent
+{
+	float elapsed;
+	SDL_Event ev;
+
+	GameEvent(float elapsed = 0.0f, SDL_Event ev = SDL_Event()) :
+		elapsed(elapsed), ev(ev)
+	{
+	}
+};
+
+class Game : public de::Emitter<GameEvent>
 {
 	Camera *camera;
 	Map *map;
 	struct timeval start_time;
 	float elapsed;
 	bool running;
-
-	SDL_MouseMotionEvent mouse_motion_event;
-	SDL_MouseButtonEvent mouse_button_event;
-	SDL_KeyboardEvent keyboard_event;
 
 	Game();
 	void operator=(Game const&);
@@ -32,11 +39,6 @@ public:
 	void init(Map *map);
 	void run();
 	void stop();
-
-	SDL_MouseMotionEvent last_mouse_motion_event() const;
-	SDL_MouseButtonEvent last_mouse_button_event() const;
-	SDL_KeyboardEvent last_keyboard_event() const;
-	float get_elapsed() const;
 
 	static Game& instance();
 };

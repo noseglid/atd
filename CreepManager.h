@@ -18,7 +18,7 @@ class CreepManager
 
 public:
 	void init(Map *map);
-	void tick();
+	void tick(const GameEvent& ev);
 
 	void remove_creep(Creep *creep);
 

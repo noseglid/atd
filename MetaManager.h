@@ -3,6 +3,8 @@
 
 #include <SDL/SDL.h>
 
+struct GameEvent;
+
 class MetaManager
 {
 	float current_fps;
@@ -11,8 +13,8 @@ class MetaManager
 
 public:
 	MetaManager();
-	void tick();
-	void keydown();
+	void tick(const GameEvent& ev);
+	void keydown(const GameEvent& ev);
 };
 
 #endif
