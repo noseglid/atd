@@ -61,8 +61,12 @@ PathCoord
 Path::next_coord(const PathCoord& coord) const
 {
 	auto it = find(coords_order.begin(), coords_order.end(), coord);
-	if (it == coords_order.end() || it == coords_order.end() - 1)
+
+	if (it == coords_order.end())
 		throw Exception("Specified coord is not in map.");
+
+  if ((it + 1) == coords_order.end())
+		throw NoMoreCoords();
 
 	return *(it + 1);
 }

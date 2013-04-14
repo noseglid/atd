@@ -1,5 +1,7 @@
 #include "HUD.h"
 #include "Debug.h"
+#include "Player.h"
+#include "Text.h"
 #include "Game.h"
 #include "GLTransform.h"
 #include "ImageLoader.h"
@@ -93,22 +95,37 @@ HUD::draw_button(GLuint texture, int i) const
 }
 
 void
+HUD::draw_stats() const
+{
+	std::stringstream gold;
+	gold << "Gold: " << Player::instance().gold;
+	Text::overlay(gold.str(), 10, 30, false);
+
+	std::stringstream lives;
+	lives << "Lives: " << Player::instance().lives;
+	Text::overlay(lives.str(), 10, 50, false);
+}
+
+void
 HUD::tick() const
 {
-	glBindTexture(GL_TEXTURE_2D, 0);
 	GLTransform::enable2D();
 
 	glColor4f(0.5f, 0.5f, 0.5f, 0.6f);
+	glDisable(GL_TEXTURE_2D);
 	draw_bottom_banner();
 
 	glColor3f(1.0f, 1.0f, 1.0f);
+	glEnable(GL_TEXTURE_2D);
 	int i = 0;
 	for (GLuint tex : textures) {
 		draw_button(tex, i++);
 	}
 
+	draw_stats();
 
 	GLTransform::disable2D();
+
 }
 
 void

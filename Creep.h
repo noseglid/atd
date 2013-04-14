@@ -10,6 +10,8 @@
 
 class Creep : public de::Emitter<>, public Targetable
 {
+	friend class CreepManager;
+
 	void travel_to(const PathCoord& target);
 
 protected:
@@ -21,10 +23,11 @@ protected:
 
 	float total_health, current_health;
 	int reward;
+	int life_cost;
 
 	Vector3 pos, dir;
 
-	Creep(Map *map, float health, int reward);
+	Creep(Map *map, float health, int reward, int life_cost);
 
 public:
 	virtual ~Creep();

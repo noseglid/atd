@@ -1,5 +1,7 @@
 #include "CreepManager.h"
 #include "SphereCreep.h"
+#include "Player.h"
+#include "Text.h"
 #include "Debug.h"
 #include "Game.h"
 
@@ -32,8 +34,8 @@ CreepManager::tick(const GameEvent& ev)
 	if ((elapsed > (float)last_spawn + SPAWN_INTERVAL) && spawned < COUNT) {
 		++spawned;
 		SphereCreep *creep = new SphereCreep(map, 73);
-		creep->on("death", std::bind(&CreepManager::remove_creep, this, creep));
-		creep->on("accomplished", std::bind(&CreepManager::remove_creep, this, creep));
+		creep->on("death", std::bind(&CreepManager::creep_death, this, creep));
+		creep->on("accomplished", std::bind(&CreepManager::creep_accomplished, this, creep));
 		creeps.push_back(creep);
 		last_spawn = elapsed;
 	}
@@ -46,6 +48,28 @@ CreepManager::tick(const GameEvent& ev)
 
 		c->tick(elapsed);
 	}
+}
+
+void
+CreepManager::creep_death(Creep *creep)
+{
+	Player::instance().alter_gold(creep->reward);
+
+	std::stringstream ss;
+	ss << creep->reward << "g";
+	Text::scrolling(ss.str(), creep->get_position(), Vector3(1.0, 0.9, 0.0));
+
+	remove_creep(creep);
+}
+
+void
+CreepManager::creep_accomplished(Creep *creep)
+{
+	Player::instance().alter_lives(-(creep->life_cost));
+
+	Text::scrolling(std::string("Haha!"), creep->get_position(), Vector3(1.0, 1.0, 1.0));
+
+	remove_creep(creep);
 }
 
 void

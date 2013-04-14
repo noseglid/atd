@@ -15,9 +15,7 @@ struct GameEvent
 	SDL_Event ev;
 
 	GameEvent(float elapsed = 0.0f, SDL_Event ev = SDL_Event()) :
-		elapsed(elapsed), ev(ev)
-	{
-	}
+		elapsed(elapsed), ev(ev) {}
 };
 
 class Game : public de::Emitter<GameEvent>
@@ -33,7 +31,6 @@ class Game : public de::Emitter<GameEvent>
 	Game(const Game&);
 
 	void handle_event(const SDL_Event& ev);
-	void handle_mouse_event(const SDL_Event& ev);
 
 public:
 	void init(Map *map);

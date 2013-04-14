@@ -6,8 +6,8 @@
 #include "Text.h"
 #include "GLTransform.h"
 
-Creep::Creep(Map *map, float health, int reward) :
-	total_health(health), current_health(health), reward(reward)
+Creep::Creep(Map *map, float health, int reward, int life_cost) :
+	total_health(health), current_health(health), reward(reward), life_cost(life_cost)
 {
 	this->map  = map;
 	this->path = map->get_path();
@@ -36,12 +36,6 @@ Creep::struck(Projectile *p)
 {
 	this->current_health -= p->get_damage();
 	if (this->current_health <= 0.0f) {
-		Player::instance().alter_gold(this->reward);
-
-		std::stringstream ss;
-		ss << reward << "g";
-		Text::scrolling(ss.str(), pos, Vector3(1.0, 0.9, 0.0));
-
 		emit("death");
 	}
 }
@@ -52,11 +46,12 @@ Creep::tick(const float& elapsed)
 	try {
 		if ((dir.x > 0 && pos.x > vtarget.x) || (dir.x < 0 && pos.x < vtarget.x) ||
 		    (dir.z > 0 && pos.z > vtarget.z) || (dir.z < 0 && pos.z < vtarget.z)) {
+			/* `next_coord` will throw if there are no more coords */
 			travel_to(path->next_coord(target));
 		}
 
 		pos += dir;
-	} catch (const Exception& e) {
+	} catch (const NoMoreCoords& e) {
 		emit("accomplished");
 	}
 }

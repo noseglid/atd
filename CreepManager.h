@@ -16,11 +16,14 @@ class CreepManager
 	void operator=(CreepManager const&);
 	CreepManager(const CreepManager&);
 
-public:
-	void init(Map *map);
+	void remove_creep(Creep *creep);
 	void tick(const GameEvent& ev);
 
-	void remove_creep(Creep *creep);
+public:
+	void init(Map *map);
+
+	void creep_death(Creep *creep);
+	void creep_accomplished(Creep *creep);
 
 	std::vector<Creep*> creeps_inside_circle(Vector3 center, float radius);
 

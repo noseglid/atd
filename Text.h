@@ -31,7 +31,7 @@ class Text
 
 public:
 	static void init(const int& screen_width, const int& screen_height);
-	static void overlay(const std::string& text, const int& x, const int&y, bool offbottom = true);
+	static void overlay(const std::string& text, const int& x, const int&y, bool offbottom = true, bool offleft = true);
 	static void scrolling(const std::string& text, const Vector3& pos, Vector3 color = Vector3(1.0f, 1.0f, 1.0f));
 
 };

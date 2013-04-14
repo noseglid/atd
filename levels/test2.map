@@ -1,0 +1,16 @@
+{
+	"width"  : 4,
+	"height" : 4,
+
+	"textures" : [
+		"grass.jpg",
+		"stone.jpg"
+	],
+
+	"paths" : [
+		{
+			"texture" : 1,
+			"path" : "M1,1 L1,4"
+		}
+	]
+}

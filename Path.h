@@ -1,6 +1,8 @@
 #ifndef __PATH_H__
 #define __PATH_H__
 
+#include "Exception.h"
+
 #include <vector>
 #include <map>
 
@@ -33,6 +35,12 @@ struct PathCoord
 		if (x != rhs.x) return x < rhs.x;
 		return y < rhs.y;
 	}
+};
+
+class NoMoreCoords : public Exception
+{
+public:
+	NoMoreCoords() : Exception("No more coordinates in path.") {}
 };
 
 class Path

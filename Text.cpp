@@ -65,6 +65,7 @@ void
 Text::tick()
 {
 	glDisable(GL_LIGHTING);
+	glEnable(GL_TEXTURE_2D);
 
 	auto it = scrollings.begin();
 	while (it != scrollings.end()) {
@@ -88,10 +89,12 @@ Text::tick()
 		it = (wt.delta.length() >= 1.5f) ? scrollings.erase(it) : it + 1;
 		glPopMatrix();
 	}
+
+	glEnable(GL_LIGHTING);
 }
 
 void
-Text::overlay(const std::string& text, const int& x, const int& y, bool offbottom)
+Text::overlay(const std::string& text, const int& x, const int& y, bool offbottom, bool offleft)
 {
 	GLTransform::enable2D();
 	glEnable(GL_TEXTURE_2D);
@@ -101,12 +104,13 @@ Text::overlay(const std::string& text, const int& x, const int& y, bool offbotto
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glColor3f(1.0f, 1.0f, 1.0f);
 
-	float offset = (offbottom) ? 2 * y : screen_height;
+	float yoffset = (offbottom) ? 2 * y : screen_height;
+	float xoffset = (offleft)   ? 2 * x : screen_width;
 	glBegin(GL_TRIANGLE_STRIP);
-		glTexCoord2f(0.0f, 0.0f); glVertex2f(x,     offset - y + h);
-		glTexCoord2f(0.0f, 1.0f); glVertex2f(x,     offset - y);
-		glTexCoord2f(1.0f, 0.0f); glVertex2f(x + w, offset - y + h);
-		glTexCoord2f(1.0f, 1.0f); glVertex2f(x + w, offset - y);
+		glTexCoord2f(0.0f, 0.0f); glVertex2f(xoffset - x,     yoffset - y + h);
+		glTexCoord2f(0.0f, 1.0f); glVertex2f(xoffset - x,     yoffset - y);
+		glTexCoord2f(1.0f, 0.0f); glVertex2f(xoffset - x + w, yoffset - y + h);
+		glTexCoord2f(1.0f, 1.0f); glVertex2f(xoffset - x + w, yoffset - y);
 	glEnd();
 	glDeleteTextures(1, &texture);
 

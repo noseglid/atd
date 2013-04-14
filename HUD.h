@@ -11,6 +11,7 @@ class HUD
 	std::list<GLuint> textures;
 
 	void tick() const;
+	void draw_stats() const;
 	void draw_bottom_banner() const;
 	void draw_button(GLuint texture, int i) const;
 

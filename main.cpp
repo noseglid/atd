@@ -38,7 +38,7 @@ init_ATD()
 	HUD::init(screen_width, screen_height);
 
 	map = new Map();
-	map->load("levels/test.map");
+	map->load("levels/test2.map");
 
 	tower_manager = new TowerManager(map);
 	CreepManager::instance().init(map);
@@ -48,6 +48,7 @@ init_ATD()
 
 	Game::instance().init(map);
 	Player::instance().alter_gold(300);
+	Player::instance().alter_lives(10);
 }
 
 void

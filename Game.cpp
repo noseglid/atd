@@ -78,12 +78,8 @@ Game::run()
 
 		camera->orientate();
 
-		glPushMatrix();
-		{
-			GLfloat pos[] = { 0.2, 0.5, 0.5, 0.0 };
-			glLightfv(GL_LIGHT0, GL_POSITION, pos);
-		}
-		glPopMatrix();
+		GLfloat pos[] = { 0.2, 0.5, 0.5, 0.0 };
+		glLightfv(GL_LIGHT0, GL_POSITION, pos);
 
 		gettimeofday(&now, NULL);
 		elapsed = now.tv_sec - start_time.tv_sec + ((now.tv_usec - start_time.tv_usec) / 1000000.0f);

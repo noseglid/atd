@@ -1,12 +1,12 @@
 #include "Player.h"
+#include "PlayerDeath.h"
 #include "Game.h"
 #include "Text.h"
 
 #include <sstream>
 
-Player::Player() : gold(0)
+Player::Player() : gold(0), lives(0)
 {
-	Game::instance().on("tick", std::bind(&Player::tick, this));
 }
 
 Player&
@@ -19,7 +19,14 @@ Player::instance()
 void
 Player::alter_gold(int delta)
 {
-	this->gold += delta;
+	gold += delta;
+}
+
+void Player::alter_lives(int delta)
+{
+	lives +=delta;
+	if (lives <= 0)
+		throw PlayerDeath();
 }
 
 bool
@@ -30,12 +37,4 @@ Player::purchase(Purchasable *p)
 
 	alter_gold(-p->price);
 	return true;
-}
-
-void
-Player::tick()
-{
-	std::stringstream overlay;
-	overlay << "Gold: " << this->gold;
-	Text::overlay(overlay.str(), 10, 30, false);
 }

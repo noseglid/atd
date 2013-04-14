@@ -36,9 +36,6 @@ Projectile::tick()
 	if(NULL == target) return;
 
 	target_pos = target->get_position();
-	if (target_pos.length() < 1) {
-		DBG("Found it: " << target_pos);
-	}
 
 	Vector3 dest(target_pos.x, target_pos.y + 0.5, target_pos.z);
 	Vector3 dir = dest - pos;
