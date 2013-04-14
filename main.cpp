@@ -116,8 +116,9 @@ int main(int argc, char *argv[])
 	} catch (Json::Exception& e) {
 		std::cout << "json error: " << e.what() << std::endl;
 		exit(EXIT_FAILURE);
-	} catch (std::exception& e) {
-		std::cout << "error: " << e.what() << std::endl;
+	} catch (Exception& e) {
+		fflush(stdout);
+		std::cout << "Game ended: " << e.what() << std::endl;
 		exit(EXIT_FAILURE);
 	} catch (...) {
 		std::cout << "unknown error." << std::endl;

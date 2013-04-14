@@ -91,10 +91,18 @@ Tower::remove_projectile(Projectile *p)
 }
 
 void
-Tower::projectile_hit(Projectile *p, Creep *c, de::Emitter<>::id_t event)
+Tower::projectile_hit(
+	Projectile *projectile,
+	Creep *creep,
+	de::Emitter<>::id_t deathev,
+	de::Emitter<>::id_t accev)
 {
-	if (c) c->off(event);
-	remove_projectile(p);
+	if (creep) {
+		creep->off(deathev);
+		creep->off(accev);
+	}
+
+	remove_projectile(projectile);
 }
 
 void
@@ -120,10 +128,11 @@ Tower::shoot_if(const float& elapsed)
 		damage
 	);
 
-	auto death_cb = std::bind(&Tower::projectile_notarget, this, p);
-	de::Emitter<>::id_t death_event = target->on("death", death_cb);
+	auto creep_gone = std::bind(&Tower::projectile_notarget, this, p);
+	de::Emitter<>::id_t deathev = target->on("death", creep_gone);
+	de::Emitter<>::id_t accev = target->on("accomplished", creep_gone);
 
-	auto hit_cb = std::bind(&Tower::projectile_hit, this, p, target, death_event);
+	auto hit_cb = std::bind(&Tower::projectile_hit, this, p, target, deathev, accev);
 	p->on("hit", hit_cb);
 
 	projectiles.push_back(p);
