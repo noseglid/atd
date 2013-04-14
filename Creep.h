@@ -2,7 +2,7 @@
 #define __CREEP_H__
 
 #include "Map.h"
-#include "Math.h"
+#include "math/Math.h"
 #include "Targetable.h"
 #include "Projectile.h"
 

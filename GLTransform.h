@@ -1,7 +1,7 @@
 #ifndef __GLTRANSFORM_H__
 #define __GLTRANSFORM_H__
 
-#include "Math.h"
+#include "math/Math.h"
 
 class GLTransform
 {

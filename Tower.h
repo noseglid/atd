@@ -1,7 +1,7 @@
 #ifndef __TOWER_H__
 #define __TOWER_H__
 
-#include "Math.h"
+#include "math/Math.h"
 #include "Model.h"
 #include "Creep.h"
 #include "Projectile.h"

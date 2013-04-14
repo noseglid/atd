@@ -1,7 +1,8 @@
 #ifndef __TARGETABLE_H__
 #define __TARGETABLE_H__
 
-#include "Math.h"
+#include "math/Math.h"
+
 class Projectile;
 
 class Targetable

@@ -1,7 +1,7 @@
 #ifndef __CAMERA_H__
 #define __CAMERA_H__
 
-#include "Math.h"
+#include "math/Math.h"
 
 #include <OpenGL/gl.h>
 

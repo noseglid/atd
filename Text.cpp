@@ -1,5 +1,4 @@
 #include "Text.h"
-#include "Math.h"
 #include "Game.h"
 #include "Debug.h"
 #include "GLTransform.h"

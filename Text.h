@@ -1,7 +1,7 @@
 #ifndef __TEXT_H__
 #define __TEXT_H__
 
-#include "Math.h"
+#include "math/Math.h"
 
 #include <string>
 #include <vector>

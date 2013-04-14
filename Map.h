@@ -2,7 +2,7 @@
 #define __MAP_H__
 
 #include "Path.h"
-#include "Math.h"
+#include "math/Math.h"
 
 #include <fstream>
 #include <iostream>

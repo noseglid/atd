@@ -11,8 +11,10 @@ SRCS  = main.cpp Model.cpp ImageLoader.cpp jpeg.cpp tga.cpp Camera.cpp Text.cpp
 SRCS += Player.cpp Game.cpp Map.cpp Projectile.cpp
 SRCS += Path.cpp TowerManager.cpp Tower.cpp
 SRCS += CreepManager.cpp Creep.cpp SphereCreep.cpp DummyCreep.cpp
-SRCS += KeyboardHandler.cpp MetaManager.cpp HUD.cpp
-SRCS += Math.cpp Vector2.cpp Vector3.cpp Matrix4.cpp GLTransform.cpp
+SRCS += KeyboardHandler.cpp MetaManager.cpp HUD.cpp GLTransform.cpp
+
+# Math related sources
+SRCS += math/Math.cpp math/Vector2.cpp math/Vector3.cpp math/Matrix4.cpp
 
 OBJS := $(SRCS:.cpp=.o)
 DEPS := $(OBJS:.o=.d)
