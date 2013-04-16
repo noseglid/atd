@@ -3,9 +3,11 @@
 #include "Debug.h"
 #include "GLTransform.h"
 
+#include <OpenGL/glu.h>
 #include <SDL/SDL.h>
 
-TTF_Font *Text::font    = NULL;
+TTF_Font *Text::font_world   = NULL;
+TTF_Font *Text::font_overlay = NULL;
 int Text::screen_width  = 0;
 int Text::screen_height = 0;
 Text Text::instance = Text();
@@ -20,40 +22,47 @@ void
 Text::init(const int& screen_width, const int& screen_height)
 {
 	if (TTF_Init() < 0) {
-		throw std::exception();
+		throw Exception("Could not init TTF library.");
 	}
 
-	if (!(Text::font = TTF_OpenFont("/Library/Fonts/Arial.ttf", 16))) {
-		throw std::exception();
+	if (!(Text::font_world = TTF_OpenFont("/Library/Fonts/Arial.ttf", 128))) {
+		throw Exception("Could not load font file.");
 	}
 
-	TTF_SetFontStyle(Text::font, TTF_STYLE_BOLD);
-	TTF_SetFontOutline(Text::font, 0);
+	if (!(Text::font_overlay = TTF_OpenFont("/Library/Fonts/Arial.ttf", 16))) {
+		throw Exception("Could not load font file.");
+	}
+
+	TTF_SetFontStyle(Text::font_overlay, TTF_STYLE_BOLD);
 
 	Text::screen_width  = screen_width;
 	Text::screen_height = screen_height;
 }
 
 GLuint
-Text::create_texture(const std::string& text, int& w, int& h)
+Text::create_texture(const std::string& text, TTF_Font *font, int& w, int& h)
 {
-	SDL_Color color = { 255, 255, 255 };
+	glEnable(GL_BLEND);
+	SDL_Color fg = { 255, 255, 255 };
 
-	TTF_SizeText(Text::font, text.c_str(), &w, &h);
+	TTF_SizeText(font, text.c_str(), &w, &h);
 	SDL_Surface *intermediary = SDL_CreateRGBSurface(0, w, h, 32,
 			0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
 
-	SDL_Surface *text_surface = TTF_RenderText_Solid(font, text.c_str(), color);
+	SDL_Surface *text_surface = TTF_RenderUTF8_Solid(font, text.c_str(), fg);
 	SDL_BlitSurface(text_surface, 0, intermediary, 0);
 	SDL_FreeSurface(text_surface);
+
 
 	GLuint texture;
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, 4, w, h, 0, GL_BGRA, GL_UNSIGNED_BYTE, intermediary->pixels);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, 4, intermediary->w, intermediary->h, 0, GL_BGRA, GL_UNSIGNED_BYTE, intermediary->pixels);
 
 	SDL_FreeSurface(intermediary);
 
@@ -83,7 +92,7 @@ Text::tick()
 			glTexCoord2f(1.0f, 0.0f); glVertex3f(width, 0.1f + height, 0.0f);
 			glTexCoord2f(1.0f, 1.0f); glVertex3f(width, 0.1f, 0.0f);
 		glEnd();
-		wt.delta.y += 0.02;
+		wt.delta.y += 0.025;
 
 		it = (wt.delta.length() >= 1.5f) ? scrollings.erase(it) : it + 1;
 		glPopMatrix();
@@ -99,7 +108,7 @@ Text::overlay(const std::string& text, const int& x, const int& y, bool offbotto
 	glEnable(GL_TEXTURE_2D);
 
 	int w, h;
-	GLuint texture = Text::create_texture(text, w, h);
+	GLuint texture = Text::create_texture(text, font_overlay, w, h);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glColor3f(1.0f, 1.0f, 1.0f);
 
@@ -120,7 +129,7 @@ void
 Text::scrolling(const std::string& text, const Vector3& pos, Vector3 color)
 {
 	WorldText wt;
-	wt.texture = Text::create_texture(text, wt.width, wt.height);
+	wt.texture = Text::create_texture(text, font_world, wt.width, wt.height);
 	wt.pos     = pos;
 	wt.color   = color;
 

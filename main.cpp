@@ -38,7 +38,7 @@ init_ATD()
 	HUD::init(screen_width, screen_height);
 
 	map = new Map();
-	map->load("levels/test2.map");
+	map->load("levels/level1.map");
 
 	tower_manager = new TowerManager(map);
 	CreepManager::instance().init(map);
@@ -47,7 +47,7 @@ init_ATD()
 	meta_manager  = new MetaManager();
 
 	Game::instance().init(map);
-	Player::instance().alter_gold(300);
+	Player::instance().alter_gold(200);
 	Player::instance().alter_lives(10);
 }
 
@@ -61,7 +61,7 @@ init_SDL()
 
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	surface = SDL_SetVideoMode(screen_width, screen_height, 16, SDL_OPENGL | SDL_HWSURFACE);
+	surface = SDL_SetVideoMode(screen_width, screen_height, 16, SDL_OPENGL | SDL_SWSURFACE);
 	if (NULL == surface) {
 		throw std::exception();
 	}
@@ -73,10 +73,17 @@ void
 init_OpenGL()
 {
 	DBG("Initing OpenGL...");
+
+	DBG("OpenGL version: " << glGetString(GL_VERSION));
+	DBG("OpenGL vendor: " << glGetString(GL_VENDOR));
+	DBG("OpenGL renderer: " << glGetString(GL_RENDERER));
+	DBG("OpenGL shading: " << glGetString(GL_SHADING_LANGUAGE_VERSION));
+
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_LINE_SMOOTH);
 	glShadeModel(GL_SMOOTH);
+	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -89,14 +96,14 @@ init_OpenGL()
 	glPointSize(3);
 
 	glEnable(GL_LIGHTING);
-	GLfloat ambient[] = { 0.2, 0.2, 0.2, 1.0 };
-	GLfloat diffuse[] = { 0.4, 0.4, 0.4, 1.0 };
-	GLfloat specular[] = { 0.8, 0.8, 0.8, 1.0 };
-
-	GLfloat lmodel_ambient[] = { 0.1, 0.1, 0.1, 1.0 };
+	GLfloat lmodel_ambient[] = { 0.2, 0.2, 0.2, 1.0 };
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
 
 	glEnable(GL_LIGHT0);
+
+	GLfloat ambient[] = { 0.4, 0.4, 0.4, 1.0 };
+	GLfloat diffuse[] = { 0.4, 0.4, 0.4, 1.0 };
+	GLfloat specular[] = { 0.4, 0.4, 0.4, 1.0 };
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, specular);

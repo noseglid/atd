@@ -10,6 +10,11 @@ struct GameEvent;
 
 class TowerManager
 {
+	enum {
+		TOWER_ARCHERY,
+		TOWER_CANNON
+	} current_tower;
+
 	Map *map;
 	std::map<Vector3, Tower*, Vector3cmp> towers;
 	struct {

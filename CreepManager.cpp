@@ -6,7 +6,7 @@
 #include "Game.h"
 
 #define SPAWN_INTERVAL 1.0f
-#define COUNT 40
+#define COUNT 1
 
 CreepManager&
 CreepManager::instance()
@@ -33,7 +33,7 @@ CreepManager::tick(const GameEvent& ev)
 	float elapsed = ev.elapsed;
 	if ((elapsed > (float)last_spawn + SPAWN_INTERVAL) && spawned < COUNT) {
 		++spawned;
-		SphereCreep *creep = new SphereCreep(map, 73);
+		SphereCreep *creep = new SphereCreep(map);
 		creep->on("death", std::bind(&CreepManager::creep_death, this, creep));
 		creep->on("accomplished", std::bind(&CreepManager::creep_accomplished, this, creep));
 		creeps.push_back(creep);

@@ -8,10 +8,12 @@ LDFLAGS += -L/Users/noseglid/opt/lib/
 LDFLAGS += -lassimp -ljpeg -ltga -lSDL_ttf -lpjson -framework OpenGL -stdlib=libc++
 
 SRCS  = main.cpp Model.cpp ImageLoader.cpp jpeg.cpp tga.cpp Camera.cpp Text.cpp
-SRCS += Player.cpp Game.cpp Map.cpp Projectile.cpp
-SRCS += Path.cpp TowerManager.cpp Tower.cpp
+SRCS += Player.cpp Game.cpp Map.cpp Projectile.cpp Path.cpp
 SRCS += CreepManager.cpp Creep.cpp SphereCreep.cpp DummyCreep.cpp
 SRCS += KeyboardHandler.cpp MetaManager.cpp HUD.cpp GLTransform.cpp
+
+# Tower related sources
+SRCS += TowerManager.cpp Tower.cpp TowerArchery.cpp TowerCannon.cpp
 
 # Math related sources
 SRCS += math/Math.cpp math/Vector2.cpp math/Vector3.cpp math/Matrix4.cpp

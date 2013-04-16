@@ -152,12 +152,18 @@ Model::load_bones(const aiScene *scene, const aiMesh *mesh)
 void
 mtlpart(const aiMaterial *mtl, GLenum gltype, const char *pKey, unsigned int type, unsigned int idx)
 {
+	if (gltype == GL_SPECULAR) {
+		/* Specular doesn't seem to work... */
+		return;
+	}
+
 	aiColor4D clr;
 	if (aiReturn_SUCCESS != mtl->Get(pKey, type, idx, clr)) {
 		return;
 	}
 
-	glMaterialfv(GL_FRONT, gltype, (GLfloat*)&clr);
+	GLfloat params[4] = { clr.r, clr.g, clr.b, clr.a };
+	glMaterialfv(GL_FRONT, gltype, params);
 }
 
 void
@@ -170,7 +176,7 @@ Model::apply_material(const aiMaterial *mtl)
 
 	GLfloat shininess = 64.0;
 	mtl->Get(AI_MATKEY_SHININESS, shininess);
-	glMaterialfv(GL_FRONT, GL_SHININESS, &shininess);
+	glMaterialf(GL_FRONT, GL_SHININESS, shininess);
 }
 
 unsigned int

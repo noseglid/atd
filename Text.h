@@ -20,14 +20,14 @@ struct WorldText
 class Text
 {
 	static Text instance;
-	static TTF_Font *font;
+	static TTF_Font *font_world, *font_overlay;
 	static int screen_width, screen_height;
 	static std::vector<WorldText> scrollings;
 
 	Text();
 	Text& operator=(const Text& rhs);
 	void tick();
-	static GLuint create_texture(const std::string& text, int& w, int& h);
+	static GLuint create_texture(const std::string& text, TTF_Font *font, int& w, int& h);
 
 public:
 	static void init(const int& screen_width, const int& screen_height);

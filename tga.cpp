@@ -1,11 +1,17 @@
 #include "tga.h"
 #include "Exception.h"
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-writable-strings"
+#pragma clang diagnostic ignored "-Wunused-variable"
+
 #include <tga.h>
 
 /* `TGA_ERROR` is buggy and may use uninitialized values, override it. */
 #undef TGA_ERROR
 #define TGA_ERROR(tga, code)
+
+#pragma clang diagnostic pop
 
 #include <iostream>
 

@@ -19,19 +19,19 @@ class Tower : public Purchasable
 	Creep * get_target();
 
 protected:
-	float last_shot, reload_time, range, damage;
+	float reload_time, range, damage, last_shot;
+	Model *model;
+	Tower(int price, Vector3 pos, float reload_time, float range, float damage);
 
 public:
-	Tower(Vector3 pos);
 	void draw(const float& elapsed) const;
+
 	void remove_projectile(Projectile *p);
 	void projectile_hit(Projectile *projectile, Creep *creep,
 		de::Emitter<>::id_t deathev, de::Emitter<>::id_t accev);
 	void projectile_notarget(Projectile *p);
 	void update_projectiles(const float& elapsed);
 	void shoot_if(const float& elapsed);
-
-	static void init();
 };
 
 #endif

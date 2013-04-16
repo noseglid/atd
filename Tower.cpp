@@ -5,15 +5,13 @@
 
 #include <OpenGL/gl.h>
 
-static Model *model;
-
-Tower::Tower(Vector3 pos) :
-	Purchasable(100),
+Tower::Tower(int price, Vector3 pos, float reload_time, float range, float damage) :
+	Purchasable(price),
 	pos(pos),
-	last_shot(0.0f),
-	reload_time(1.2f),
-	range(2.0f),
-	damage(20.0)
+	reload_time(reload_time),
+	range(range),
+	damage(damage),
+	last_shot(0.0f)
 {
 }
 
@@ -54,8 +52,9 @@ Tower::draw(const float& elapsed) const
 
 	glPushMatrix();
 	glTranslatef(pos.x, pos.y, pos.z);
+	model->normalize();
 	model->draw(elapsed);
-	//draw_range_circle();
+	draw_range_circle();
 	glPopMatrix();
 
 	for (Projectile *p : projectiles) {
@@ -140,8 +139,3 @@ Tower::shoot_if(const float& elapsed)
 	last_shot = elapsed;
 }
 
-void
-Tower::init()
-{
-	model = new Model("models/tower/tower.dae");
-}
