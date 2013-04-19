@@ -92,9 +92,9 @@ Text::tick()
 			glTexCoord2f(1.0f, 0.0f); glVertex3f(width, 0.1f + height, 0.0f);
 			glTexCoord2f(1.0f, 1.0f); glVertex3f(width, 0.1f, 0.0f);
 		glEnd();
-		wt.delta.y += 0.025;
+		wt.delta.y += 0.005;
 
-		it = (wt.delta.length() >= 1.5f) ? scrollings.erase(it) : it + 1;
+		it = (wt.delta.length() >= 0.5f) ? scrollings.erase(it) : it + 1;
 		glPopMatrix();
 	}
 

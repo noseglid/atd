@@ -79,7 +79,6 @@ init_OpenGL()
 	DBG("OpenGL renderer: " << glGetString(GL_RENDERER));
 	DBG("OpenGL shading: " << glGetString(GL_SHADING_LANGUAGE_VERSION));
 
-	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_LINE_SMOOTH);
 	glShadeModel(GL_SMOOTH);

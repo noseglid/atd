@@ -1,5 +1,6 @@
 #include "Map.h"
 #include "Game.h"
+#include "HUD.h"
 #include "GLTransform.h"
 #include "ImageLoader.h"
 #include "Exception.h"
@@ -14,8 +15,8 @@
 Map::Map()
 {
 	draw_meta = false;
-	highlighted.x = 20;
-	highlighted.y = 10;
+	highlighted.x = -1;
+	highlighted.y = -1;
 
 	Game& g = Game::instance();
 	g.on("tick", std::bind(&Map::tick, this, std::placeholders::_1));
@@ -117,16 +118,16 @@ Map::generate_normals()
 }
 
 void
-Map::tick(const GameEvent& ev)
+Map::tick(const GameEvent& ge)
 {
 	this->draw();
 	if (draw_meta) this->draw_normals();
 }
 
 void
-Map::keydown(const GameEvent& ev)
+Map::keydown(const GameEvent& ge)
 {
-	SDL_KeyboardEvent event = ev.ev.key;
+	SDL_KeyboardEvent event = ge.ev.key;
 	switch (event.keysym.sym) {
 		case SDLK_m: draw_meta = !draw_meta; break;
 		default: break;
@@ -134,12 +135,16 @@ Map::keydown(const GameEvent& ev)
 }
 
 void
-Map::mousemotion(const GameEvent& ev)
+Map::mousemotion(const GameEvent& ge)
 {
-	int x, y;
-	SDL_GetMouseState(&x, &y);
-	Vector3 v = GLTransform::unproject(x, y);
-	set_hightlight(floor(v.x), floor(v.z));
+	int hlx = -1, hly = -1;
+	if (!HUD::instance().in_turf(ge.ev.motion.x, ge.ev.motion.y)) {
+		Vector3 v = GLTransform::unproject(ge.ev.motion.x, ge.ev.motion.y);
+		hlx = floor(v.x);
+		hly = floor(v.z);
+	}
+
+	set_hightlight(hlx, hly);
 }
 
 void

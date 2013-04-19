@@ -1,8 +1,10 @@
 #include "TowerManager.h"
+#include "ImageLoader.h"
 #include "Text.h"
 #include "Player.h"
 #include "Creep.h"
 #include "Game.h"
+#include "HUD.h"
 
 /* Available towers */
 #include "TowerArchery.h"
@@ -17,6 +19,17 @@ TowerManager::TowerManager(Map *map) : current_tower(TOWER_CANNON), map(map)
 
 	TowerArchery::init();
 	TowerCannon::init();
+
+	HUD::instance().add_button(IL::GL::texture("tower_hero.jpg"),
+		std::bind(&TowerManager::select_tower, this, TOWER_ARCHERY, std::placeholders::_1));
+	HUD::instance().add_button(IL::GL::texture("tower_basic1.jpg"),
+		std::bind(&TowerManager::select_tower, this, TOWER_CANNON, std::placeholders::_1));
+}
+
+void
+TowerManager::select_tower(TOWER_TYPE t, int i)
+{
+	current_tower = t;
 }
 
 void
@@ -28,31 +41,29 @@ TowerManager::purchase_tower(Vector3 pos)
 	case TOWER_CANNON:  t = new TowerCannon(pos); break;
 	}
 
-	if (Player::instance().purchase(t)) {
-		towers.insert(std::make_pair(pos, t));
-	} else {
+	if (!Player::instance().purchase(t)) {
 		Text::scrolling("You're broke mate!", pos);
 		delete t;
+		return;
 	}
+
+	towers.insert(std::make_pair(pos, t));
 }
 
 void
 TowerManager::mousedown(const GameEvent& ev)
 {
-	if (ev.ev.button.button == SDL_BUTTON_RIGHT) {
-		current_tower = (current_tower == TOWER_ARCHERY) ? TOWER_CANNON : TOWER_ARCHERY;
-		DBG("Changed tower: " << current_tower);
-	}
-
 	SDL_MouseButtonEvent event = ev.ev.button;
 	click.x = event.x;
 	click.y = event.y;
 }
 
 void
-TowerManager::mouseup(const GameEvent& ev)
+TowerManager::mouseup(const GameEvent& ge)
 {
-	SDL_MouseButtonEvent event = ev.ev.button;
+	SDL_MouseButtonEvent event = ge.ev.button;
+
+	if (HUD::instance().in_turf(event.x, event.y)) return;
 
 	if (event.button == SDL_BUTTON_LEFT &&
 			abs(event.x - click.x) < 3 &&

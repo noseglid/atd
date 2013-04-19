@@ -35,9 +35,9 @@ public:
 	~Map();
 
 	void load(const std::string& file);
-	void tick(const GameEvent& ev);
-	void mousemotion(const GameEvent& ev);
-	void keydown(const GameEvent& ev);
+	void tick(const GameEvent& ge);
+	void mousemotion(const GameEvent& ge);
+	void keydown(const GameEvent& ge);
 
 	void draw() const;
 	void draw_normals() const;

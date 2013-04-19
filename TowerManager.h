@@ -10,7 +10,7 @@ struct GameEvent;
 
 class TowerManager
 {
-	enum {
+	enum TOWER_TYPE {
 		TOWER_ARCHERY,
 		TOWER_CANNON
 	} current_tower;
@@ -22,6 +22,7 @@ class TowerManager
 	} click;
 
 	void purchase_tower(Vector3 pos);
+	void select_tower(TOWER_TYPE t, int i);
 
 public:
 	TowerManager(Map *map);

@@ -54,7 +54,7 @@ Tower::draw(const float& elapsed) const
 	glTranslatef(pos.x, pos.y, pos.z);
 	model->normalize();
 	model->draw(elapsed);
-	draw_range_circle();
+	//draw_range_circle();
 	glPopMatrix();
 
 	for (Projectile *p : projectiles) {

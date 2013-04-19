@@ -2,7 +2,6 @@
 #include "Debug.h"
 #include "Player.h"
 #include "Text.h"
-#include "Game.h"
 #include "GLTransform.h"
 #include "ImageLoader.h"
 
@@ -10,8 +9,8 @@
 #define HUD_BUTTON_HEIGHT 64.0f
 
 #define BOTTOM_BAR_OFFSET 3.0f
-#define BOTTOM_BAR_PADDING 3.0f
-#define BOTTOM_BAR_HEIGHT HUD_BUTTON_HEIGHT + 2 * BOTTOM_BAR_PADDING
+#define BOTTOM_BAR_PADDING 5.0f
+#define BOTTOM_BAR_HEIGHT (HUD_BUTTON_HEIGHT + 2 * BOTTOM_BAR_PADDING)
 
 int HUD::screen_width  = 0;
 int HUD::screen_height = 0;
@@ -26,10 +25,19 @@ HUD::instance()
 HUD::HUD()
 {
 	Game::instance().on("tick_nodepth", std::bind(&HUD::tick, this));
-	textures.push_back(IL::GL::texture("tower_hero.jpg"));
-	textures.push_back(IL::GL::texture("tower_basic1.jpg"));
-	textures.push_back(IL::GL::texture("tower_basic2.jpg"));
-	textures.push_back(IL::GL::texture("tower_basic3.jpg"));
+	Game::instance().on("mousedown", std::bind(&HUD::mousedown, this, std::placeholders::_1));
+}
+
+int
+HUD::button_index(int x, int y) const
+{
+	x -= (BOTTOM_BAR_OFFSET + BOTTOM_BAR_PADDING);
+	int i = -1;
+	while (x > 0) {
+		x -= (HUD_BUTTON_WIDTH + 2 * BOTTOM_BAR_PADDING);
+		++i;
+	}
+	return i;
 }
 
 void
@@ -117,15 +125,24 @@ HUD::tick() const
 
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glEnable(GL_TEXTURE_2D);
-	int i = 0;
-	for (GLuint tex : textures) {
-		draw_button(tex, i++);
+	for (button_def def : button_definitions) {
+		draw_button(def.texture, def.button_index);
 	}
 
 	draw_stats();
 
 	GLTransform::disable2D();
+}
 
+void
+HUD::mousedown(const GameEvent& ge) const
+{
+	if (!in_turf(ge.ev.button.x, ge.ev.button.y)) return;
+
+	int index = button_index(ge.ev.button.x, ge.ev.button.y);
+	if (0 > index || button_definitions.size() <= index) return;
+
+	button_definitions[index].cb(index);
 }
 
 void
@@ -134,4 +151,24 @@ HUD::init(int screen_width, int screen_height)
 	HUD::screen_width  = screen_width;
 	HUD::screen_height = screen_height;
 	HUD::instance();
+}
+
+bool
+HUD::in_turf(int x, int y) const
+{
+	return
+		y > (screen_height - BOTTOM_BAR_OFFSET - BOTTOM_BAR_HEIGHT) &&
+	  y < (screen_height - BOTTOM_BAR_OFFSET);
+}
+
+int
+HUD::add_button(GLuint texture, button_cb cb)
+{
+	button_def def;
+	def.texture = texture;
+	def.cb = cb;
+	def.button_index = button_definitions.size();
+
+	button_definitions.push_back(def);
+	return def.button_index;
 }
