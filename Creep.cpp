@@ -7,7 +7,11 @@
 #include "GLTransform.h"
 
 Creep::Creep(Map *map, float health, int reward, int life_cost) :
-	total_health(health), current_health(health), reward(reward), life_cost(life_cost)
+	Mobile(0.8f),
+	total_health(health),
+	current_health(health),
+	reward(reward),
+	life_cost(life_cost)
 {
 	this->map  = map;
 	this->path = map->get_path();
@@ -28,7 +32,8 @@ Creep::travel_to(const PathCoord& target)
 	this->target = target;
 
 	vtarget = map->get_center_of(target.x, target.y);
-	dir = (vtarget - pos) / 40.0f;
+	dir = (vtarget - pos);
+	dir.normalize();
 }
 
 void
@@ -50,7 +55,7 @@ Creep::tick(const float& elapsed)
 			travel_to(path->next_coord(target));
 		}
 
-		pos += dir;
+		pos += dir * get_speed_factor(elapsed);
 	} catch (const NoMoreCoords& e) {
 		emit("accomplished");
 	}

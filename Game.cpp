@@ -68,6 +68,7 @@ Game::run()
 
 	gettimeofday(&start_time, NULL);
 	while (running) {
+		usleep(300000);
 		while (SDL_PollEvent(&ev)) {
 			handle_event(ev);
 		}
@@ -82,7 +83,12 @@ Game::run()
 		glLightfv(GL_LIGHT0, GL_POSITION, pos);
 
 		gettimeofday(&now, NULL);
-		elapsed = now.tv_sec - start_time.tv_sec + ((now.tv_usec - start_time.tv_usec) / 1000000.0f);
+		elapsed = now.tv_sec - start_time.tv_sec;
+		if (now.tv_usec < start_time.tv_usec) {
+			elapsed += (now.tv_usec - start_time.tv_usec) / 1000000.0f;
+		} else {
+			elapsed -= (start_time.tv_usec - now.tv_usec) / 1000000.0f;
+		}
 
 		glEnable(GL_DEPTH_TEST);
 		emit("tick", GameEvent(elapsed));

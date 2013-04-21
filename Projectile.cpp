@@ -4,7 +4,11 @@
 #include <OpenGL/gl.h>
 
 Projectile::Projectile(Targetable *target, Vector3 pos, float damage) :
-	target(target), pos(pos), target_pos(target->get_position()), damage(damage)
+	Mobile(2.2),
+	target(target),
+	pos(pos),
+	target_pos(target->get_position()),
+	damage(damage)
 {
 }
 
@@ -31,23 +35,31 @@ Projectile::get_damage() const
 }
 
 void
-Projectile::tick()
+Projectile::tick(const float& elapsed)
 {
 	if(NULL == target) return;
 
 	target_pos = target->get_position();
 
 	Vector3 dest(target_pos.x, target_pos.y + 0.5, target_pos.z);
-	Vector3 dir = dest - pos;
-	if (dir.length() < 0.1) {
+	Vector3 dir = (dest - pos);
+	dir.normalize();
+
+	Vector3 step = dir * get_speed_factor(elapsed);
+
+	/* Derived from P + aS = T, where P is position, S is the step,
+	 * and T is the target, if a < 1.0 then less than one step
+	 * is required to reach target -> it's a hit */
+	float a = (dest.z - pos.z) / step.z;
+
+	if (a < 1.0) {
 		emit("hit");
 		target->struck(this);
 		return;
 	}
 
-	dir.normalize();
-	dir /= 8.0f;
-	pos += dir;
+
+	pos += step;
 }
 
 void

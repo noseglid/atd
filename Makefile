@@ -7,16 +7,25 @@ LDFLAGS  = $(shell /Users/noseglid/opt/bin/sdl-config --libs)
 LDFLAGS += -L/Users/noseglid/opt/lib/
 LDFLAGS += -lassimp -ljpeg -ltga -lSDL_ttf -lpjson -framework OpenGL -stdlib=libc++
 
-SRCS  = main.cpp Model.cpp ImageLoader.cpp jpeg.cpp tga.cpp Camera.cpp Text.cpp
-SRCS += Player.cpp Game.cpp Map.cpp Projectile.cpp Path.cpp
+SRCS  = main.cpp
+SRCS += Player.cpp Game.cpp Map.cpp Path.cpp
+SRCS += KeyboardHandler.cpp MetaManager.cpp GLTransform.cpp
+
+# Core
+SRCS += Mobile.cpp Model.cpp Camera.cpp Text.cpp HUD.cpp
+
+# Creep
 SRCS += CreepManager.cpp Creep.cpp SphereCreep.cpp DummyCreep.cpp
-SRCS += KeyboardHandler.cpp MetaManager.cpp HUD.cpp GLTransform.cpp
 
-# Tower related sources
+# Tower
 SRCS += TowerManager.cpp Tower.cpp TowerArchery.cpp TowerCannon.cpp
+SRCS += Projectile.cpp
 
-# Math related sources
+# Math
 SRCS += math/Math.cpp math/Vector2.cpp math/Vector3.cpp math/Matrix4.cpp
+
+# Image
+SRCS += ImageLoader.cpp jpeg.cpp tga.cpp
 
 OBJS := $(SRCS:.cpp=.o)
 DEPS := $(OBJS:.o=.d)

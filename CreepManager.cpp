@@ -6,7 +6,7 @@
 #include "Game.h"
 
 #define SPAWN_INTERVAL 1.0f
-#define COUNT 25
+#define COUNT 100
 
 CreepManager&
 CreepManager::instance()

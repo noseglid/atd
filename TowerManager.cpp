@@ -10,7 +10,7 @@
 #include "TowerArchery.h"
 #include "TowerCannon.h"
 
-TowerManager::TowerManager(Map *map) : current_tower(TOWER_CANNON), map(map)
+TowerManager::TowerManager(Map *map) : current_tower(TOWER_ARCHERY), map(map)
 {
 	Game& g = Game::instance();
 	g.on("tick", std::bind(&TowerManager::tick, this, std::placeholders::_1));

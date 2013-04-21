@@ -78,7 +78,7 @@ Tower::update_projectiles(const float& elapsed)
 {
 	std::list<Projectile *> tmp = projectiles;
 	for (Projectile *p : tmp) {
-		p->tick();
+		p->tick(elapsed);
 	}
 }
 
@@ -116,7 +116,7 @@ Tower::projectile_notarget(Projectile *p)
 void
 Tower::shoot_if(const float& elapsed)
 {
-	if (elapsed - last_shot < reload_time) return;
+	if (last_shot > 0.0f && elapsed - last_shot < reload_time) return;
 
 	Creep *target = get_target();
 	if (NULL == target) return;

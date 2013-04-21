@@ -5,10 +5,11 @@
 #include "math/Math.h"
 #include "Targetable.h"
 #include "Projectile.h"
+#include "Mobile.h"
 
 #include <de.h>
 
-class Creep : public de::Emitter<>, public Targetable
+class Creep : public de::Emitter<>, public Targetable, public Mobile
 {
 	friend class CreepManager;
 

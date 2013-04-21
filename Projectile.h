@@ -2,10 +2,11 @@
 #define __PROJECTILE_H__
 
 #include "Targetable.h"
+#include "Mobile.h"
 
 #include <de.h>
 
-class Projectile : public de::Emitter<>
+class Projectile : public de::Emitter<>, public Mobile
 {
 	Targetable *target;
 	Vector3 pos, target_pos;
@@ -20,7 +21,7 @@ public:
 	Vector3 get_target_pos() const;
 	float get_damage() const;
 
-	void tick();
+	void tick(const float& elapsed);
 	void draw() const;
 
 };
