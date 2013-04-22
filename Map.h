@@ -48,6 +48,8 @@ public:
 
 	void set_hightlight(const int& x, const int& y);
 	Vector2 get_highlight() const;
+
+	static Map& instance();
 };
 
 #endif

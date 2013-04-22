@@ -112,3 +112,10 @@ Camera::zoom(GLdouble delta)
 
 	pos -= dir * delta;
 }
+
+Camera&
+Camera::instance()
+{
+	static Camera instance;
+	return instance;
+}

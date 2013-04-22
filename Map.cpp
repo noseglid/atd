@@ -282,3 +282,10 @@ Map::get_highlight() const
 {
 	return highlighted;
 }
+
+Map&
+Map::instance()
+{
+	static Map instance;
+	return instance;
+}

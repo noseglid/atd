@@ -20,9 +20,6 @@ struct GameEvent
 
 class Game : public de::Emitter<GameEvent>
 {
-	Camera *camera;
-	Map *map;
-	struct timeval start_time;
 	float elapsed;
 	bool running;
 
@@ -33,7 +30,6 @@ class Game : public de::Emitter<GameEvent>
 	void handle_event(const SDL_Event& ev);
 
 public:
-	void init(Map *map);
 	void run();
 	void stop();
 

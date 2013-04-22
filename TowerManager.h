@@ -1,7 +1,6 @@
 #ifndef __TOWERMANAGER_H__
 #define __TOWERMANAGER_H__
 
-#include "Map.h"
 #include "Tower.h"
 
 #include <vector>
@@ -16,7 +15,6 @@ class TowerManager
 		TOWER_CANNON
 	} current_tower;
 
-	Map *map;
 	std::map<Vector3, Tower*, Vector3cmp> towers;
 	struct {
 		int x, y;
@@ -26,11 +24,13 @@ class TowerManager
 	void select_tower(TOWER_TYPE t, int i);
 
 public:
-	TowerManager(Map *map);
+	TowerManager();
 	void mouseup(const GameEvent& ev);
 	void mousedown(const GameEvent& ev);
 	void keydown(const GameEvent& ev);
 	void tick(const GameEvent& ev);
+
+	static TowerManager& instance();
 };
 
 #endif

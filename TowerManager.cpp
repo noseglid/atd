@@ -10,7 +10,7 @@
 #include "TowerArchery.h"
 #include "TowerCannon.h"
 
-TowerManager::TowerManager(Map *map) : current_tower(TOWER_NONE), map(map)
+TowerManager::TowerManager() : current_tower(TOWER_NONE)
 {
 	Game& g = Game::instance();
 	g.on("tick", std::bind(&TowerManager::tick, this, std::placeholders::_1));
@@ -84,7 +84,7 @@ TowerManager::mouseup(const GameEvent& ge)
 			abs(event.x - click.x) < 3 &&
 			abs(event.y - click.y) < 3) {
 		/* Since coordinates didn't change (granted, some fuzz), it was a `click`, not a `drag` */
-		Vector2 hl = map->get_highlight();
+		Vector2 hl = Map::instance().get_highlight();
 		Vector3 pos(hl.x + 0.5f, 0.0f, hl.y + 0.5f);
 		if (towers.end() == towers.find(pos) && hl.x != -1 && hl.y != -1) {
 			purchase_tower(pos);
@@ -95,7 +95,6 @@ TowerManager::mouseup(const GameEvent& ge)
 		}
 	}
 }
-
 
 void
 TowerManager::tick(const GameEvent& ev)
@@ -111,4 +110,11 @@ TowerManager::tick(const GameEvent& ev)
 		t.second->draw(elapsed);
 		glPopMatrix();
 	}
+}
+
+TowerManager&
+TowerManager::instance()
+{
+	static TowerManager instance;
+	return instance;
 }

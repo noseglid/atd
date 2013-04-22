@@ -1,4 +1,5 @@
 #include "Creep.h"
+#include "Map.h"
 #include "Debug.h"
 #include "Exception.h"
 #include "Player.h"
@@ -6,18 +7,17 @@
 #include "Text.h"
 #include "GLTransform.h"
 
-Creep::Creep(Map *map, float health, int reward, int life_cost) :
+Creep::Creep(float health, int reward, int life_cost) :
 	Mobile(0.8f),
 	total_health(health),
 	current_health(health),
 	reward(reward),
 	life_cost(life_cost)
 {
-	this->map  = map;
-	this->path = map->get_path();
+	this->path = Map::instance().get_path();
 
 	PathCoord start = path->get_start();
-	pos = map->get_center_of(start.x, start.y);
+	pos = Map::instance().get_center_of(start.x, start.y);
 
 	travel_to(path->next_coord(start));
 }
@@ -31,7 +31,7 @@ Creep::travel_to(const PathCoord& target)
 {
 	this->target = target;
 
-	vtarget = map->get_center_of(target.x, target.y);
+	vtarget = Map::instance().get_center_of(target.x, target.y);
 	dir = (vtarget - pos);
 	dir.normalize();
 }

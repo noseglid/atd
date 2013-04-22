@@ -19,10 +19,10 @@ class Camera
 		float zmin, zmax;
 	} limits;
 
+	Camera();
 
 public:
 
-	Camera();
 	~Camera();
 
 	void set_limits(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax);
@@ -34,6 +34,8 @@ public:
 
 	void mousebutton(const GameEvent& ev);
 	void mousemotion(const GameEvent& ev);
+
+	static Camera& instance();
 };
 
 #endif

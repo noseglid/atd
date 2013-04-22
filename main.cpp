@@ -37,16 +37,15 @@ init_ATD()
 	Text::init(screen_width, screen_height);
 	HUD::init(screen_width, screen_height);
 
-	map = new Map();
-	map->load("levels/level1.map");
+	Map::instance().load("levels/level1.map");
 
-	tower_manager = new TowerManager(map);
-	CreepManager::instance().init(map);
+	TowerManager::instance();
+	CreepManager::instance();
 
 	keyboard      = new KeyboardHandler();
 	meta_manager  = new MetaManager();
 
-	Game::instance().init(map);
+	Game::instance();
 	Player::instance().alter_gold(200000);
 	Player::instance().alter_lives(10);
 }

@@ -6,7 +6,7 @@
 class SphereCreep : public Creep
 {
 public:
-	SphereCreep(Map *map);
+	SphereCreep();
 	void draw_model(const float& elapsed) const;
 };
 

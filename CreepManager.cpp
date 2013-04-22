@@ -17,13 +17,6 @@ CreepManager::instance()
 
 CreepManager::CreepManager() : last_spawn(-SPAWN_INTERVAL), spawned(0)
 {
-}
-
-void
-CreepManager::init(Map *map)
-{
-  this->map = map;
-
 	Game::instance().on("tick", std::bind(&CreepManager::tick, this, std::placeholders::_1));
 }
 
@@ -33,7 +26,7 @@ CreepManager::tick(const GameEvent& ev)
 	float elapsed = ev.elapsed;
 	if ((elapsed > (float)last_spawn + SPAWN_INTERVAL) && spawned < COUNT) {
 		++spawned;
-		SphereCreep *creep = new SphereCreep(map);
+		SphereCreep *creep = new SphereCreep();
 		creep->on("death", std::bind(&CreepManager::creep_death, this, creep));
 		creep->on("accomplished", std::bind(&CreepManager::creep_accomplished, this, creep));
 		creeps.push_back(creep);

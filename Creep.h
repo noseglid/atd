@@ -1,8 +1,8 @@
 #ifndef __CREEP_H__
 #define __CREEP_H__
 
-#include "Map.h"
 #include "math/Math.h"
+#include "Path.h"
 #include "Targetable.h"
 #include "Projectile.h"
 #include "Mobile.h"
@@ -16,7 +16,6 @@ class Creep : public de::Emitter<>, public Targetable, public Mobile
 	void travel_to(const PathCoord& target);
 
 protected:
-	Map *map;
 	const Path *path;
 
 	PathCoord target;
@@ -28,7 +27,7 @@ protected:
 
 	Vector3 pos, dir;
 
-	Creep(Map *map, float health, int reward, int life_cost);
+	Creep(float health, int reward, int life_cost);
 
 public:
 	virtual ~Creep();
