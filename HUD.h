@@ -16,6 +16,7 @@ class HUD
 	} button_def;
 	static int screen_width, screen_height;
 
+	int marked_button;
 	std::vector<button_def> button_definitions;
 
 	int button_index(int x, int y) const;
@@ -24,7 +25,7 @@ class HUD
 	void mousedown(const GameEvent& ev) const;
 	void draw_stats() const;
 	void draw_bottom_banner() const;
-	void draw_button(GLuint texture, int i) const;
+	void draw_button(GLuint texture, int i, bool marked) const;
 
 	HUD();
 
@@ -33,6 +34,7 @@ public:
 
 	bool in_turf(int x, int y) const;
 	int add_button(GLuint texture, button_cb cb);
+	void mark_button(int index);
 
 	static HUD& instance();
 };

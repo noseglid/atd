@@ -10,12 +10,13 @@
 #include "TowerArchery.h"
 #include "TowerCannon.h"
 
-TowerManager::TowerManager(Map *map) : current_tower(TOWER_ARCHERY), map(map)
+TowerManager::TowerManager(Map *map) : current_tower(TOWER_NONE), map(map)
 {
 	Game& g = Game::instance();
 	g.on("tick", std::bind(&TowerManager::tick, this, std::placeholders::_1));
 	g.on("mousedown", std::bind(&TowerManager::mousedown, this, std::placeholders::_1));
 	g.on("mouseup", std::bind(&TowerManager::mouseup, this, std::placeholders::_1));
+	g.on("keydown", std::bind(&TowerManager::keydown, this, std::placeholders::_1));
 
 	TowerArchery::init();
 	TowerCannon::init();
@@ -30,6 +31,7 @@ void
 TowerManager::select_tower(TOWER_TYPE t, int i)
 {
 	current_tower = t;
+	HUD::instance().mark_button(i);
 }
 
 void
@@ -37,6 +39,7 @@ TowerManager::purchase_tower(Vector3 pos)
 {
 	Tower *t;
 	switch (current_tower) {
+	case TOWER_NONE: return;
 	case TOWER_ARCHERY: t = new TowerArchery(pos); break;
 	case TOWER_CANNON:  t = new TowerCannon(pos); break;
 	}
@@ -48,6 +51,18 @@ TowerManager::purchase_tower(Vector3 pos)
 	}
 
 	towers.insert(std::make_pair(pos, t));
+}
+
+void
+TowerManager::keydown(const GameEvent& ge)
+{
+	switch (ge.ev.key.keysym.sym) {
+	case SDLK_ESCAPE:
+		select_tower(TOWER_NONE, -1);
+		break;
+	default:
+		break;
+	}
 }
 
 void
@@ -73,9 +88,14 @@ TowerManager::mouseup(const GameEvent& ge)
 		Vector3 pos(hl.x + 0.5f, 0.0f, hl.y + 0.5f);
 		if (towers.end() == towers.find(pos) && hl.x != -1 && hl.y != -1) {
 			purchase_tower(pos);
+
+			SDLMod mod = SDL_GetModState();
+			if (!(mod & KMOD_SHIFT))
+				select_tower(TOWER_NONE, -1);
 		}
 	}
 }
+
 
 void
 TowerManager::tick(const GameEvent& ev)

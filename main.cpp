@@ -81,6 +81,7 @@ init_OpenGL()
 
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_LINE_SMOOTH);
+	glEnable(GL_POINT_SMOOTH);
 	glShadeModel(GL_SMOOTH);
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 

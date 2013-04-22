@@ -68,7 +68,6 @@ Game::run()
 
 	gettimeofday(&start_time, NULL);
 	while (running) {
-		usleep(300000);
 		while (SDL_PollEvent(&ev)) {
 			handle_event(ev);
 		}

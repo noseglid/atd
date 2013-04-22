@@ -2,6 +2,7 @@
 #include "Debug.h"
 
 #include <OpenGL/gl.h>
+#include <cmath>
 
 Projectile::Projectile(Targetable *target, Vector3 pos, float damage) :
 	Mobile(2.2),
@@ -50,9 +51,15 @@ Projectile::tick(const float& elapsed)
 	/* Derived from P + aS = T, where P is position, S is the step,
 	 * and T is the target, if a < 1.0 then less than one step
 	 * is required to reach target -> it's a hit */
-	float a = (dest.z - pos.z) / step.z;
+	float a = (dest.x - pos.x) / step.x;
+	float b = (dest.y - pos.y) / step.y;
+	float c = (dest.z - pos.z) / step.z;
 
-	if (a < 1.0) {
+	/* isnan may happen if there is no difference along one axis,
+	 * eg: (0.0 - 0.0) / 0.0, therefore we must check all axises */
+	if ((!isnan(a) && a < 1.0) ||
+	    (!isnan(b) && b < 1.0) ||
+	    (!isnan(c) && c < 1.0)) {
 		emit("hit");
 		target->struck(this);
 		return;
@@ -65,7 +72,6 @@ Projectile::tick(const float& elapsed)
 void
 Projectile::draw() const
 {
-	glEnable(GL_POINT_SMOOTH);
 	glDisable(GL_LIGHTING);
 
 	glPointSize(6.0);

@@ -22,7 +22,7 @@ HUD::instance()
 	return instance;
 }
 
-HUD::HUD()
+HUD::HUD() : marked_button(-1)
 {
 	Game::instance().on("tick_nodepth", std::bind(&HUD::tick, this));
 	Game::instance().on("mousedown", std::bind(&HUD::mousedown, this, std::placeholders::_1));
@@ -67,7 +67,7 @@ HUD::draw_bottom_banner() const
 }
 
 void
-HUD::draw_button(GLuint texture, int i) const
+HUD::draw_button(GLuint texture, int i, bool marked) const
 {
 	glBindTexture(GL_TEXTURE_2D, texture);
 
@@ -100,6 +100,19 @@ HUD::draw_button(GLuint texture, int i) const
 			BOTTOM_BAR_OFFSET + BOTTOM_BAR_PADDING
 		);
 	glEnd();
+
+	if (marked) {
+		glPointSize(12.0f);
+		glDisable(GL_TEXTURE_2D);
+
+		glBegin(GL_POINTS);
+		glColor3f(1.0f, 0.0f, 0.0f);
+		glVertex2f(
+			(i + 1) * (HUD_BUTTON_WIDTH + 2 * BOTTOM_BAR_PADDING) + BOTTOM_BAR_OFFSET,
+			BOTTOM_BAR_OFFSET + HUD_BUTTON_HEIGHT + BOTTOM_BAR_PADDING
+		);
+		glEnd();
+	}
 }
 
 void
@@ -123,10 +136,10 @@ HUD::tick() const
 	glDisable(GL_TEXTURE_2D);
 	draw_bottom_banner();
 
-	glColor3f(1.0f, 1.0f, 1.0f);
-	glEnable(GL_TEXTURE_2D);
 	for (button_def def : button_definitions) {
-		draw_button(def.texture, def.button_index);
+		glEnable(GL_TEXTURE_2D);
+		glColor3f(1.0f, 1.0f, 1.0f);
+		draw_button(def.texture, def.button_index, def.button_index == marked_button);
 	}
 
 	draw_stats();
@@ -171,4 +184,11 @@ HUD::add_button(GLuint texture, button_cb cb)
 
 	button_definitions.push_back(def);
 	return def.button_index;
+}
+
+
+void
+HUD::mark_button(int index)
+{
+	marked_button = index;
 }

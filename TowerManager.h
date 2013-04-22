@@ -11,6 +11,7 @@ struct GameEvent;
 class TowerManager
 {
 	enum TOWER_TYPE {
+		TOWER_NONE,
 		TOWER_ARCHERY,
 		TOWER_CANNON
 	} current_tower;
@@ -28,6 +29,7 @@ public:
 	TowerManager(Map *map);
 	void mouseup(const GameEvent& ev);
 	void mousedown(const GameEvent& ev);
+	void keydown(const GameEvent& ev);
 	void tick(const GameEvent& ev);
 };
 
