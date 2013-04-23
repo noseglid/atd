@@ -137,14 +137,17 @@ Map::keydown(const GameEvent& ge)
 void
 Map::mousemotion(const GameEvent& ge)
 {
-	int hlx = -1, hly = -1;
-	if (!HUD::instance().in_turf(ge.ev.motion.x, ge.ev.motion.y)) {
-		Vector3 v = GLTransform::unproject(ge.ev.motion.x, ge.ev.motion.y);
-		hlx = floor(v.x);
-		hly = floor(v.z);
-	}
+	static MapEvent me;
 
-	set_hightlight(hlx, hly);
+	Vector3 v = GLTransform::unproject(ge.ev.motion.x, ge.ev.motion.y);
+	int newx = static_cast<int>(v.x);
+	int newy = static_cast<int>(v.z);
+	if ((newx >= 0 && newx < width && newy >= 0 && newy < height) &&
+	    (me.hovered.x != newx || me.hovered.y != newy)) {
+		me.hovered.x = v.x;
+		me.hovered.y = v.z;
+		emit("hover", me);
+	}
 }
 
 void
@@ -266,13 +269,8 @@ Map::get_height() const
 }
 
 void
-Map::set_hightlight(const int& x, const int& y)
+Map::set_highlight(const int& x, const int& y)
 {
-	if (path->has_coord(x, y)) {
-		highlighted.x = highlighted.y = -1;
-		return;
-	}
-
 	highlighted.x = x;
 	highlighted.y = y;
 }

@@ -57,8 +57,8 @@ public:
 	Path(int textureid, std::string path);
 
 	PathCoord next_coord(const PathCoord& coord) const;
-	bool has_coord(const PathCoord& coord);
-	bool has_coord(int x, int y);
+	bool has_coord(const PathCoord& coord) const;
+	bool has_coord(int x, int y) const;
 	PathCoord get_start() const;
 };
 

@@ -26,6 +26,8 @@ protected:
 public:
 	void draw(const float& elapsed) const;
 
+	void set_position(Vector3 pos);
+	Vector3 get_position() const;
 	void remove_projectile(Projectile *p);
 	void projectile_hit(Projectile *projectile, Creep *creep,
 		de::Emitter<>::id_t deathev, de::Emitter<>::id_t accev);

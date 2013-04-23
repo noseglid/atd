@@ -64,6 +64,18 @@ Tower::draw(const float& elapsed) const
 	}
 }
 
+void
+Tower::set_position(Vector3 pos)
+{
+	this->pos = pos;
+}
+
+Vector3
+Tower::get_position() const
+{
+	return this->pos;
+}
+
 Creep *
 Tower::get_target()
 {

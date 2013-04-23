@@ -72,13 +72,13 @@ Path::next_coord(const PathCoord& coord) const
 }
 
 bool
-Path::has_coord(const PathCoord& coord)
+Path::has_coord(const PathCoord& coord) const
 {
 	return active_coords.find(coord) != active_coords.end();
 }
 
 bool
-Path::has_coord(int x, int y)
+Path::has_coord(int x, int y) const
 {
 	PathCoord coord(x, y);
 	return has_coord(coord);

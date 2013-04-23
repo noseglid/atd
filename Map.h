@@ -10,10 +10,18 @@
 #include <OpenGL/GL.h>
 
 #include <pjson.hpp>
+#include <de.h>
 
 struct GameEvent;
 
-class Map
+struct MapEvent
+{
+	struct {
+		int x, y;
+	} hovered;
+};
+
+class Map : public de::Emitter<MapEvent>
 {
 	size_t width, height;
 	Vector2 highlighted;
@@ -46,7 +54,7 @@ public:
 	size_t get_width() const;
 	size_t get_height() const;
 
-	void set_hightlight(const int& x, const int& y);
+	void set_highlight(const int& x, const int& y);
 	Vector2 get_highlight() const;
 
 	static Map& instance();
