@@ -80,23 +80,25 @@ TowerManager::select_tower(TOWER_TYPE t, int i)
 	dummy_tower_pos = Vector3();
 }
 
-void
+bool
 TowerManager::purchase_tower(Vector3 pos)
 {
 	if (towers.end() != towers.find(pos)) {
-		return;
+		return false;
 	}
 
 	Tower *t = create_tower(current_tower, pos);
 	if (!Player::instance().purchase(t)) {
 		Text::scrolling("You're broke mate!", pos);
 		delete t;
-		return;
+		return false;
 	}
 
 	towers.insert(std::make_pair(pos, t));
 	dummy_tower_pos = Vector3();
 	Map::instance().set_highlight(-1, -1);
+
+	return true;
 }
 
 void
@@ -139,10 +141,10 @@ TowerManager::mouseup(const GameEvent& ge)
 
 		Vector3 pos = Map::instance().get_center_of(hl.x, hl.y);
 		pos.y = 0.0f;
-		purchase_tower(pos);
+		bool purchased = purchase_tower(pos);
 
 		SDLMod mod = SDL_GetModState();
-		if (!(mod & KMOD_SHIFT)) {
+		if (!(mod & KMOD_SHIFT) && purchased) {
 			select_tower(TOWER_NONE, -1);
 		}
 	}
