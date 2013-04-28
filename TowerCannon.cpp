@@ -3,7 +3,7 @@
 
 static Model *smodel = NULL;
 
-TowerCannon::TowerCannon(Vector3 pos) : Tower(100, pos, 200.0f, 4.0f, 45.0f)
+TowerCannon::TowerCannon(Vector3 pos) : Tower(100, pos, 2.0f, 4.0f, 45.0f)
 {
 	if (NULL == smodel) {
 		DBGERR("Model have not been initalized.");

@@ -6,7 +6,7 @@
 
 Model *model = NULL;
 
-SphereCreep::SphereCreep() : Creep(80, 10, 1, 5.8)
+SphereCreep::SphereCreep() : Creep(80, 10, 1, 1.3)
 {
 	if (NULL == model) model = new Model("models/spherecreep/spherecreep.dae");
 }

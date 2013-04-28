@@ -28,9 +28,12 @@ class TowerManager
 		int x, y;
 	} click;
 
+	MapEvent last_map_event;
+
 	Tower *create_tower(TOWER_TYPE t, Vector3 pos);
+	void dummy_tower(int x, int y);
 	bool purchase_tower(Vector3 pos);
-	void select_tower(TOWER_TYPE t, int i);
+	void select_tower(TOWER_TYPE t, int i = -1);
 	void map_select(const MapEvent& me);
 
 public:

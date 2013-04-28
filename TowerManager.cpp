@@ -42,19 +42,16 @@ TowerManager::create_tower(TOWER_TYPE type, Vector3 pos)
 	switch (type) {
 	case TOWER_ARCHERY: tower = new TowerArchery(pos); break;
 	case TOWER_CANNON:  tower = new TowerCannon(pos); break;
+	case TOWER_NONE: DBGWRN("Trying to create tower from TOWER_NONE."); break;
 	default: break;
 	}
 	return tower;
 }
 
 void
-TowerManager::map_select(const MapEvent& me)
+TowerManager::dummy_tower(int x, int y)
 {
-	if (TOWER_NONE == current_tower)
-		return;
-
 	Map& map = Map::instance();
-	int x = me.hovered.x, y = me.hovered.y;
 	Vector3 pos = map.get_center_of(x, y);
 	pos.y = 0.0f;
 	int hlx = x, hly = y;
@@ -71,13 +68,28 @@ TowerManager::map_select(const MapEvent& me)
 }
 
 void
+TowerManager::map_select(const MapEvent& me)
+{
+	last_map_event = me;
+	if (TOWER_NONE == current_tower)
+		return;
+
+	dummy_tower(me.hovered.x, me.hovered.y);
+}
+
+void
 TowerManager::select_tower(TOWER_TYPE t, int i)
 {
+	if (-1 == i) i = t - 1;
+
 	current_tower = t;
 	HUD::instance().mark_button(i);
 	Map::instance().set_highlight(-1, -1);
 
-	dummy_tower_pos = Vector3();
+	if (t != TOWER_NONE) {
+		dummy_tower(last_map_event.hovered.x, last_map_event.hovered.y);
+	} else {
+	}
 }
 
 bool
@@ -105,8 +117,14 @@ void
 TowerManager::keydown(const GameEvent& ge)
 {
 	switch (ge.ev.key.keysym.sym) {
+	case SDLK_1:
+		select_tower(TOWER_ARCHERY);
+		break;
+	case SDLK_2:
+		select_tower(TOWER_CANNON);
+		break;
 	case SDLK_ESCAPE:
-		select_tower(TOWER_NONE, -1);
+		select_tower(TOWER_NONE);
 		break;
 	default:
 		break;
@@ -136,8 +154,7 @@ TowerManager::mouseup(const GameEvent& ge)
 		 * it was a `click`, not a `drag` */
 
 		Vector2 hl = Map::instance().get_highlight();
-		if (0.0f >= hl.x || 0.0f >= hl.y)
-			return;
+		if (0.0f >= hl.x || 0.0f >= hl.y) return;
 
 		Vector3 pos = Map::instance().get_center_of(hl.x, hl.y);
 		pos.y = 0.0f;
