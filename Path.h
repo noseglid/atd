@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <map>
+#include <iostream>
 
 struct PathCoord
 {
@@ -36,6 +37,8 @@ struct PathCoord
 		return y < rhs.y;
 	}
 };
+
+std::ostream& operator<<(std::ostream& out, const PathCoord& v);
 
 class NoMoreCoords : public Exception
 {

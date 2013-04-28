@@ -1,4 +1,5 @@
 #include "Path.h"
+#include "Debug.h"
 #include "Exception.h"
 
 #include <sstream>
@@ -88,4 +89,10 @@ PathCoord
 Path::get_start() const
 {
 	return coords_order[0];
+}
+
+std::ostream&
+operator<<(std::ostream& out, const PathCoord& v)
+{
+	return out << v.x << "," << v.y;
 }
