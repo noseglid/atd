@@ -27,7 +27,7 @@ protected:
 
 	Vector3 pos, dir;
 
-	Creep(float health, int reward, int life_cost);
+	Creep(float health, int reward, int life_cost, float speed);
 
 public:
 	virtual ~Creep();

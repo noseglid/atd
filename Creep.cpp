@@ -7,8 +7,8 @@
 #include "Text.h"
 #include "GLTransform.h"
 
-Creep::Creep(float health, int reward, int life_cost) :
-	Mobile(0.8f),
+Creep::Creep(float health, int reward, int life_cost, float speed) :
+	Mobile(speed),
 	total_health(health),
 	current_health(health),
 	reward(reward),
