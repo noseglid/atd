@@ -49,13 +49,15 @@ void
 Creep::tick(const float& elapsed)
 {
 	try {
-		if ((dir.x > 0 && pos.x > vtarget.x) || (dir.x < 0 && pos.x < vtarget.x) ||
-		    (dir.z > 0 && pos.z > vtarget.z) || (dir.z < 0 && pos.z < vtarget.z)) {
+		float sf = get_speed_factor(elapsed);
+		pos += dir * sf;
+
+		/* Will yet another step takes us past our target? */
+		if ((dir * sf + pos - vtarget).length() > (pos - vtarget).length()) {
 			/* `next_coord` will throw if there are no more coords */
+			pos = vtarget;
 			travel_to(path->next_coord(target));
 		}
-
-		pos += dir * get_speed_factor(elapsed);
 	} catch (const NoMoreCoords& e) {
 		emit("accomplished");
 	}
