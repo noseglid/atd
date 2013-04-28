@@ -7,6 +7,7 @@
 
 #include <de.h>
 #include <SDL/SDL.h>
+#include <SDL/SDL_Mixer.h>
 #include <map>
 
 struct GameEvent

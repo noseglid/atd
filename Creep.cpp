@@ -1,4 +1,5 @@
 #include "Creep.h"
+#include "Audio.h"
 #include "Map.h"
 #include "Debug.h"
 #include "Exception.h"
@@ -7,8 +8,9 @@
 #include "Text.h"
 #include "GLTransform.h"
 
-Creep::Creep(float health, int reward, int life_cost, float speed) :
+Creep::Creep(float health, int reward, int life_cost, float speed, Mix_Chunk *audio_death) :
 	Mobile(speed),
+	audio_death(audio_death),
 	total_health(health),
 	current_health(health),
 	reward(reward),
@@ -41,6 +43,7 @@ Creep::struck(Projectile *p)
 {
 	this->current_health -= p->get_damage();
 	if (this->current_health <= 0.0f) {
+		Audio::instance().play(audio_death);
 		emit("death");
 	}
 }

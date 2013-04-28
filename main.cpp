@@ -62,8 +62,26 @@ init_SDL()
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	surface = SDL_SetVideoMode(screen_width, screen_height, 16, SDL_OPENGL | SDL_SWSURFACE);
 	if (NULL == surface) {
-		throw std::exception();
+		throw Exception("Could not set video modes.");
 	}
+
+	if (Mix_Init(MIX_INIT_FLAC|MIX_INIT_OGG) < 0) {
+		throw Exception("Could not initiate SDL mixer file formats.");
+	}
+	if (-1 == Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 4096)) {
+		throw Exception("Could not initate SDL Mixer library.");
+	}
+	if (TTF_Init() < 0) {
+		throw Exception("Could not initiate SDL TTF library.");
+	}
+
+	const SDL_version *v;
+	v = SDL_Linked_Version();
+	DBG("SDL version: " << (int)v->major << "." << (int)v->minor << "." << (int)v->patch);
+	v = Mix_Linked_Version();
+	DBG("SDL Mixer version: " << (int)v->major << "." << (int)v->minor << "." << (int)v->patch);
+	v = TTF_Linked_Version();
+	DBG("SDL TTF version: " << (int)v->major << "." << (int)v->minor << "." << (int)v->patch);
 
 	SDL_WM_SetCaption("ATD", NULL);
 }

@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "Audio.h"
 #include "Debug.h"
 #include "Model.h"
 #include "Text.h"
@@ -56,6 +57,10 @@ Game::run()
 	);
 
 	gettimeofday(&start_time, NULL);
+
+	Mix_Music *bgmusic = Audio::instance().load_music("sound/music/meadow.ogg");
+	Audio::instance().play(bgmusic);
+
 	while (running) {
 		while (SDL_PollEvent(&ev)) {
 			handle_event(ev);

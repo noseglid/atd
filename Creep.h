@@ -8,12 +8,15 @@
 #include "Mobile.h"
 
 #include <de.h>
+#include <SDL/SDL_mixer.h>
 
 class Creep : public de::Emitter<>, public Targetable, public Mobile
 {
 	friend class CreepManager;
 
 	void travel_to(const PathCoord& target);
+
+	Mix_Chunk *audio_death;
 
 protected:
 	const Path *path;
@@ -27,7 +30,7 @@ protected:
 
 	Vector3 pos, dir;
 
-	Creep(float health, int reward, int life_cost, float speed);
+	Creep(float health, int reward, int life_cost, float speed, Mix_Chunk *audio_death);
 
 public:
 	virtual ~Creep();

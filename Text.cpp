@@ -21,10 +21,6 @@ Text::Text()
 void
 Text::init(const int& screen_width, const int& screen_height)
 {
-	if (TTF_Init() < 0) {
-		throw Exception("Could not init TTF library.");
-	}
-
 	if (!(Text::font_world = TTF_OpenFont("/Library/Fonts/Arial.ttf", 128))) {
 		throw Exception("Could not load font file.");
 	}

@@ -1,14 +1,15 @@
 #include "SphereCreep.h"
 #include "Model.h"
+#include "Audio.h"
 
 #include <iostream>
 #include <OpenGL/gl.h>
 
-Model *model = NULL;
+Model *model = new Model("models/spherecreep/spherecreep.dae");
 
-SphereCreep::SphereCreep() : Creep(80, 10, 1, 1.3)
+SphereCreep::SphereCreep() :
+	Creep(80, 10, 1, 1.3, Audio::instance().load_sfx("sound/sfx/creep_death.ogg"))
 {
-	if (NULL == model) model = new Model("models/spherecreep/spherecreep.dae");
 }
 
 void
