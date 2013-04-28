@@ -24,7 +24,7 @@ void
 CreepManager::tick(const GameEvent& ev)
 {
 	float elapsed = ev.elapsed;
-	if ((elapsed > (float)last_spawn + SPAWN_INTERVAL) && spawned < COUNT) {
+	if ((elapsed > last_spawn + SPAWN_INTERVAL) && spawned < COUNT) {
 		++spawned;
 		SphereCreep *creep = new SphereCreep();
 		creep->on("death", std::bind(&CreepManager::creep_death, this, creep));
@@ -60,7 +60,7 @@ CreepManager::creep_accomplished(Creep *creep)
 {
 	Player::instance().alter_lives(-(creep->life_cost));
 
-	Text::scrolling(std::string("Haha!"), creep->get_position(), Vector3(1.0, 1.0, 1.0));
+	Text::scrolling("Haha!", creep->get_position(), Vector3(1.0, 1.0, 1.0));
 
 	remove_creep(creep);
 }
