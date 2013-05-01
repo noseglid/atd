@@ -64,9 +64,9 @@ Audio::load_music(const std::string& file)
 }
 
 void
-Audio::play(Mix_Chunk *audio) const
+Audio::play(Mix_Chunk *audio, int loops) const
 {
-	if (-1 == Mix_PlayChannel(-1, audio, 0)) {
+	if (-1 == Mix_PlayChannel(-1, audio, loops)) {
 		DBGERR(Mix_GetError());
 		throw Exception("Could not play audio.");
 	}

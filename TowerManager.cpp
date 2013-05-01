@@ -33,6 +33,8 @@ TowerManager::TowerManager() : current_tower(TOWER_NONE)
 		std::bind(&TowerManager::select_tower, this, TOWER_ARCHERY, std::placeholders::_1));
 	h.add_button(IL::GL::texture("tower_basic1.jpg"),
 		std::bind(&TowerManager::select_tower, this, TOWER_CANNON, std::placeholders::_1));
+
+	audio_build = Audio::instance().load_sfx("sound/sfx/build1.ogg");
 }
 
 Tower *
@@ -88,7 +90,6 @@ TowerManager::select_tower(TOWER_TYPE t, int i)
 
 	if (t != TOWER_NONE) {
 		dummy_tower(last_map_event.hovered.x, last_map_event.hovered.y);
-	} else {
 	}
 }
 
@@ -159,6 +160,9 @@ TowerManager::mouseup(const GameEvent& ge)
 		Vector3 pos = Map::instance().get_center_of(hl.x, hl.y);
 		pos.y = 0.0f;
 		bool purchased = purchase_tower(pos);
+		if (purchased) {
+			Audio::instance().play(audio_build, 3);
+		}
 
 		SDLMod mod = SDL_GetModState();
 		if (!(mod & KMOD_SHIFT) && purchased) {

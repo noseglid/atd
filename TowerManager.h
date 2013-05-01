@@ -3,6 +3,7 @@
 
 #include "Tower.h"
 #include "Map.h"
+#include "Audio.h"
 
 #include <vector>
 
@@ -29,6 +30,8 @@ class TowerManager
 	} click;
 
 	MapEvent last_map_event;
+
+	Mix_Chunk *audio_build;
 
 	Tower *create_tower(TOWER_TYPE t, Vector3 pos);
 	void dummy_tower(int x, int y);
