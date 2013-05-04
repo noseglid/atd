@@ -72,7 +72,7 @@ Game::run()
 
 		Camera::instance().orientate();
 
-		GLfloat pos[] = { 0.2, 0.5, 0.5, 0.0 };
+		GLfloat pos[] = { 0.5, 0.5, 0.5, 0.0 };
 		glLightfv(GL_LIGHT0, GL_POSITION, pos);
 
 		gettimeofday(&now, NULL);

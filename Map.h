@@ -23,19 +23,39 @@ struct MapEvent
 
 class Map : public de::Emitter<MapEvent>
 {
+	typedef std::vector<std::vector<float>> heightmap_t;
+	typedef std::vector<std::vector<Vector3>> normals_t;
+
 	size_t width, height;
 	Vector2 highlighted;
 	bool draw_meta;
 
 	Path *path;
+	GLint cliff_texture;
 	std::vector<GLint> textures;
-	float **heightmap;
+
+	heightmap_t heightmap;
 	Vector3 **normals;
 
-	void load_textures(const Json::Value& v);
-	void create_heightmap();
-	void generate_normals();
+	size_t edge_width;
+	heightmap_t heightmap_edge;
+	normals_t normals_edge;
 
+	void load_textures(const Json::Value& v);
+
+	void create_map_heightmap();
+	void create_edge_heightmap();
+
+	Vector3 calc_normal(
+		int h, int hmax,
+		int w, int wmax,
+		const heightmap_t& map,
+		float exaggeration = 1.0f) const;
+
+	void generate_map_normals();
+	void generate_edge_normals();
+
+	void draw_edge_wall() const;
 	void draw_square(const int&x, const int& y) const;
 
 public:

@@ -118,9 +118,9 @@ init_OpenGL()
 
 	glEnable(GL_LIGHT0);
 
-	GLfloat ambient[] = { 0.4, 0.4, 0.4, 1.0 };
+	GLfloat ambient[] = { 0.2, 0.2, 0.2, 1.0 };
 	GLfloat diffuse[] = { 0.4, 0.4, 0.4, 1.0 };
-	GLfloat specular[] = { 0.4, 0.4, 0.4, 1.0 };
+	GLfloat specular[] = { 0.1, 0.1, 0.1, 1.0 };
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, specular);

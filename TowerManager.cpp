@@ -58,8 +58,11 @@ TowerManager::dummy_tower(int x, int y)
 	pos.y = 0.0f;
 	int hlx = x, hly = y;
 
-	if (map.get_path()->has_coord(x, y) || towers.end() != towers.find(pos)) {
-		/* This is not a valid coord for anything, reset all params */
+	if (map.get_path()->has_coord(x, y) ||
+	    towers.end() != towers.find(pos) ||
+	    x == 0 || x == map.get_width() - 1 ||
+	    y == 0 || y == map.get_height() - 1) {
+		/* This is not a valid coord for a dummy tower, reset all params */
 		pos = Vector3(0.0f, 0.0f, 0.0f);
 		hlx = -1;
 		hly = -1;
