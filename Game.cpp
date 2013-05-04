@@ -51,9 +51,9 @@ Game::run()
 
 	Map& map = Map::instance();
 	Camera::instance().set_limits(
-		0.0f, (float)map.get_width(),
+		1.0f, (float)map.get_width() - 1.0f,
 		0.5f, 8.0f,
-		0.0f, (float)map.get_height()
+		1.0f, (float)map.get_height() - 1.0f
 	);
 
 	gettimeofday(&start_time, NULL);

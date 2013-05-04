@@ -21,6 +21,8 @@ class Camera
 
 	Camera();
 
+	void impose_limits();
+
 public:
 
 	~Camera();

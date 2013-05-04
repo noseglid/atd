@@ -40,6 +40,19 @@ Camera::set_limits(float xmin, float xmax, float ymin, float ymax, float zmin, f
 }
 
 void
+Camera::impose_limits()
+{
+	if (pos.x < limits.xmin) pos.x = limits.xmin;
+	if (pos.x > limits.xmax) pos.x = limits.xmax;
+
+	if (pos.y < limits.ymin) pos.y = limits.ymin;
+	if (pos.y > limits.ymax) pos.y = limits.ymax;
+
+	if (pos.z < limits.zmin) pos.z = limits.zmin;
+	if (pos.z > limits.zmax) pos.z = limits.zmax;
+}
+
+void
 Camera::orientate() const
 {
 	gluLookAt(
@@ -58,10 +71,7 @@ Camera::hover(GLdouble dx, GLdouble dz)
 	pos -= perpendicular * dx * pos.y;
 	pos -= direction * dz * pos.y;
 
-	if (pos.x < limits.xmin) pos.x = limits.xmin;
-	if (pos.x > limits.xmax) pos.x = limits.xmax;
-	if (pos.z < limits.zmin) pos.z = limits.zmin;
-	if (pos.z > limits.zmax) pos.z = limits.zmax;
+	impose_limits();
 }
 
 void
@@ -107,10 +117,11 @@ Camera::look(GLdouble hangle, GLdouble vangle)
 void
 Camera::zoom(GLdouble delta)
 {
-	if (pos.y < limits.ymin && delta < 0) return;
-	if (pos.y > limits.ymax && delta > 0) return;
+	Vector3 newpos = pos - dir * delta;
+	if (newpos.y > limits.ymax || newpos.y < limits.ymin) return;
 
-	pos -= dir * delta;
+	pos = newpos;
+	impose_limits();
 }
 
 Camera&
