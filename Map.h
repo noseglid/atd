@@ -2,6 +2,7 @@
 #define __MAP_H__
 
 #include "Path.h"
+#include "Model.h"
 #include "math/Math.h"
 
 #include <fstream>
@@ -25,6 +26,12 @@ class Map : public de::Emitter<MapEvent>
 {
 	typedef std::vector<std::vector<float>> heightmap_t;
 	typedef std::vector<std::vector<Vector3>> normals_t;
+	typedef struct {
+		Model *model;
+		float tx, ty, tz;
+		float angle, rx, ry, rz;
+		float sx, sy, sz;
+	} scenery_t;
 
 	size_t width, height;
 	Vector2 highlighted;
@@ -41,6 +48,8 @@ class Map : public de::Emitter<MapEvent>
 	heightmap_t heightmap_edge;
 	normals_t normals_edge;
 
+	std::vector<scenery_t> scenery;
+
 	void load_textures(const Json::Value& v);
 
 	void create_map_heightmap();
@@ -56,6 +65,7 @@ class Map : public de::Emitter<MapEvent>
 	void generate_edge_normals();
 
 	void draw_edge_wall() const;
+	void draw_scenery(const float& elapsed) const;
 	void draw_square(const int&x, const int& y) const;
 
 public:
@@ -67,7 +77,7 @@ public:
 	void mousemotion(const GameEvent& ge);
 	void keydown(const GameEvent& ge);
 
-	void draw() const;
+	void draw(const float& elapsed) const;
 	void draw_normals() const;
 	Vector3 get_center_of(int x, int y) const;
 	const Path *get_path() const;

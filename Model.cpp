@@ -8,6 +8,8 @@
 
 static Assimp::Importer importer;
 
+std::map<std::string, Model*> Model::loaded_models;
+
 void
 Model::get_bounding_box_for_node(
 	const aiNode* nd,
@@ -56,7 +58,7 @@ Model::get_bounding_box(aiVector3D& min, aiVector3D& max)
 
 Model::Model(std::string file)
 {
-	importer.ReadFile(file, aiProcessPreset_TargetRealtime_Quality | aiProcess_FixInfacingNormals);
+	importer.ReadFile(file, aiProcessPreset_TargetRealtime_Quality);
 	scene = importer.GetOrphanedScene();
 	if (NULL == scene) {
 		throw ModelException("Could not load file: " + file);
@@ -152,11 +154,6 @@ Model::load_bones(const aiScene *scene, const aiMesh *mesh)
 void
 mtlpart(const aiMaterial *mtl, GLenum gltype, const char *pKey, unsigned int type, unsigned int idx)
 {
-	if (gltype == GL_SPECULAR) {
-		/* Specular doesn't seem to work... */
-		return;
-	}
-
 	aiColor4D clr;
 	if (aiReturn_SUCCESS != mtl->Get(pKey, type, idx, clr)) {
 		return;
@@ -284,8 +281,7 @@ Model::rrender(const aiNode *node)
 	glPushMatrix();
 
 	aiMatrix4x4 trafo = node->mTransformation;
-	trafo.Transpose();
-	glMultMatrixf((GLfloat*)&trafo);
+	glMultTransposeMatrixf((GLfloat*)&trafo);
 
 	for (unsigned int n = 0; n < node->mNumMeshes; ++n) {
 		const aiMesh *mesh = scene->mMeshes[node->mMeshes[n]];
@@ -474,4 +470,16 @@ void
 Model::drawBones()
 {
 	rrenderbones(scene->mRootNode);
+}
+
+Model *
+Model::load(std::string file)
+{
+	auto it = loaded_models.find(file);
+	if (loaded_models.end() != it)
+		return it->second;
+
+	Model *m = new Model(file);
+	loaded_models.insert(std::make_pair(file, m));
+	return m;
 }

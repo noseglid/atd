@@ -99,6 +99,7 @@ init_OpenGL()
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_LINE_SMOOTH);
 	glEnable(GL_POINT_SMOOTH);
+	glEnable(GL_NORMALIZE);
 	glShadeModel(GL_SMOOTH);
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
@@ -119,8 +120,8 @@ init_OpenGL()
 	glEnable(GL_LIGHT0);
 
 	GLfloat ambient[] = { 0.2, 0.2, 0.2, 1.0 };
-	GLfloat diffuse[] = { 0.4, 0.4, 0.4, 1.0 };
-	GLfloat specular[] = { 0.1, 0.1, 0.1, 1.0 };
+	GLfloat diffuse[] = { 0.8, 0.8, 0.8, 1.0 };
+	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, specular);

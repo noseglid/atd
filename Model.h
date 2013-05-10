@@ -21,6 +21,8 @@ struct bone
 
 class Model
 {
+	static std::map<std::string, Model*> loaded_models;
+
 	aiVector3D scene_min, scene_max, scene_center;
 
 	void get_bounding_box_for_node(const aiNode* nd, aiVector3D& min, aiVector3D& max, aiMatrix4x4* trafo);
@@ -45,9 +47,12 @@ class Model
 
 	GLuint tex_from_jpeg(const char *path);
 
-public:
 	Model(std::string file);
+
+public:
 	~Model();
+
+	static Model *load(std::string file);
 
 	void normalize();
 	void draw(float animtime);

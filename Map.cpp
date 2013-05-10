@@ -70,6 +70,22 @@ Map::load(const std::string& file)
 	Json::Value p = paths[0];
 	path = new Path(p["texture"].asInt(), p["path"].asString());
 
+	for (Json::Value entry : map["scenery"].asArray()) {
+		scenery_t s;
+		s.model = Model::load(entry["model"].asString());
+		s.tx    = entry["position"]["x"].asNumber();
+		s.ty    = entry["position"]["y"].asNumber();
+		s.tz    = entry["position"]["z"].asNumber();
+		s.angle = entry["rotation"]["angle"].asNumber();
+		s.rx    = entry["rotation"]["x"].asNumber();
+		s.ry    = entry["rotation"]["y"].asNumber();
+		s.rz    = entry["rotation"]["z"].asNumber();
+		s.sx    = entry["scale"]["x"].asNumber();
+		s.sy    = entry["scale"]["y"].asNumber();
+		s.sz    = entry["scale"]["z"].asNumber();
+		scenery.push_back(s);
+	}
+
 	create_map_heightmap();
 	create_edge_heightmap();
 	generate_map_normals();
@@ -156,7 +172,7 @@ Map::generate_edge_normals()
 void
 Map::tick(const GameEvent& ge)
 {
-	this->draw();
+	this->draw(ge.elapsed);
 	if (draw_meta) this->draw_normals();
 }
 
@@ -225,6 +241,20 @@ Map::draw_edge_wall() const
 }
 
 void
+Map::draw_scenery(const float& elapsed) const
+{
+	for (scenery_t entry : scenery) {
+		glPushMatrix();
+		glTranslatef(entry.tx, entry.ty, entry.tz);
+		glRotatef(entry.angle, entry.rx, entry.ry, entry.rz);
+		glScalef(entry.sx, entry.sy, entry.sz);
+		entry.model->normalize();
+		entry.model->draw(elapsed);
+		glPopMatrix();
+	}
+}
+
+void
 Map::draw_square(const int& x, const int& y) const
 {
 	static const GLfloat texcoords[4][2] = {
@@ -263,7 +293,7 @@ Map::draw_square(const int& x, const int& y) const
 }
 
 void
-Map::draw() const
+Map::draw(const float& elapsed) const
 {
 	glEnable(GL_LIGHTING);
 	glEnable(GL_TEXTURE_2D);
@@ -307,6 +337,8 @@ Map::draw() const
 		draw_edge_wall();
 		glPopMatrix();
 	}
+
+	draw_scenery(elapsed);
 }
 
 

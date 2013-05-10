@@ -7,7 +7,6 @@ class TowerCannon : public Tower
 {
 public:
 	TowerCannon(Vector3 pos);
-	static void init();
 };
 
 #endif

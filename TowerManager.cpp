@@ -21,9 +21,6 @@ TowerManager::TowerManager() : current_tower(TOWER_NONE)
 	Map& m = Map::instance();
 	m.on("hover", std::bind(&TowerManager::map_select, this, std::placeholders::_1));
 
-	TowerArchery::init();
-	TowerCannon::init();
-
 	for (TOWER_TYPE t = TOWER_FIRST; ++t != TOWER_NONE;) {
 		dummy_towers.insert(std::make_pair(t, create_tower(t, Vector3())));
 	}
