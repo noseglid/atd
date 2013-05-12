@@ -5,7 +5,7 @@
 #include <cmath>
 
 Projectile::Projectile(Targetable *target, Vector3 pos, float damage) :
-	Mobile(2.2),
+	Mobile(5.2),
 	target(target),
 	pos(pos),
 	target_pos(target->get_position()),

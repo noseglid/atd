@@ -8,6 +8,7 @@
 #include "Purchasable.h"
 
 #include <de.h>
+#include <pjson.hpp>
 #include <list>
 
 class Tower : public Purchasable
@@ -18,12 +19,11 @@ class Tower : public Purchasable
 	void draw_range_circle() const;
 	Creep * get_target();
 
-protected:
-	float reload_time, range, damage, last_shot;
+	float reload, range, damage, last_shot;
 	Model *model;
-	Tower(int price, Vector3 pos, float reload_time, float range, float damage);
 
 public:
+	Tower(Json::Value spec, Vector3 pos);
 	void draw(const float& elapsed) const;
 
 	void set_position(Vector3 pos);

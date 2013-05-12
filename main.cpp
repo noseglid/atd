@@ -21,7 +21,7 @@
 #include <vector>
 
 static SDL_Surface *surface;
-static int screen_width = 1024, screen_height = 768;
+static int screen_width = 1600, screen_height = 1200;
 
 Map *map;
 MetaManager *meta_manager;
@@ -37,9 +37,9 @@ init_ATD()
 	Text::init(screen_width, screen_height);
 	HUD::init(screen_width, screen_height);
 
-	Map::instance().load("levels/level1.map");
+	Map::instance().load("levels/test.map");
 
-	TowerManager::instance();
+	TowerManager::instance().set_faction(Faction::Faction::SAGES);
 	CreepManager::instance();
 
 	keyboard      = new KeyboardHandler();

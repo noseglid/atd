@@ -52,13 +52,13 @@ Game::run()
 	Map& map = Map::instance();
 	Camera::instance().set_limits(
 		1.0f, (float)map.get_width() - 1.0f,
-		0.5f, 8.0f,
+		0.5f, 10.0f,
 		1.0f, (float)map.get_height() - 1.0f
 	);
 
 	gettimeofday(&start_time, NULL);
 
-	Mix_Music *bgmusic = Audio::instance().load_music("sound/music/meadow.ogg");
+	Mix_Music *bgmusic = Audio::instance().load_music("music/meadow.ogg");
 	Audio::instance().play(bgmusic);
 
 	while (running) {

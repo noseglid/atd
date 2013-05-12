@@ -1,50 +1,53 @@
 #include "TowerManager.h"
+#include "IO.h"
 #include "ImageLoader.h"
 #include "Text.h"
 #include "Player.h"
 #include "Creep.h"
 #include "Game.h"
 #include "HUD.h"
+#include "Faction.h"
 
-/* Available towers */
-#include "TowerArchery.h"
-#include "TowerCannon.h"
-
-TowerManager::TowerManager() : current_tower(TOWER_NONE)
+TowerManager::TowerManager()
 {
 	Game& g = Game::instance();
-	g.on("tick", std::bind(&TowerManager::tick, this, std::placeholders::_1));
+	g.on("tick",      std::bind(&TowerManager::tick,      this, std::placeholders::_1));
 	g.on("mousedown", std::bind(&TowerManager::mousedown, this, std::placeholders::_1));
-	g.on("mouseup", std::bind(&TowerManager::mouseup, this, std::placeholders::_1));
-	g.on("keydown", std::bind(&TowerManager::keydown, this, std::placeholders::_1));
+	g.on("mouseup",   std::bind(&TowerManager::mouseup,   this, std::placeholders::_1));
+	g.on("keydown",   std::bind(&TowerManager::keydown,   this, std::placeholders::_1));
 
 	Map& m = Map::instance();
-	m.on("hover", std::bind(&TowerManager::map_select, this, std::placeholders::_1));
+	m.on("hover", std::bind(&TowerManager::map_hover, this, std::placeholders::_1));
 
-	for (TOWER_TYPE t = TOWER_FIRST; ++t != TOWER_NONE;) {
-		dummy_towers.insert(std::make_pair(t, create_tower(t, Vector3())));
+	audio_build = Audio::instance().load_sfx("sfx/build1.ogg");
+}
+
+void
+TowerManager::set_faction(Faction::Faction faction)
+{
+	std::list<std::string> specs = Faction::Loader::tower_specs(faction);
+	for (std::string file : specs) {
+		Json::Value jspec = Json::deserialize(IO::file_get_contents(file));
+		available_towers.insert(std::make_pair(jspec["name"].asString(), jspec));
+		HUD::instance().add_button(
+			IL::GL::texture(jspec["hudtex"].asString()),
+			std::bind(
+				&TowerManager::select_tower,
+				this,
+				jspec["name"].asString(),
+				std::placeholders::_1
+			)
+		);
+		Tower *t = create_tower(jspec["name"].asString(), Vector3());
+		dummy_towers.insert(std::make_pair(jspec["name"].asString(), t));
 	}
-
-	HUD& h = HUD::instance();
-	h.add_button(IL::GL::texture("tower_hero.jpg"),
-		std::bind(&TowerManager::select_tower, this, TOWER_ARCHERY, std::placeholders::_1));
-	h.add_button(IL::GL::texture("tower_basic1.jpg"),
-		std::bind(&TowerManager::select_tower, this, TOWER_CANNON, std::placeholders::_1));
-
-	audio_build = Audio::instance().load_sfx("sound/sfx/build1.ogg");
 }
 
 Tower *
-TowerManager::create_tower(TOWER_TYPE type, Vector3 pos)
+TowerManager::create_tower(std::string tower, Vector3 pos)
 {
-	Tower *tower = NULL;
-	switch (type) {
-	case TOWER_ARCHERY: tower = new TowerArchery(pos); break;
-	case TOWER_CANNON:  tower = new TowerCannon(pos); break;
-	case TOWER_NONE: DBGWRN("Trying to create tower from TOWER_NONE."); break;
-	default: break;
-	}
-	return tower;
+	Json::Value spec = available_towers.at(tower);
+	return new Tower(spec, pos);
 }
 
 void
@@ -70,27 +73,30 @@ TowerManager::dummy_tower(int x, int y)
 }
 
 void
-TowerManager::map_select(const MapEvent& me)
+TowerManager::map_hover(const MapEvent& me)
 {
 	last_map_event = me;
-	if (TOWER_NONE == current_tower)
+	if (selected_tower.empty())
 		return;
 
 	dummy_tower(me.hovered.x, me.hovered.y);
 }
 
 void
-TowerManager::select_tower(TOWER_TYPE t, int i)
+TowerManager::deselect_tower()
 {
-	if (-1 == i) i = t - 1;
+	selected_tower = "";
+	HUD::instance().mark_button(-1);
+	Map::instance().set_highlight(-1, -1);
+}
 
-	current_tower = t;
+void
+TowerManager::select_tower(std::string tower, int i)
+{
+	selected_tower = tower;
 	HUD::instance().mark_button(i);
 	Map::instance().set_highlight(-1, -1);
-
-	if (t != TOWER_NONE) {
-		dummy_tower(last_map_event.hovered.x, last_map_event.hovered.y);
-	}
+	dummy_tower(last_map_event.hovered.x, last_map_event.hovered.y);
 }
 
 bool
@@ -100,7 +106,7 @@ TowerManager::purchase_tower(Vector3 pos)
 		return false;
 	}
 
-	Tower *t = create_tower(current_tower, pos);
+	Tower *t = create_tower(selected_tower, pos);
 	if (!Player::instance().purchase(t)) {
 		Text::scrolling("You're broke mate!", pos);
 		delete t;
@@ -118,14 +124,8 @@ void
 TowerManager::keydown(const GameEvent& ge)
 {
 	switch (ge.ev.key.keysym.sym) {
-	case SDLK_1:
-		select_tower(TOWER_ARCHERY);
-		break;
-	case SDLK_2:
-		select_tower(TOWER_CANNON);
-		break;
 	case SDLK_ESCAPE:
-		select_tower(TOWER_NONE);
+		deselect_tower();
 		break;
 	default:
 		break;
@@ -166,7 +166,7 @@ TowerManager::mouseup(const GameEvent& ge)
 
 		SDLMod mod = SDL_GetModState();
 		if (!(mod & KMOD_SHIFT) && purchased) {
-			select_tower(TOWER_NONE, -1);
+			deselect_tower();
 		}
 	}
 }
@@ -185,8 +185,8 @@ TowerManager::tick(const GameEvent& ev)
 		glPopMatrix();
 	}
 
-	if (current_tower != TOWER_NONE && dummy_tower_pos.length() > 0.0f) {
-		Tower *t = dummy_towers[current_tower];
+	if (!selected_tower.empty() && dummy_tower_pos.length() > 0.0f) {
+		Tower *t = dummy_towers.at(selected_tower);
 		t->set_position(dummy_tower_pos);
 
 		glEnable(GL_COLOR_MATERIAL);

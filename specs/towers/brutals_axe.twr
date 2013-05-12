@@ -1,0 +1,10 @@
+{
+  "type"   : "normal",
+  "name"   : "Axe",
+  "model"  : "towers/brutals_axe.dae",
+  "hudtex" : "tower_basic1.jpg",
+  "price"  : 80,
+  "reload" : 1.4,
+  "range"  : 2.5,
+  "damage" : 31.0
+}

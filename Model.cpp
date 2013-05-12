@@ -475,6 +475,7 @@ Model::drawBones()
 Model *
 Model::load(std::string file)
 {
+	file = std::string("models/") + file;
 	auto it = loaded_models.find(file);
 	if (loaded_models.end() != it)
 		return it->second;

@@ -7,12 +7,12 @@
 
 Camera::Camera() : mouse_buttons_active(0)
 {
-	pos.x = 1;
+	pos.x = 10;
 	pos.y = 8;
-	pos.z = 1;
-	dir.x = 0.50;
+	pos.z = 10;
+	dir.x = 0.00;
 	dir.y = -1.00;
-	dir.z = 0.51;
+	dir.z = -0.70;
 	up.x = 0;
 	up.y = 1;
 	up.z = 0;

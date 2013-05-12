@@ -1,4 +1,5 @@
 #include "Map.h"
+#include "IO.h"
 #include "Game.h"
 #include "HUD.h"
 #include "GLTransform.h"
@@ -43,15 +44,8 @@ Map::~Map()
 void
 Map::load(const std::string& file)
 {
-	DBG("Loading file: " << file);
-	std::ifstream ifs(file.c_str());
-	if (!ifs.good()) throw Exception(std::string("Could not open file: ") + file);
-
-	std::string content(
-		(std::istreambuf_iterator<char>(ifs)),
-		(std::istreambuf_iterator<char>())
-	);
-	Json::Value map = Json::deserialize(content);
+	DBG("Loading map from '" << file << "'");
+	Json::Value map = Json::deserialize(IO::file_get_contents(file));
 
 	/* Load metadata */
 	width  = map["width"].asInt();
@@ -70,6 +64,7 @@ Map::load(const std::string& file)
 	Json::Value p = paths[0];
 	path = new Path(p["texture"].asInt(), p["path"].asString());
 
+	/* Load the scenery */
 	for (Json::Value entry : map["scenery"].asArray()) {
 		scenery_t s;
 		s.model = Model::load(entry["model"].asString());

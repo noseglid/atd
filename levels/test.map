@@ -16,31 +16,31 @@
 
   "scenery" : [
     {
-      "model" : "models/house1/house1.dae",
+      "model" : "house1/house1.dae",
       "scale"    : { "x" : 1.8, "y" : 1.8, "z" : 1.8 },
       "rotation" : { "angle" : 35.0, "x" : 0.0, "y" : 1.0, "z" : 0.0 },
       "position" : { "x" : 8.0, "y" : 0.0, "z" : 10.0 }
     },
     {
-      "model" : "models/house1/house1.dae",
+      "model" : "house1/house1.dae",
       "scale"    : { "x" : 1.6, "y" : 1.6, "z" : 1.6 },
       "rotation" : { "angle" : 235.0, "x" : 0.0, "y" : 1.0, "z" : 0.0 },
       "position" : { "x" : 4.5, "y" : 0.0, "z" : 7.0 }
     },
     {
-      "model" : "models/house1/house1.dae",
+      "model" : "house1/house1.dae",
       "scale"    : { "x" : 1.6, "y" : 1.6, "z" : 1.6 },
       "rotation" : { "angle" : 300.0, "x" : 0.0, "y" : 1.0, "z" : 0.0 },
       "position" : { "x" : 4.5, "y" : 0.0, "z" : 10.0 }
     },
     {
-      "model" : "models/house1/house1.dae",
+      "model" : "house1/house1.dae",
       "scale"    : { "x" : 1.6, "y" : 1.6, "z" : 1.6 },
       "rotation" : { "angle" : 155.0, "x" : 0.0, "y" : 1.0, "z" : 0.0 },
       "position" : { "x" : 7.5, "y" : 0.0, "z" : 7.0 }
     },
     {
-      "model" : "models/cratanian/cratanian.dae",
+      "model" : "cratanian/cratanian.dae",
       "scale"    : { "x" : 0.60, "y" : 0.60, "z" : 0.60 },
       "rotation" : { "angle" : 75.0, "x" : 0.0, "y" : 1.0, "z" : 0.0 },
       "position" : { "x" : 6.5, "y" : 0.5, "z" : 9.0 }

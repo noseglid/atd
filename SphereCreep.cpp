@@ -5,10 +5,10 @@
 #include <iostream>
 #include <OpenGL/gl.h>
 
-Model *model = Model::load("models/spherecreep/spherecreep.dae");
+Model *model = Model::load("spherecreep/spherecreep.dae");
 
 SphereCreep::SphereCreep() :
-	Creep(80, 10, 1, 1.3, Audio::instance().load_sfx("sound/sfx/creep_death.ogg"))
+	Creep(80, 10, 1, 1.3, Audio::instance().load_sfx("sfx/creep_death.ogg"))
 {
 }
 

@@ -32,34 +32,36 @@ Audio::instance()
 Mix_Chunk *
 Audio::load_sfx(const std::string& file)
 {
-	auto it = sfx.find(file);
+	std::string rfile = std::string("sound/") + file;
+	auto it = sfx.find(rfile);
 	if (it != sfx.end()) return it->second;
 
-	Mix_Chunk *audio = Mix_LoadWAV(file.c_str());
+	Mix_Chunk *audio = Mix_LoadWAV(rfile.c_str());
 	if (NULL == audio) {
 		DBGERR(Mix_GetError());
-		throw Exception(std::string("Could not load audio: ") + file);
+		throw Exception(std::string("Could not load audio: ") + rfile);
 	}
 
 	Mix_VolumeChunk(audio, SFXVOL);
 
-	sfx.insert(make_pair(file, audio));
+	sfx.insert(std::make_pair(rfile, audio));
 	return audio;
 }
 
 Mix_Music *
 Audio::load_music(const std::string& file)
 {
-	auto it = music.find(file);
+	std::string rfile = std::string("sound/") + file;
+	auto it = music.find(rfile);
 	if (it != music.end()) return it->second;
 
-	Mix_Music *audio = Mix_LoadMUS(file.c_str());
+	Mix_Music *audio = Mix_LoadMUS(rfile.c_str());
 	if (NULL == audio) {
 		DBGERR(Mix_GetError());
-		throw Exception(std::string("Could not load music: ") + file);
+		throw Exception(std::string("Could not load music: ") + rfile);
 	}
 
-	music.insert(make_pair(file, audio));
+	music.insert(std::make_pair(rfile, audio));
 	return audio;
 }
 

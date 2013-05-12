@@ -5,13 +5,14 @@
 
 #include <OpenGL/gl.h>
 
-Tower::Tower(int price, Vector3 pos, float reload_time, float range, float damage) :
-	Purchasable(price),
+Tower::Tower(Json::Value spec, Vector3 pos) :
+	Purchasable(spec["price"].asInt()),
 	pos(pos),
-	reload_time(reload_time),
-	range(range),
-	damage(damage),
-	last_shot(0.0f)
+	reload(spec["reload"].asNumber()),
+	range(spec["range"].asNumber()),
+	damage(spec["damage"].asNumber()),
+	last_shot(0.0f),
+	model(Model::load(spec["model"].asString()))
 {
 }
 
@@ -128,7 +129,7 @@ Tower::projectile_notarget(Projectile *p)
 void
 Tower::shoot_if(const float& elapsed)
 {
-	if (last_shot > 0.0f && elapsed - last_shot < reload_time) return;
+	if (last_shot > 0.0f && elapsed - last_shot < reload) return;
 
 	Creep *target = get_target();
 	if (NULL == target) return;

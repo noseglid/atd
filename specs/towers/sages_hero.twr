@@ -1,0 +1,10 @@
+{
+  "type"   : "hero",
+  "name"   : "Poran",
+  "model"  : "towers/sages_hero.dae",
+  "hudtex" : "tower_hero.jpg",
+  "price"  : 135,
+  "reload" : 0.2,
+  "range"  : 4.8,
+  "damage" : 28.2
+}

@@ -19,7 +19,7 @@ SRCS += Mobile.cpp Model.cpp Camera.cpp Text.cpp HUD.cpp Audio.cpp
 SRCS += CreepManager.cpp Creep.cpp SphereCreep.cpp DummyCreep.cpp
 
 # Tower
-SRCS += TowerManager.cpp Tower.cpp TowerArchery.cpp TowerCannon.cpp
+SRCS += TowerManager.cpp Tower.cpp
 SRCS += Projectile.cpp
 
 # Math
