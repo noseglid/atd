@@ -12,15 +12,20 @@
 
 BEGIN_NAMESPACE_IL
 
+static std::map<std::string, GLuint> loaded_textures;
+
 GLuint
 GL::texture(std::string path, FILETYPE t)
 {
-	std::string trimmed(path.begin(), remove_if(path.begin(), path.end(), [](char c) {
-		return isspace(c);
-	}));
-
 	path = "textures/" + path;
 	DBG("Loading texture from: " << path);
+
+	auto it = loaded_textures.find(path);
+	if (it != loaded_textures.end()) {
+		DBG("Using cached at texid: " << it->second);
+		return it->second;
+	}
+
 
 	GLuint texid;
 	glGenTextures(1, &texid);
@@ -46,6 +51,8 @@ GL::texture(std::string path, FILETYPE t)
 	GLuint components = (format == GL_RGB) ? 3 : 4;
 	gluBuild2DMipmaps(GL_TEXTURE_2D, components, width, height, format, GL_UNSIGNED_BYTE, data);
 	free(data);
+
+	loaded_textures.insert(std::make_pair(path, texid));
 
 	return texid;
 }
