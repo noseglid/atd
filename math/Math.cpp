@@ -8,5 +8,5 @@
 
 float deg2rad(const float deg)
 {
-	return (deg * M_PI) / 180.0f;
+  return (deg * M_PI) / 180.0f;
 }
