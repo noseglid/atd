@@ -23,6 +23,7 @@ class Model
 {
 	static std::map<std::string, Model*> loaded_models;
 
+	Assimp::Importer importer;
 	aiVector3D scene_min, scene_max, scene_center;
 
 	void get_bounding_box_for_node(const aiNode* nd, aiVector3D& min, aiVector3D& max, aiMatrix4x4* trafo);
@@ -44,8 +45,6 @@ class Model
 	void apply_material(const aiMaterial *mtl);
 	void rrender(const aiNode* node);
 	void rrenderbones(const aiNode* node);
-
-	GLuint tex_from_jpeg(const char *path);
 
 	Model(std::string file);
 

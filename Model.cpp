@@ -6,8 +6,6 @@
 #define aisgl_min(x,y) (x<y?x:y)
 #define aisgl_max(x,y) (y>x?y:x)
 
-static Assimp::Importer importer;
-
 std::map<std::string, Model*> Model::loaded_models;
 
 void
@@ -59,7 +57,7 @@ Model::get_bounding_box(aiVector3D& min, aiVector3D& max)
 Model::Model(std::string file)
 {
 	importer.ReadFile(file, aiProcessPreset_TargetRealtime_Quality);
-	scene = importer.GetOrphanedScene();
+	scene = importer.GetScene();
 	if (NULL == scene) {
 		throw ModelException("Could not load file: " + file);
 	}
