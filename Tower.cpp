@@ -49,8 +49,6 @@ Tower::draw_range_circle() const
 void
 Tower::draw(const float& elapsed) const
 {
-	glEnable(GL_LIGHTING);
-
 	glPushMatrix();
 	glTranslatef(pos.x, pos.y, pos.z);
 	model->normalize();

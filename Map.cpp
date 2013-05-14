@@ -217,11 +217,11 @@ Map::draw_edge_wall() const
 		for (int j = 0; j < edge_width; ++j) {
 			glNormal3fv((GLfloat*)&(normals_edge[i + 1][j]));
 			glTexCoord2fv(texcoords[0]);
-			glVertex3f(j,        heightmap_edge[i + 1][j],     -i);
+			glVertex3f(j, heightmap_edge[i + 1][j], -i);
 
 			glNormal3fv((GLfloat*)&(normals_edge[i][j]));
 			glTexCoord2fv(texcoords[1]);
-			glVertex3f(j,        heightmap_edge[i][j],         -i + 1.0f);
+			glVertex3f(j, heightmap_edge[i][j], -i + 1.0f);
 
 			glNormal3fv((GLfloat*)&(normals_edge[i + 1][j + 1]));
 			glTexCoord2fv(texcoords[2]);
@@ -229,7 +229,7 @@ Map::draw_edge_wall() const
 
 			glNormal3fv((GLfloat*)&(normals_edge[i][j + 1]));
 			glTexCoord2fv(texcoords[3]);
-			glVertex3f(j + 1.0f, heightmap_edge[i][j + 1],     -i + 1.0f);
+			glVertex3f(j + 1.0f, heightmap_edge[i][j + 1], -i + 1.0f);
 		}
 		glEnd();
 	}
