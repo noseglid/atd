@@ -473,10 +473,13 @@ Model::drawBones()
 Model *
 Model::load(std::string file)
 {
+	DBG("Loading model: " << file);
 	file = std::string("models/") + file;
 	auto it = loaded_models.find(file);
-	if (loaded_models.end() != it)
+	if (loaded_models.end() != it) {
+		DBG("Using cached at: " << it->second);
 		return it->second;
+	}
 
 	Model *m = new Model(file);
 	loaded_models.insert(std::make_pair(file, m));
