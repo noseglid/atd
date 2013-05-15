@@ -5,7 +5,7 @@
 
 #include <sstream>
 
-#define FPS_MEASURE_INTERVAL 0.25f /* seconds */
+#define FPS_MEASURE_INTERVAL 2.00f /* seconds */
 
 MetaManager::MetaManager() : last_measure(0), draw_meta(false)
 {
