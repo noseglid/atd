@@ -65,20 +65,22 @@ Map::load(const std::string& file)
   path = new Path(p["texture"].asInt(), p["path"].asString());
 
   /* Load the scenery */
-  for (Json::Value entry : map["scenery"].asArray()) {
-    scenery_t s;
-    s.model = Model::load(entry["model"].asString());
-    s.tx    = entry["position"]["x"].asNumber();
-    s.ty    = entry["position"]["y"].asNumber();
-    s.tz    = entry["position"]["z"].asNumber();
-    s.angle = entry["rotation"]["angle"].asNumber();
-    s.rx    = entry["rotation"]["x"].asNumber();
-    s.ry    = entry["rotation"]["y"].asNumber();
-    s.rz    = entry["rotation"]["z"].asNumber();
-    s.sx    = entry["scale"]["x"].asNumber();
-    s.sy    = entry["scale"]["y"].asNumber();
-    s.sz    = entry["scale"]["z"].asNumber();
-    scenery.push_back(s);
+  if (map.objectHasKey("scenery")) {
+    for (Json::Value entry : map["scenery"].asArray()) {
+      scenery_t s;
+      s.model = Model::load(entry["model"].asString());
+      s.tx    = entry["position"]["x"].asNumber();
+      s.ty    = entry["position"]["y"].asNumber();
+      s.tz    = entry["position"]["z"].asNumber();
+      s.angle = entry["rotation"]["angle"].asNumber();
+      s.rx    = entry["rotation"]["x"].asNumber();
+      s.ry    = entry["rotation"]["y"].asNumber();
+      s.rz    = entry["rotation"]["z"].asNumber();
+      s.sx    = entry["scale"]["x"].asNumber();
+      s.sy    = entry["scale"]["y"].asNumber();
+      s.sz    = entry["scale"]["z"].asNumber();
+      scenery.push_back(s);
+    }
   }
 
   create_map_heightmap();
