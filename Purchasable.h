@@ -5,12 +5,12 @@ class Purchasable
 {
 
 protected:
-	Purchasable(int price) : price(price)
-	{
-	}
+  Purchasable(int price) : price(price)
+  {
+  }
 
 public:
-	int price;
+  int price;
 };
 
 #endif

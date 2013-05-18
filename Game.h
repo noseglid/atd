@@ -12,29 +12,29 @@
 
 struct GameEvent
 {
-	float elapsed;
-	SDL_Event ev;
+  float elapsed;
+  SDL_Event ev;
 
-	GameEvent(float elapsed = 0.0f, SDL_Event ev = SDL_Event()) :
-		elapsed(elapsed), ev(ev) {}
+  GameEvent(float elapsed = 0.0f, SDL_Event ev = SDL_Event()) :
+    elapsed(elapsed), ev(ev) {}
 };
 
 class Game : public de::Emitter<GameEvent>
 {
-	float elapsed;
-	bool running;
+  float elapsed;
+  bool running;
 
-	Game();
-	void operator=(Game const&);
-	Game(const Game&);
+  Game();
+  void operator=(Game const&);
+  Game(const Game&);
 
-	void handle_event(const SDL_Event& ev);
+  void handle_event(const SDL_Event& ev);
 
 public:
-	void run();
-	void stop();
+  void run();
+  void stop();
 
-	static Game& instance();
+  static Game& instance();
 };
 
 #endif

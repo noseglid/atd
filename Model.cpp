@@ -56,6 +56,7 @@ Model::get_bounding_box(aiVector3D& min, aiVector3D& max)
 
 Model::Model(std::string file)
 {
+  DBG("Loading model: " << file);
   importer.ReadFile(file, aiProcessPreset_TargetRealtime_Quality);
   scene = importer.GetScene();
   if (NULL == scene) {
@@ -419,6 +420,7 @@ Model::normalize()
 void
 Model::draw(float elapsed)
 {
+  glEnable(GL_DEPTH_TEST);
   if (0 < scene->mNumAnimations) {
     const aiAnimation *anim = scene->mAnimations[0];
     float animtime = fmod(elapsed * anim->mTicksPerSecond, anim->mDuration);
@@ -426,6 +428,7 @@ Model::draw(float elapsed)
   }
 
   this->rrender(scene->mRootNode);
+  drawBones();
 }
 
 void
@@ -473,11 +476,9 @@ Model::drawBones()
 Model *
 Model::load(std::string file)
 {
-  DBG("Loading model: " << file);
   file = std::string("models/") + file;
   auto it = loaded_models.find(file);
   if (loaded_models.end() != it) {
-    DBG("Using cached at: " << it->second);
     return it->second;
   }
 

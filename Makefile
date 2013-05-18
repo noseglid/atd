@@ -16,7 +16,7 @@ SRCS += KeyboardHandler.cpp MetaManager.cpp GLTransform.cpp
 SRCS += Mobile.cpp Model.cpp Camera.cpp Text.cpp HUD.cpp Audio.cpp
 
 # Creep
-SRCS += CreepManager.cpp Creep.cpp SphereCreep.cpp DummyCreep.cpp
+SRCS += CreepManager.cpp Creep.cpp DummyCreep.cpp
 
 # Tower
 SRCS += TowerManager.cpp Tower.cpp

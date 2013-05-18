@@ -1,4 +1,5 @@
 #include "CreepManager.h"
+#include "IO.h"
 #include "SphereCreep.h"
 #include "Player.h"
 #include "Text.h"
@@ -21,17 +22,58 @@ CreepManager::CreepManager() : last_spawn(-SPAWN_INTERVAL), spawned(0)
 }
 
 void
-CreepManager::tick(const GameEvent& ev)
+CreepManager::setup(const Json::Value& levelspec)
 {
-  float elapsed = ev.elapsed;
-  if ((elapsed > last_spawn + SPAWN_INTERVAL) && spawned < COUNT) {
-    ++spawned;
-    SphereCreep *creep = new SphereCreep();
+  Json::Value waves = levelspec["waves"];
+
+  float spawntime = 0;
+
+  DBG(Json::serialize(levelspec["waves"], Json::FORMAT_PRETTY));
+  for (Json::Value wave : levelspec["waves"].asArray()) {
+    wave_t w;
+    for (Json::Value creep : wave["creeps"].asArray()) {
+      Json::Value spec = Json::deserialize(IO::file_get_contents(creep["spec"].asString()));
+      for (int i = 0; i < creep["count"].asNumber(); ++i) {
+        spawn_t s;
+        s.spec = spec;
+        spawntime += creep["spawninterval"].asNumber();
+        s.time = spawntime;
+        w.push_back(s);
+      }
+    }
+    spawns.push_back(w);
+  }
+}
+
+void
+CreepManager::check_spawn(const float& elapsed)
+{
+  if (spawns.empty()) {
+    /* All waves complete. When last creeps either dies or accomplishes, it's done */
+    return;
+  }
+
+  wave_t& wave = spawns.front();
+  if (wave.empty()) {
+    /* Wave complete */
+    spawns.pop_front();
+    return;
+  }
+
+  spawn_t& spawn = wave.front();
+  if (elapsed >= spawn.time) {
+    Creep *creep = new Creep(spawn.spec);
     creep->on("death", std::bind(&CreepManager::creep_death, this, creep));
     creep->on("accomplished", std::bind(&CreepManager::creep_accomplished, this, creep));
     creeps.push_back(creep);
-    last_spawn = elapsed;
+    wave.pop_front();
   }
+}
+
+void
+CreepManager::tick(const GameEvent& ev)
+{
+  float elapsed = ev.elapsed;
 
   std::list<Creep *> tmp = creeps;
   for (Creep *c : tmp) {
@@ -41,6 +83,8 @@ CreepManager::tick(const GameEvent& ev)
 
     c->tick(elapsed);
   }
+
+  check_spawn(elapsed);
 }
 
 void
@@ -60,7 +104,9 @@ CreepManager::creep_accomplished(Creep *creep)
 {
   Player::instance().alter_lives(-(creep->life_cost));
 
-  Text::scrolling("Haha!", creep->get_position(), Vector3(1.0, 1.0, 1.0));
+  std::stringstream ss;
+  ss << "-" << creep->life_cost;
+  Text::scrolling(ss.str(), creep->get_position(), Vector3(1.0, 1.0, 1.0));
 
   remove_creep(creep);
 }

@@ -3,5 +3,5 @@
 class PlayerDeath : public Exception
 {
 public:
-	PlayerDeath() : Exception("Player died") {}
+  PlayerDeath() : Exception("Player died") {}
 };

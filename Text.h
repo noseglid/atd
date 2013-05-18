@@ -11,28 +11,28 @@
 
 struct WorldText
 {
-	GLuint texture;
-	Vector3 pos, delta;
-	Vector3 color;
-	int width, height;
+  GLuint texture;
+  Vector3 pos, delta;
+  Vector3 color;
+  int width, height;
 };
 
 class Text
 {
-	static Text instance;
-	static TTF_Font *font_world, *font_overlay;
-	static int screen_width, screen_height;
-	static std::vector<WorldText> scrollings;
+  static Text instance;
+  static TTF_Font *font_world, *font_overlay;
+  static int screen_width, screen_height;
+  static std::vector<WorldText> scrollings;
 
-	Text();
-	Text& operator=(const Text& rhs);
-	void tick();
-	static GLuint create_texture(const std::string& text, TTF_Font *font, int& w, int& h);
+  Text();
+  Text& operator=(const Text& rhs);
+  void tick();
+  static GLuint create_texture(const std::string& text, TTF_Font *font, int& w, int& h);
 
 public:
-	static void init(const int& screen_width, const int& screen_height);
-	static void overlay(const std::string& text, const int& x, const int&y, bool offbottom = true, bool offleft = true);
-	static void scrolling(const std::string& text, const Vector3& pos, Vector3 color = Vector3(1.0f, 1.0f, 1.0f));
+  static void init(const int& screen_width, const int& screen_height);
+  static void overlay(const std::string& text, const int& x, const int&y, bool offbottom = true, bool offleft = true);
+  static void scrolling(const std::string& text, const Vector3& pos, Vector3 color = Vector3(1.0f, 1.0f, 1.0f));
 
 };
 

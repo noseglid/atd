@@ -1,5 +1,4 @@
 #include "Map.h"
-#include "IO.h"
 #include "Game.h"
 #include "HUD.h"
 #include "GLTransform.h"
@@ -42,31 +41,28 @@ Map::~Map()
 }
 
 void
-Map::load(const std::string& file)
+Map::load(const Json::Value& levelspec)
 {
-  DBG("Loading map from '" << file << "'");
-  Json::Value map = Json::deserialize(IO::file_get_contents(file));
-
   /* Load metadata */
-  width  = map["width"].asInt();
-  height = map["height"].asInt();
+  width  = levelspec["width"].asInt();
+  height = levelspec["height"].asInt();
 
   /* Load the textures */
-  for (Json::Value entry : map["textures"].asArray()) {
+  for (Json::Value entry : levelspec["textures"].asArray()) {
     textures.push_back(IL::GL::texture(entry.asString()));
   }
 
   /* Load the paths */
-  Json::Array paths = map["paths"].asArray();
+  Json::Array paths = levelspec["paths"].asArray();
   if (paths.size() != 1) {
-    throw Exception("Only one path per map currently supported.");
+    throw Exception("Only one path per levelspec currently supported.");
   }
   Json::Value p = paths[0];
   path = new Path(p["texture"].asInt(), p["path"].asString());
 
   /* Load the scenery */
-  if (map.objectHasKey("scenery")) {
-    for (Json::Value entry : map["scenery"].asArray()) {
+  if (levelspec.objectHasKey("scenery")) {
+    for (Json::Value entry : levelspec["scenery"].asArray()) {
       scenery_t s;
       s.model = Model::load(entry["model"].asString());
       s.tx    = entry["position"]["x"].asNumber();

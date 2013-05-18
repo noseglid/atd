@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "IO.h"
 #include "Text.h"
 #include "HUD.h"
 #include "Map.h"
@@ -37,10 +38,11 @@ init_ATD()
   Text::init(screen_width, screen_height);
   HUD::init(screen_width, screen_height);
 
-  Map::instance().load("levels/test.map");
+  Json::Value levelspec = Json::deserialize(IO::file_get_contents("levels/test.map"));
+  Map::instance().load(levelspec);
 
   TowerManager::instance().set_faction(Faction::Faction::SAGES);
-  CreepManager::instance();
+  CreepManager::instance().setup(levelspec);
 
   keyboard      = new KeyboardHandler();
   meta_manager  = new MetaManager();

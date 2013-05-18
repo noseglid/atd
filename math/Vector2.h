@@ -5,14 +5,14 @@
 
 struct Vector2
 {
-	float x, y;
+  float x, y;
 
-	Vector2();
-	Vector2(float x, float y);
+  Vector2();
+  Vector2(float x, float y);
 
-	void rotate(float rad);
+  void rotate(float rad);
 
-	float length() const;
+  float length() const;
 };
 
 std::ostream& operator<<(std::ostream& out, Vector2 v);

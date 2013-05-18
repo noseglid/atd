@@ -1,18 +1,18 @@
 {
-	"width"  : 16,
-	"height" : 16,
+  "width"  : 16,
+  "height" : 16,
 
-	"textures" : [
-		"grass.jpg",
-		"stone.jpg"
-	],
+  "textures" : [
+    "grass.jpg",
+    "stone.jpg"
+  ],
 
-	"paths" : [
-		{
-			"texture" : 1,
-			"path" : "M1,1 L10,1 L10,10 L13,10"
-		}
-	],
+  "paths" : [
+    {
+      "texture" : 1,
+      "path" : "M1,1 L10,1 L10,10 L13,10"
+    }
+  ],
 
   "scenery" : [
     {
@@ -44,6 +44,27 @@
       "scale"    : { "x" : 0.60, "y" : 0.60, "z" : 0.60 },
       "rotation" : { "angle" : 75.0, "x" : 0.0, "y" : 1.0, "z" : 0.0 },
       "position" : { "x" : 6.5, "y" : 0.5, "z" : 9.0 }
+    }
+  ],
+
+  "waves" : [
+    {
+      "creeps" : [
+        {
+          "spec" : "specs/creeps/spherecreep.json",
+          "spawninterval" : 1.0,
+          "count" : 6
+        }
+      ]
+    },
+    {
+      "creeps" : [
+        {
+          "spec" : "specs/creeps/spherecreep.json",
+          "spawninterval" : 0.5,
+          "count" : 12
+        }
+      ]
     }
   ]
 }

@@ -6,7 +6,7 @@
 class ModelException : public Exception
 {
 public:
-	ModelException(const std::string& msg) : Exception(msg) {}
+  ModelException(const std::string& msg) : Exception(msg) {}
 };
 
 #endif

@@ -15,20 +15,20 @@
 
 class Audio
 {
-	std::map<std::string, Mix_Chunk *> sfx;
-	std::map<std::string, Mix_Music *> music;
+  std::map<std::string, Mix_Chunk *> sfx;
+  std::map<std::string, Mix_Music *> music;
 
-	Audio();
-	~Audio();
+  Audio();
+  ~Audio();
 
 public:
-	static Audio& instance();
+  static Audio& instance();
 
-	Mix_Chunk *load_sfx(const std::string& file);
-	Mix_Music *load_music(const std::string& file);
+  Mix_Chunk *load_sfx(const std::string& file);
+  Mix_Music *load_music(const std::string& file);
 
-	void play(Mix_Chunk *audio, int loops = 0) const;
-	void play(Mix_Music *audio) const;
+  void play(Mix_Chunk *audio, int loops = 0) const;
+  void play(Mix_Music *audio) const;
 };
 
 #endif

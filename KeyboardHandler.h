@@ -6,8 +6,8 @@ struct GameEvent;
 class KeyboardHandler
 {
 public:
-	KeyboardHandler();
-	void keydown(const GameEvent& ev);
+  KeyboardHandler();
+  void keydown(const GameEvent& ev);
 };
 
 #endif

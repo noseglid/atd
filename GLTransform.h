@@ -6,10 +6,10 @@
 class GLTransform
 {
 public:
-	static void billboard();
-	static void enable2D();
-	static void disable2D();
-	static Vector3 unproject(const int& x, const int& y);
+  static void billboard();
+  static void enable2D();
+  static void disable2D();
+  static Vector3 unproject(const int& x, const int& y);
 };
 
 #endif

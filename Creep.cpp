@@ -8,13 +8,14 @@
 #include "Text.h"
 #include "GLTransform.h"
 
-Creep::Creep(float health, int reward, int life_cost, float speed, Mix_Chunk *audio_death) :
-  Mobile(speed),
-  audio_death(audio_death),
-  total_health(health),
-  current_health(health),
-  reward(reward),
-  life_cost(life_cost)
+Creep::Creep(Json::Value spec) :
+  Mobile(spec["speed"].asNumber()),
+  audio_death(Audio::instance().load_sfx(spec["audio"]["death"].asString())),
+  model(Model::load(spec["model"].asString())),
+  total_health(spec["health"].asInt()),
+  current_health(spec["health"].asInt()),
+  reward(spec["reward"].asInt()),
+  life_cost(spec["cost"].asInt())
 {
   this->path = Map::instance().get_path();
 
@@ -84,13 +85,12 @@ Creep::draw(const float& elapsed) const
   glTranslatef(pos.x, pos.y + 0.5f, pos.z);
 
   glPushMatrix();
-  this->draw_model(elapsed);
+  this->model->draw(elapsed);
   glPopMatrix();
 
   glPushMatrix();
   this->draw_health();
   glPopMatrix();
-
 }
 
 void

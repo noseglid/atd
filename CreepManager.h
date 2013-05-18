@@ -4,28 +4,39 @@
 #include "Creep.h"
 #include "Game.h"
 
+#include <pjson.hpp>
 #include <list>
 
 class CreepManager
 {
-	float last_spawn;
-	unsigned int spawned;
-	std::list<Creep*> creeps;
+  typedef struct {
+    Json::Value spec;
+    float time;
+  } spawn_t;
+  typedef std::list<spawn_t> wave_t;
+  std::list<wave_t> spawns;
 
-	CreepManager();
-	void operator=(CreepManager const&);
-	CreepManager(const CreepManager&);
+  float last_spawn;
+  unsigned int spawned;
+  std::list<Creep*> creeps;
 
-	void remove_creep(Creep *creep);
-	void tick(const GameEvent& ev);
+  CreepManager();
+  void operator=(CreepManager const&);
+  CreepManager(const CreepManager&);
+
+  void check_spawn(const float& elapsed);
+  void remove_creep(Creep *creep);
+  void tick(const GameEvent& ev);
+
+  void creep_death(Creep *creep);
+  void creep_accomplished(Creep *creep);
 
 public:
-	void creep_death(Creep *creep);
-	void creep_accomplished(Creep *creep);
+  void setup(const Json::Value& levelspec);
 
-	std::vector<Creep*> creeps_inside_circle(Vector3 center, float radius);
+  std::vector<Creep*> creeps_inside_circle(Vector3 center, float radius);
 
-	static CreepManager& instance();
+  static CreepManager& instance();
 };
 
 #endif

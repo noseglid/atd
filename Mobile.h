@@ -3,12 +3,12 @@
 
 class Mobile
 {
-	float last_elapsed;
-	float velocity;
+  float last_elapsed;
+  float velocity;
 
 protected:
-	Mobile(float velocity);
-	float get_speed_factor(const float& elapsed);
+  Mobile(float velocity);
+  float get_speed_factor(const float& elapsed);
 };
 
 #endif

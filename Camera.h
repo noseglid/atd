@@ -9,35 +9,35 @@ struct GameEvent;
 
 class Camera
 {
-	Vector3 pos, dir, up;
-	GLdouble xzangle;
-	int mouse_buttons_active;
+  Vector3 pos, dir, up;
+  GLdouble xzangle;
+  int mouse_buttons_active;
 
-	struct {
-		float xmin, xmax;
-		float ymin, ymax;
-		float zmin, zmax;
-	} limits;
+  struct {
+    float xmin, xmax;
+    float ymin, ymax;
+    float zmin, zmax;
+  } limits;
 
-	Camera();
+  Camera();
 
-	void impose_limits();
+  void impose_limits();
 
 public:
 
-	~Camera();
+  ~Camera();
 
-	void set_limits(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax);
+  void set_limits(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax);
 
-	void orientate() const;
-	void hover(GLdouble dx, GLdouble dz);
-	void look(GLdouble dx, GLdouble dy);
-	void zoom(GLdouble delta);
+  void orientate() const;
+  void hover(GLdouble dx, GLdouble dz);
+  void look(GLdouble dx, GLdouble dy);
+  void zoom(GLdouble delta);
 
-	void mousebutton(const GameEvent& ev);
-	void mousemotion(const GameEvent& ev);
+  void mousebutton(const GameEvent& ev);
+  void mousemotion(const GameEvent& ev);
 
-	static Camera& instance();
+  static Camera& instance();
 };
 
 #endif

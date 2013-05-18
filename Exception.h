@@ -6,14 +6,14 @@
 
 class Exception : public std::exception
 {
-	std::string _what;
+  std::string _what;
 public:
-	Exception(std::string msg) throw() : _what(msg) {}
-	~Exception() throw() {}
+  Exception(std::string msg) throw() : _what(msg) {}
+  ~Exception() throw() {}
 
-	const char *what() const throw() {
-		return _what.c_str();
-	}
+  const char *what() const throw() {
+    return _what.c_str();
+  }
 };
 
 #endif

@@ -6,8 +6,8 @@
 class SphereCreep : public Creep
 {
 public:
-	SphereCreep();
-	void draw_model(const float& elapsed) const;
+  SphereCreep();
+  void draw_model(const float& elapsed) const;
 };
 
 #endif
