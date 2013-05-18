@@ -1,6 +1,5 @@
 #include "CreepManager.h"
 #include "IO.h"
-#include "SphereCreep.h"
 #include "Player.h"
 #include "Text.h"
 #include "Debug.h"
@@ -28,7 +27,6 @@ CreepManager::setup(const Json::Value& levelspec)
 
   float spawntime = 0;
 
-  DBG(Json::serialize(levelspec["waves"], Json::FORMAT_PRETTY));
   for (Json::Value wave : levelspec["waves"].asArray()) {
     wave_t w;
     for (Json::Value creep : wave["creeps"].asArray()) {
