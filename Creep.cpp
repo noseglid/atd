@@ -10,6 +10,7 @@
 
 Creep::Creep(Json::Value spec) :
   Mobile(spec["speed"].asNumber()),
+  distance_moved(0),
   audio_death(Audio::instance().load_sfx(spec["audio"]["death"].asString())),
   model(Model::load(spec["model"].asString())),
   total_health(spec["health"].asInt()),
@@ -54,7 +55,10 @@ Creep::tick(const float& elapsed)
 {
   try {
     float sf = get_speed_factor(elapsed);
-    pos += dir * sf;
+    Vector3 v = dir * sf;
+    pos += v;
+
+    distance_moved += v.length();
 
     /* Will yet another step takes us past our target? */
     if ((dir * sf + pos - vtarget).length() > (pos - vtarget).length()) {
@@ -77,6 +81,12 @@ float
 Creep::get_health() const
 {
   return current_health;
+}
+
+float
+Creep::get_distance_moved() const
+{
+  return distance_moved;
 }
 
 void

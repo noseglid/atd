@@ -16,10 +16,11 @@ class Creep : public de::Emitter<>, public Targetable, public Mobile
 {
   friend class CreepManager;
 
-  void travel_to(const PathCoord& target);
-
+  float distance_moved;
   Mix_Chunk *audio_death;
   Model *model;
+
+  void travel_to(const PathCoord& target);
 
 protected:
   const Path *path;
@@ -41,6 +42,7 @@ public:
   virtual Vector3 get_position() const;
 
   float get_health() const;
+  float get_distance_moved() const;
 
   void draw(const float& elapsed) const;
   void draw_health() const;
