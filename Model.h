@@ -55,7 +55,6 @@ public:
 
   void normalize();
   void draw(float animtime);
-  void drawBones();
 };
 
 #endif

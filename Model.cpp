@@ -428,7 +428,7 @@ Model::draw(float elapsed)
   }
 
   this->rrender(scene->mRootNode);
-  drawBones();
+  this->rrenderbones(scene->mRootNode);
 }
 
 void
@@ -437,6 +437,7 @@ Model::rrenderbones(const aiNode *node)
   glDisable(GL_DEPTH_TEST);
   glDisable(GL_LIGHTING);
   glDisable(GL_TEXTURE_2D);
+  glPointSize(2.0f);
 
   glColor3f(1.0, 0.0, 0.0);
   for (std::pair<std::string, struct bone> p : bones) {
@@ -463,14 +464,6 @@ Model::rrenderbones(const aiNode *node)
     glPopMatrix();
   }
   glEnd();
-
-  glColor3f(0.5, 0.5, 0.5);
-}
-
-void
-Model::drawBones()
-{
-  rrenderbones(scene->mRootNode);
 }
 
 Model *
