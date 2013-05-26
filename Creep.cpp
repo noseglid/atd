@@ -92,7 +92,10 @@ Creep::get_distance_moved() const
 void
 Creep::draw(const float& elapsed) const
 {
+  float angle = dir.angle(Vector3(0.0f, 0.0f, 1.0f));
+
   glTranslatef(pos.x, pos.y + 0.5f, pos.z);
+  glRotatef(rad2deg(angle), 0.0f, 1.0f, 0.0f);
 
   glPushMatrix();
   this->model->draw(elapsed);

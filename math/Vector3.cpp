@@ -29,6 +29,18 @@ Vector3::normalize()
   z = z / len;
 }
 
+float
+Vector3::dot(const Vector3& rhs) const
+{
+  return x * rhs.x + y * rhs.y + z * rhs.z;
+}
+
+float
+Vector3::angle(const Vector3& rhs) const
+{
+  return acos(dot(rhs) / (length() * rhs.length()));
+}
+
 Vector3&
 Vector3::operator*=(const float& rhs)
 {

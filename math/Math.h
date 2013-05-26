@@ -5,6 +5,7 @@
 #include "Vector3.h"
 #include "Matrix4.h"
 
-float deg2rad(const float deg);
+float deg2rad(const float& deg);
+float rad2deg(const float& rad);
 
 #endif
