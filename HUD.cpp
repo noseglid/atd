@@ -8,9 +8,9 @@
 #define HUD_BUTTON_WIDTH 80.0f
 #define HUD_BUTTON_HEIGHT 64.0f
 
-#define BOTTOM_BAR_OFFSET 3.0f
-#define BOTTOM_BAR_PADDING 5.0f
-#define BOTTOM_BAR_HEIGHT (HUD_BUTTON_HEIGHT + 2 * BOTTOM_BAR_PADDING)
+#define BAR_OFFSET 3.0f
+#define BAR_PADDING 5.0f
+#define BAR_HEIGHT (HUD_BUTTON_HEIGHT + 2 * BAR_PADDING)
 
 int HUD::screen_width  = 0;
 int HUD::screen_height = 0;
@@ -26,91 +26,81 @@ HUD::HUD() : marked_button(-1)
 {
   Game::instance().on("tick_nodepth", std::bind(&HUD::tick, this));
   Game::instance().on("mousedown", std::bind(&HUD::mousedown, this, std::placeholders::_1));
+
+  nbuttonsat[BOTTOM_LEFT] = 0;
+  nbuttonsat[BOTTOM_RIGHT] = 0;
 }
 
 int
 HUD::button_index(int x, int y) const
 {
-  x -= (BOTTOM_BAR_OFFSET + BOTTOM_BAR_PADDING);
-  int i = -1;
-  while (x > 0) {
-    x -= (HUD_BUTTON_WIDTH + 2 * BOTTOM_BAR_PADDING);
-    ++i;
+  y = screen_height - y;
+  for (button_def def : button_definitions) {
+    if (def.vertices.left  <= x &&
+        def.vertices.right >= x &&
+        def.vertices.bot   <= y &&
+        def.vertices.top   >= y) {
+      return def.button_index;
+    }
   }
-  return i;
+
+  return -1;
 }
 
 void
-HUD::draw_bottom_banner() const
+HUD::draw_banner(float yoffset) const
 {
   glBegin(GL_TRIANGLE_STRIP);
     glVertex2f(
-      BOTTOM_BAR_OFFSET,
-      BOTTOM_BAR_OFFSET + BOTTOM_BAR_HEIGHT
+      BAR_OFFSET,
+      yoffset + BAR_HEIGHT
     );
 
     glVertex2f(
-      BOTTOM_BAR_OFFSET,
-      BOTTOM_BAR_OFFSET
+      BAR_OFFSET,
+      yoffset
     );
 
     glVertex2f(
-      HUD::screen_width - BOTTOM_BAR_OFFSET,
-      BOTTOM_BAR_OFFSET + BOTTOM_BAR_HEIGHT
+      HUD::screen_width - BAR_OFFSET,
+      yoffset + BAR_HEIGHT
     );
 
     glVertex2f(
-      HUD::screen_width - BOTTOM_BAR_OFFSET,
-      BOTTOM_BAR_OFFSET
+      HUD::screen_width - BAR_OFFSET,
+      yoffset
     );
   glEnd();
 }
 
 void
-HUD::draw_button(GLuint texture, int i, bool marked) const
+HUD::draw_button(button_def def) const
 {
-  glBindTexture(GL_TEXTURE_2D, texture);
+  glBindTexture(GL_TEXTURE_2D, def.texture);
 
   glBegin(GL_TRIANGLE_STRIP);
-    /* Top Left */
     glTexCoord2f(0.0f, 1.0f);
-    glVertex2f(
-      (i + 1) * BOTTOM_BAR_PADDING + i * (HUD_BUTTON_WIDTH + BOTTOM_BAR_PADDING) + BOTTOM_BAR_OFFSET,
-      BOTTOM_BAR_OFFSET + HUD_BUTTON_HEIGHT + BOTTOM_BAR_PADDING
-    );
+    glVertex2f(def.vertices.left, def.vertices.top);
 
-    /* Bottom Left */
     glTexCoord2f(0.0f, 0.0f);
-    glVertex2f(
-      (i + 1) * BOTTOM_BAR_PADDING + i * (HUD_BUTTON_WIDTH + BOTTOM_BAR_PADDING) + BOTTOM_BAR_OFFSET,
-      BOTTOM_BAR_OFFSET + BOTTOM_BAR_PADDING
-    );
+    glVertex2f(def.vertices.left, def.vertices.bot);
 
-    /* Top Right */
     glTexCoord2f(1.0f, 1.0f);
-    glVertex2f(
-      (i + 1) * (HUD_BUTTON_WIDTH + 2 * BOTTOM_BAR_PADDING) + BOTTOM_BAR_OFFSET,
-      BOTTOM_BAR_OFFSET + HUD_BUTTON_HEIGHT + BOTTOM_BAR_PADDING
-    );
+    glVertex2f(def.vertices.right, def.vertices.top);
 
-    /* Bottom Right */
     glTexCoord2f(1.0f, 0.0f);
-    glVertex2f(
-      (i + 1) * (HUD_BUTTON_WIDTH + 2 * BOTTOM_BAR_PADDING) + BOTTOM_BAR_OFFSET,
-      BOTTOM_BAR_OFFSET + BOTTOM_BAR_PADDING
-    );
+    glVertex2f(def.vertices.right, def.vertices.bot);
   glEnd();
 
-  if (marked) {
+  if (def.button_index == marked_button) {
+    /* This button is currently 'marked' */
+
     glPointSize(12.0f);
     glDisable(GL_TEXTURE_2D);
 
     glBegin(GL_POINTS);
     glColor3f(1.0f, 0.0f, 0.0f);
-    glVertex2f(
-      (i + 1) * (HUD_BUTTON_WIDTH + 2 * BOTTOM_BAR_PADDING) + BOTTOM_BAR_OFFSET,
-      BOTTOM_BAR_OFFSET + HUD_BUTTON_HEIGHT + BOTTOM_BAR_PADDING
-    );
+    glVertex2f(def.vertices.right, def.vertices.top);
     glEnd();
   }
 }
@@ -118,13 +108,15 @@ HUD::draw_button(GLuint texture, int i, bool marked) const
 void
 HUD::draw_stats() const
 {
+  Text::set_color(0.0f, 0.80f, 0.0f);
+
   std::stringstream gold;
   gold << "Gold: " << Player::instance().gold;
-  Text::overlay(gold.str(), 10, 30, false);
+  Text::overlay(gold.str(), 10, 40, false);
 
   std::stringstream lives;
   lives << "Lives: " << Player::instance().lives;
-  Text::overlay(lives.str(), 10, 50, false);
+  Text::overlay(lives.str(), 10, 60, false);
 }
 
 void
@@ -134,13 +126,24 @@ HUD::tick() const
 
   glColor4f(0.5f, 0.5f, 0.5f, 0.6f);
   glDisable(GL_TEXTURE_2D);
-  draw_bottom_banner();
+  draw_banner(screen_height - (BAR_HEIGHT + BAR_OFFSET));
+  draw_banner(BAR_OFFSET);
 
   for (button_def def : button_definitions) {
     glEnable(GL_TEXTURE_2D);
     glColor3f(1.0f, 1.0f, 1.0f);
-    draw_button(def.texture, def.button_index, def.button_index == marked_button);
+    draw_button(def);
   }
+
+  int title_width, title_height;
+  Text::set_color(0.853, 0.853, 0.853);
+  Text::size(title, &title_width, &title_height);
+  Text::overlay(
+    title,
+    screen_width / 2 - title_width / 2,
+    BAR_OFFSET + BAR_HEIGHT / 2 + title_height / 2,
+    false
+  );
 
   draw_stats();
 
@@ -152,10 +155,10 @@ HUD::mousedown(const GameEvent& ge) const
 {
   if (!in_turf(ge.ev.button.x, ge.ev.button.y)) return;
 
-  int index = button_index(ge.ev.button.x, ge.ev.button.y);
-  if (0 > index || button_definitions.size() <= index) return;
+  int bindex = button_index(ge.ev.button.x, ge.ev.button.y);
+  if (0 > bindex) return;
 
-  button_definitions[index].cb(index);
+  button_definitions.at(bindex).cb(bindex);
 }
 
 void
@@ -170,25 +173,72 @@ bool
 HUD::in_turf(int x, int y) const
 {
   return
-    y > (screen_height - BOTTOM_BAR_OFFSET - BOTTOM_BAR_HEIGHT) &&
-    y < (screen_height - BOTTOM_BAR_OFFSET);
+    y > (screen_height - BAR_OFFSET - BAR_HEIGHT) &&
+    y < (screen_height - BAR_OFFSET);
+}
+
+void
+HUD::calc_button_vertices(int xindex, float *left, float *right, float *top, float *bot) const
+{
+  int i = abs(xindex) - 1;
+
+  *left = (i + 1) * BAR_PADDING +
+          i * (HUD_BUTTON_WIDTH + BAR_PADDING) + BAR_OFFSET;
+
+  *right = (i + 1) * (HUD_BUTTON_WIDTH + 2 * BAR_PADDING) + BAR_OFFSET;
+
+  if (0 > xindex) {
+    int tmp = *left;
+    *left = screen_width - *right;
+    *right = screen_width - tmp;
+  }
+
+  *top = BAR_OFFSET + HUD_BUTTON_HEIGHT + BAR_PADDING;
+  *bot = BAR_OFFSET + BAR_PADDING;
 }
 
 int
-HUD::add_button(GLuint texture, button_cb cb)
+HUD::add_button(GLuint texture, button_cb cb, BUTTON_LOCATION loc)
 {
   button_def def;
   def.texture = texture;
   def.cb = cb;
   def.button_index = button_definitions.size();
+  def.loc = loc;
+  calc_button_vertices(
+    ((loc == BOTTOM_RIGHT) ? -1 : 1) * (++nbuttonsat[loc]),
+    &def.vertices.left,
+    &def.vertices.right,
+    &def.vertices.top,
+    &def.vertices.bot
+  );
 
   button_definitions.push_back(def);
   return def.button_index;
 }
 
+void
+HUD::remove_button(int idx)
+{
+  auto it = std::find_if(button_definitions.begin(), button_definitions.end(),
+    [idx](button_def def) { return def.button_index == idx; });
+  if (it == button_definitions.end()) {
+    DBGWRN("No button index: " << idx << " defined in HUD.");
+    return;
+  }
+
+  nbuttonsat[it->loc]--;
+  button_definitions.erase(it);
+}
 
 void
-HUD::mark_button(int index)
+HUD::mark_button(int bindex)
 {
-  marked_button = index;
+  marked_button = bindex;
+}
+
+void
+HUD::set_title(std::string title)
+{
+  this->title = title;
 }
