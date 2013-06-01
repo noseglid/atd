@@ -52,8 +52,8 @@
       "creeps" : [
         {
           "spec" : "specs/creeps/vlod.json",
-          "spawninterval" : 0.0,
-          "count" : 0
+          "spawninterval" : 1.0,
+          "count" : 50
         }
       ]
     },

@@ -1,6 +1,7 @@
 #ifndef __PLAYER_H__
 #define __PLAYER_H__
 
+#include "Exception.h"
 #include "Purchasable.h"
 
 class PlayerDeath : public Exception

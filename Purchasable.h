@@ -3,13 +3,10 @@
 
 class Purchasable
 {
-
-protected:
-  Purchasable(int price) : price(price)
-  {
-  }
-
 public:
+
+  Purchasable(int price) : price(price) {}
+
   int price;
 };
 

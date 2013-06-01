@@ -35,7 +35,8 @@ public:
   static void size(const std::string& text, int *width = NULL, int *height = NULL);
 
   static void set_color(float r, float g, float b);
-  static void overlay(const std::string& text, const int& x, const int& y, bool offbottom = true, bool offleft = true);
+  static void overlay(const std::string& text, const int& x, const int& y,
+                      bool offbottom = true, bool offleft = true);
   static void scrolling(const std::string& text, const Vector3& pos);
 
 };

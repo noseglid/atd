@@ -11,10 +11,12 @@
     {
       "price"  : 20,
       "range"  : 2.5,
+      "reload" : 1.4,
       "damage" : 45.0
     },
     {
       "price"  : 20,
+      "reload" : 0.7,
       "range"  : 2.5,
       "damage" : 45.0
     }

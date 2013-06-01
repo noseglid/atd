@@ -10,6 +10,7 @@ Tower::Tower(Json::Value spec, Vector3 pos) :
   Purchasable(spec["price"].asInt()),
   pos(pos),
   name(spec["name"].asString()),
+  level(1),
   reload(spec["reload"].asNumber()),
   range(spec["range"].asNumber()),
   damage(spec["damage"].asNumber()),
@@ -53,6 +54,15 @@ Tower::set_position(Vector3 pos)
   this->pos = pos;
 }
 
+void
+Tower::upgrade(int level, float reload, float range, float damage)
+{
+  this->level  = level;
+  this->reload = reload;
+  this->range  = range;
+  this->damage = damage;
+}
+
 Vector3
 Tower::get_position() const
 {
@@ -63,6 +73,12 @@ std::string
 Tower::get_name() const
 {
   return name;
+}
+
+int
+Tower::get_level() const
+{
+  return level;
 }
 
 Creep *

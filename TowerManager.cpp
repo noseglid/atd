@@ -131,7 +131,41 @@ TowerManager::purchase_tower(Vector3 pos)
 void
 TowerManager::upgrade_tower(int i)
 {
-  DBG("Will upgrade: " << selected_tower->second->get_name());
+  auto avail_it = available_towers.find(selected_tower->second->get_name());
+  if (available_towers.end() == avail_it) {
+    DBGERR("No tower named: '" << selected_tower->second->get_name() << "'");
+    return;
+  }
+
+  Tower *t = selected_tower->second;
+  Vector3 textpos = t->get_position();
+  textpos.y += 1.0f;
+
+  if (avail_it->second["upgrades"].asArray().size() == t->get_level() - 1) {
+    DBG("No more upgrades available for this tower.");
+    return;
+  }
+
+  Json::Value upgrade = avail_it->second["upgrades"].asArray().at(t->get_level() - 1);
+
+  Purchasable dummy(upgrade["price"].asInt());
+  if (!Player::instance().purchase(&dummy)) {
+    Text::scrolling("No moneys for upgrade.", textpos);
+    return;
+  }
+
+  t->upgrade(
+    t->get_level() + 1,
+    upgrade["reload"].asNumber(),
+    upgrade["range"].asNumber(),
+    upgrade["damage"].asNumber()
+  );
+
+
+  std::stringstream ss;
+  ss << "-" << upgrade["price"].asInt();
+  Text::set_color(1.0f, 0.9f, 0.0f);
+  Text::scrolling(ss.str(), textpos);
 }
 
 void
