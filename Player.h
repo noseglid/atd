@@ -3,6 +3,12 @@
 
 #include "Purchasable.h"
 
+class PlayerDeath : public Exception
+{
+public:
+  PlayerDeath() : Exception("Player died") {}
+};
+
 class Player
 {
   friend class HUD;
