@@ -1,4 +1,5 @@
 #include "Tower.h"
+#include "GLShapes.h"
 #include "Text.h"
 #include "CreepManager.h"
 #include "DummyCreep.h"
@@ -8,6 +9,7 @@
 Tower::Tower(Json::Value spec, Vector3 pos) :
   Purchasable(spec["price"].asInt()),
   pos(pos),
+  name(spec["name"].asString()),
   reload(spec["reload"].asNumber()),
   range(spec["range"].asNumber()),
   damage(spec["damage"].asNumber()),
@@ -21,27 +23,11 @@ Tower::draw_range_circle() const
 {
   glDisable(GL_DEPTH_TEST);
   glDisable(GL_TEXTURE_2D);
+  glEnable(GL_COLOR_MATERIAL);
 
-  int points = 20;
-  float step =  2*M_PI / (float)points;
-
-  GLfloat
-    emission[]  = { 0.0f, 0.0f, 0.0f, 1.0f },
-    specular[] = { 0.0f, 0.0f, 0.0f, 1.0f },
-    ambient[]  = { 0.0f, 0.0f, 1.0f, 0.1f };
-
-  glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
-  glMaterialfv(GL_FRONT, GL_EMISSION, emission);
-  glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, ambient);
-
-  glBegin(GL_TRIANGLE_FAN);
-  glVertex3f(0.0f, 0.0f, 0.0f);
-  for (int i = points; i >= 0; --i) {
-    float x = cos((float)i * step) * range;
-    float z = sin((float)i * step) * range;
-    glVertex3f(x, 0.0f, z);
-  }
-  glEnd();
+  glTranslatef(pos.x, pos.y, pos.z);
+  glColor4f(0.0f, 0.0f, 0.8f, 0.2f);
+  GLShapes::circle(range);
 
   glEnable(GL_DEPTH_TEST);
 }
@@ -51,9 +37,7 @@ Tower::draw(const float& elapsed) const
 {
   glPushMatrix();
   glTranslatef(pos.x, pos.y, pos.z);
-  model->normalize();
   model->draw(elapsed);
-  //draw_range_circle();
   glPopMatrix();
 
   for (Projectile *p : projectiles) {
@@ -73,6 +57,12 @@ Vector3
 Tower::get_position() const
 {
   return this->pos;
+}
+
+std::string
+Tower::get_name() const
+{
+  return name;
 }
 
 Creep *

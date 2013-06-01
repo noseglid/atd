@@ -421,13 +421,16 @@ void
 Model::draw(float elapsed)
 {
   glEnable(GL_DEPTH_TEST);
+
   if (0 < scene->mNumAnimations) {
     const aiAnimation *anim = scene->mAnimations[0];
     float animtime = fmod(elapsed * anim->mTicksPerSecond, anim->mDuration);
     this->animate(scene->mRootNode, animtime, aiMatrix4x4());
   }
 
+  glDisable(GL_COLOR_MATERIAL);
   this->rrender(scene->mRootNode);
+  glEnable(GL_COLOR_MATERIAL);
   this->rrenderbones(scene->mRootNode);
 }
 

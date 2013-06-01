@@ -1,0 +1,11 @@
+{
+  "name"   : "Vlod",
+  "health" : 120,
+  "cost"   : 1,
+  "reward" : 20,
+  "speed"  : 0.40,
+  "model"  : "vlod/vlod.dae",
+  "audio"  : {
+    "death" : "sfx/creep_death.ogg"
+   }
+}

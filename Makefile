@@ -10,7 +10,7 @@ LDFLAGS += -lassimp -ljpeg -ltga -lSDL_ttf -lSDL_mixer -lpjson -framework OpenGL
 
 SRCS  = main.cpp
 SRCS += Player.cpp Game.cpp Map.cpp Path.cpp
-SRCS += KeyboardHandler.cpp MetaManager.cpp GLTransform.cpp
+SRCS += KeyboardHandler.cpp MetaManager.cpp GLTransform.cpp GLShapes.cpp
 
 # Core
 SRCS += Mobile.cpp Model.cpp Camera.cpp Text.cpp HUD.cpp Audio.cpp

@@ -1,10 +1,22 @@
 {
-  "type"   : "normal",
-  "name"   : "Arcane",
-  "model"  : "towers/sages_arcane.dae",
-  "hudtex" : "tower_basic1.jpg",
-  "price"  : 80,
-  "reload" : 1.4,
-  "range"  : 2.5,
-  "damage" : 31.0
+  "type"     : "normal",
+  "name"     : "Arcane",
+  "model"    : "towers/sages_arcane.dae",
+  "hudtex"   : "tower_basic1.jpg",
+  "price"    : 80,
+  "reload"   : 1.4,
+  "range"    : 2.5,
+  "damage"   : 31.0,
+  "upgrades" : [
+    {
+      "price"  : 20,
+      "range"  : 2.5,
+      "damage" : 45.0
+    },
+    {
+      "price"  : 20,
+      "range"  : 2.5,
+      "damage" : 45.0
+    }
+  ]
 }

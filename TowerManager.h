@@ -12,15 +12,17 @@ struct GameEvent;
 
 class TowerManager
 {
+  typedef std::map<Vector3, Tower*, Vector3cmp> tlist_t;
+
   Vector3 dummy_tower_pos;
-  std::string selected_tower;
+  std::string build_tower;
   std::map<std::string, Tower*> dummy_towers;
   std::map<std::string, Json::Value> available_towers;
 
-  std::map<Vector3, Tower*, Vector3cmp> towers;
-  struct {
-    int x, y;
-  } click;
+  int upgrade_button;
+  tlist_t::iterator selected_tower;
+  tlist_t towers;
+  Vector3 click;
 
   MapEvent last_map_event;
 
@@ -29,9 +31,13 @@ class TowerManager
   Tower *create_tower(std::string tower, Vector3 pos);
   void dummy_tower(int x, int y);
   bool purchase_tower(Vector3 pos);
-  void deselect_tower();
-  void select_tower(std::string name, int i);
+  void upgrade_tower(int i);
+  void build_tower_unset();
+  void build_tower_set(std::string name, int i);
   void map_hover(const MapEvent& me);
+
+  bool tower_purchase_if();
+  void tower_select_if(int clickx, int clicky);
 
   void mouseup(const GameEvent& ev);
   void mousedown(const GameEvent& ev);

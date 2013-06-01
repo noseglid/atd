@@ -1,10 +1,11 @@
 {
-  "type"   : "hero",
-  "name"   : "Poran",
-  "model"  : "towers/brutals_hero.dae",
-  "hudtex" : "tower_hero.jpg",
-  "price"  : 135,
-  "reload" : 0.2,
-  "range"  : 4.8,
-  "damage" : 28.2
+  "type"     : "hero",
+  "name"     : "Poran",
+  "model"    : "towers/brutals_hero.dae",
+  "hudtex"   : "tower_hero.jpg",
+  "price"    : 135,
+  "reload"   : 0.2,
+  "range"    : 4.8,
+  "damage"   : 28.2,
+  "upgrades" : []
 }

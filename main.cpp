@@ -22,7 +22,7 @@
 #include <vector>
 
 static SDL_Surface *surface;
-static int screen_width = 1600, screen_height = 1200;
+static int screen_width = 1024, screen_height = 768;
 
 Map *map;
 MetaManager *meta_manager;
@@ -62,7 +62,8 @@ init_SDL()
 
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-  surface = SDL_SetVideoMode(screen_width, screen_height, 16, SDL_OPENGL | SDL_SWSURFACE);
+  surface = SDL_SetVideoMode(screen_width, screen_height, 16,
+    SDL_OPENGL | SDL_SWSURFACE | SDL_NOFRAME);
   if (NULL == surface) {
     throw Exception("Could not set video modes.");
   }
@@ -141,14 +142,13 @@ int main(int argc, char *argv[])
     Game::instance().run();
 
   } catch (Json::Exception& e) {
-    std::cout << "json error: " << e.what() << std::endl;
+    DBGERR("json error: " << e.what());
     exit(EXIT_FAILURE);
   } catch (Exception& e) {
-    fflush(stdout);
-    std::cout << "Game ended: " << e.what() << std::endl;
+    DBGERR("Game ended: " << e.what());
     exit(EXIT_FAILURE);
   } catch (...) {
-    std::cout << "unknown error." << std::endl;
+    DBGERR("unknown error.");
     exit(EXIT_FAILURE);
   }
 
