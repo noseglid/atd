@@ -12,10 +12,12 @@ int Text::screen_width  = 0;
 int Text::screen_height = 0;
 Text Text::instance = Text();
 std::vector<WorldText> Text::scrollings = std::vector<WorldText>();
+SDL_Color font_color;
 
 Text::Text()
 {
   Game::instance().on("tick_nodepth", std::bind(&Text::tick, this));
+  font_color = { 255, 255, 255 };
 }
 
 void
@@ -35,17 +37,30 @@ Text::init(const int& screen_width, const int& screen_height)
   Text::screen_height = screen_height;
 }
 
+void
+Text::size(const std::string& text, int *width, int *height)
+{
+  TTF_SizeText(font_overlay, text.c_str(), width, height);
+}
+
+void
+Text::set_color(float r, float g, float b)
+{
+  font_color.r = r * 255;
+  font_color.g = g * 255;
+  font_color.b = b * 255;
+}
+
 GLuint
 Text::create_texture(const std::string& text, TTF_Font *font, int& w, int& h)
 {
   glEnable(GL_BLEND);
-  SDL_Color fg = { 255, 255, 255 };
 
   TTF_SizeText(font, text.c_str(), &w, &h);
   SDL_Surface *intermediary = SDL_CreateRGBSurface(0, w, h, 32,
       0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
 
-  SDL_Surface *text_surface = TTF_RenderUTF8_Solid(font, text.c_str(), fg);
+  SDL_Surface *text_surface = TTF_RenderUTF8_Solid(font, text.c_str(), font_color);
   SDL_BlitSurface(text_surface, 0, intermediary, 0);
   SDL_FreeSurface(text_surface);
 
@@ -79,7 +94,7 @@ Text::tick()
     glBindTexture(GL_TEXTURE_2D, wt.texture);
     glTranslatef(wt.pos.x + wt.delta.x, wt.pos.y + wt.delta.y, wt.pos.z + wt.delta.z);
     GLTransform::billboard();
-    glColor3f(wt.color.x, wt.color.y, wt.color.z);
+    glColor3f(wt.color.r / 255.0f, wt.color.g / 255.0f, wt.color.b / 255.0f);
     float height = 0.25f;
     float width = (float)wt.width/(float)wt.height * height;
     glBegin(GL_TRIANGLE_STRIP);
@@ -122,12 +137,12 @@ Text::overlay(const std::string& text, const int& x, const int& y, bool offbotto
 }
 
 void
-Text::scrolling(const std::string& text, const Vector3& pos, Vector3 color)
+Text::scrolling(const std::string& text, const Vector3& pos)
 {
   WorldText wt;
   wt.texture = Text::create_texture(text, font_world, wt.width, wt.height);
   wt.pos     = pos;
-  wt.color   = color;
+  wt.color   = font_color;
 
   scrollings.push_back(wt);
 }
