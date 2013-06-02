@@ -30,7 +30,8 @@ MetaManager::tick(const GameEvent& ev)
     std::stringstream ss;
     ss.precision(4);
     ss << "FPS: " << current_fps;
-    Text::overlay(ss.str(), 100, 20, false, false);
+    Text::set_color(0.8f, 0.8f, 0.8f);
+    Text::overlay(ss.str(), 100, 200, 16.0f, false, false);
   }
 }
 

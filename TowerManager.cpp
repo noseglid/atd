@@ -111,6 +111,7 @@ TowerManager::purchase_tower(Vector3 pos)
 
   Tower *t = create_tower(build_tower, pos);
   if (!Player::instance().purchase(t)) {
+    Text::set_color(1.0f, 1.0f, 1.0f);
     Text::scrolling("You're broke mate!", pos);
     delete t;
     return false;
@@ -122,7 +123,7 @@ TowerManager::purchase_tower(Vector3 pos)
 
 
   std::stringstream ss;
-  ss << "-" << t->price;
+  ss << "-" << t->price << "g";
   Text::set_color(1.0f, 0.9f, 0.0f);
   Text::scrolling(ss.str(), Vector3(pos.x, pos.y + 1.0f, pos.z));
   return true;
@@ -163,7 +164,7 @@ TowerManager::upgrade_tower(int i)
 
 
   std::stringstream ss;
-  ss << "-" << upgrade["price"].asInt();
+  ss << "-" << upgrade["price"].asInt() << "g";
   Text::set_color(1.0f, 0.9f, 0.0f);
   Text::scrolling(ss.str(), textpos);
 }

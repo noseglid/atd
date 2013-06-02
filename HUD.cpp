@@ -112,11 +112,11 @@ HUD::draw_stats() const
 
   std::stringstream gold;
   gold << "Gold: " << Player::instance().gold;
-  Text::overlay(gold.str(), 10, 40, false);
+  Text::overlay(gold.str(), 10, 40, 16.0f, false);
 
   std::stringstream lives;
   lives << "Lives: " << Player::instance().lives;
-  Text::overlay(lives.str(), 10, 60, false);
+  Text::overlay(lives.str(), 10, 60, 16.0f, false);
 }
 
 void
@@ -138,10 +138,13 @@ HUD::tick() const
   int title_width, title_height;
   Text::set_color(0.853, 0.853, 0.853);
   Text::size(title, &title_width, &title_height);
+  title_height *= 32.0f / TEXT_OVERLAY_PTSIZE;
+  title_width  *= 32.0f / TEXT_OVERLAY_PTSIZE;
   Text::overlay(
     title,
     screen_width / 2 - title_width / 2,
     BAR_OFFSET + BAR_HEIGHT / 2 + title_height / 2,
+    32.0f,
     false
   );
 

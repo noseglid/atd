@@ -91,7 +91,7 @@ CreepManager::creep_death(Creep *creep)
   Player::instance().alter_gold(creep->reward);
 
   std::stringstream ss;
-  ss << creep->reward << "g";
+  ss << "+" << creep->reward << "g";
   Text::set_color(1.0f, 0.9f, 0.0f);
   Text::scrolling(ss.str(), creep->get_position());
 

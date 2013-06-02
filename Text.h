@@ -9,6 +9,9 @@
 #include <OpenGL/gl.h>
 #include <SDL/SDL_ttf.h>
 
+#define TEXT_OVERLAY_PTSIZE 64
+#define TEXT_SCROLLING_PTSIZE 64
+
 struct WorldText
 {
   GLuint texture;
@@ -36,7 +39,7 @@ public:
 
   static void set_color(float r, float g, float b);
   static void overlay(const std::string& text, const int& x, const int& y,
-                      bool offbottom = true, bool offleft = true);
+                      const float& factor = 1.0, bool offbottom = true, bool offleft = true);
   static void scrolling(const std::string& text, const Vector3& pos);
 
 };

@@ -5,7 +5,7 @@
   "hudtex"   : "tower_basic1.jpg",
   "price"    : 80,
   "reload"   : 1.4,
-  "range"    : 2.5,
+  "range"    : 2.0,
   "damage"   : 31.0,
   "upgrades" : [
     {
@@ -17,7 +17,7 @@
     {
       "price"  : 20,
       "reload" : 0.7,
-      "range"  : 2.5,
+      "range"  : 3.5,
       "damage" : 45.0
     }
   ]

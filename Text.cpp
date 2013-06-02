@@ -23,15 +23,15 @@ Text::Text()
 void
 Text::init(const int& screen_width, const int& screen_height)
 {
-  if (!(Text::font_world = TTF_OpenFont("/Library/Fonts/Arial.ttf", 128))) {
+  if (!(Text::font_world = TTF_OpenFont("fonts/Celtic-Garamond-The-2nd.ttf",
+                                        TEXT_SCROLLING_PTSIZE))) {
     throw Exception("Could not load font file.");
   }
 
-  if (!(Text::font_overlay = TTF_OpenFont("/Library/Fonts/Arial.ttf", 16))) {
+  if (!(Text::font_overlay = TTF_OpenFont("fonts/Celtic-Garamond-The-2nd.ttf",
+                                          TEXT_OVERLAY_PTSIZE))) {
     throw Exception("Could not load font file.");
   }
-
-  TTF_SetFontStyle(Text::font_overlay, TTF_STYLE_BOLD);
 
   Text::screen_width  = screen_width;
   Text::screen_height = screen_height;
@@ -113,15 +113,24 @@ Text::tick()
 }
 
 void
-Text::overlay(const std::string& text, const int& x, const int& y, bool offbottom, bool offleft)
+Text::overlay(const std::string& text, const int& x, const int& y, const float& ptsize, bool offbottom, bool offleft)
 {
   GLTransform::enable2D();
   glEnable(GL_TEXTURE_2D);
+
+  if (ptsize > TEXT_OVERLAY_PTSIZE) {
+    DBGWRN("Requested overlay pt size is large than loaded. "
+           "Will upscale which might look horrible. "
+           "Consider increasing loaded size.");
+  }
 
   int w, h;
   GLuint texture = Text::create_texture(text, font_overlay, w, h);
   glBindTexture(GL_TEXTURE_2D, texture);
   glColor3f(1.0f, 1.0f, 1.0f);
+
+  h *= (ptsize / TEXT_OVERLAY_PTSIZE);
+  w *= (ptsize / TEXT_OVERLAY_PTSIZE);
 
   float yoffset = (offbottom) ? 2 * y : screen_height;
   float xoffset = (offleft)   ? 2 * x : screen_width;
