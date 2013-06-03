@@ -10,7 +10,7 @@
 #include "HUD.h"
 #include "Faction.h"
 
-TowerManager::TowerManager() : upgrade_button(-1), selected_tower(towers.end())
+TowerManager::TowerManager() : selected_tower(towers.end())
 {
   Game& g = Game::instance();
   g.on("tick",      std::bind(&TowerManager::tick,      this, std::placeholders::_1));
@@ -121,7 +121,6 @@ TowerManager::purchase_tower(Vector3 pos)
   dummy_tower_pos = Vector3();
   Map::instance().set_highlight(-1, -1);
 
-
   std::stringstream ss;
   ss << "-" << t->price << "g";
   Text::set_color(1.0f, 0.9f, 0.0f);
@@ -129,25 +128,32 @@ TowerManager::purchase_tower(Vector3 pos)
   return true;
 }
 
+int
+TowerManager::upgrades_left(tlist_t::const_iterator tower) const
+{
+  auto avail_it = available_towers.find(tower->second->get_name());
+  if (available_towers.end() == avail_it) {
+    DBGERR("No tower named: '" << selected_tower->second->get_name() << "'");
+    return -1;
+  }
+
+  return (avail_it->second["upgrades"].asArray().size() - (tower->second->get_level() - 1));
+}
+
 void
 TowerManager::upgrade_tower(int i)
 {
-  auto avail_it = available_towers.find(selected_tower->second->get_name());
-  if (available_towers.end() == avail_it) {
-    DBGERR("No tower named: '" << selected_tower->second->get_name() << "'");
+  if (0 == upgrades_left(selected_tower)) {
     return;
   }
 
   Tower *t = selected_tower->second;
+  Json::Value upgrade = available_towers
+    .find(selected_tower->second->get_name())
+    ->second["upgrades"].asArray().at(t->get_level() - 1);
+
   Vector3 textpos = t->get_position();
   textpos.y += 1.0f;
-
-  if (avail_it->second["upgrades"].asArray().size() == t->get_level() - 1) {
-    DBG("No more upgrades available for this tower.");
-    return;
-  }
-
-  Json::Value upgrade = avail_it->second["upgrades"].asArray().at(t->get_level() - 1);
 
   Purchasable dummy(upgrade["price"].asInt());
   if (!Player::instance().purchase(&dummy)) {
@@ -167,6 +173,9 @@ TowerManager::upgrade_tower(int i)
   ss << "-" << upgrade["price"].asInt() << "g";
   Text::set_color(1.0f, 0.9f, 0.0f);
   Text::scrolling(ss.str(), textpos);
+
+  /* Reset buttons so potentially grayscale upgrade button is shown */
+  tower_set_hud_buttons();
 }
 
 void
@@ -218,38 +227,57 @@ TowerManager::tower_purchase_if()
 }
 
 void
+TowerManager::tower_set_hud_buttons()
+{
+  static int upgrade_button = -1;
+  static HUD& hud = HUD::instance();
+  static HUD::BUTTON_LOCATION bloc = HUD::BOTTOM_RIGHT;
+
+  if (-1 != upgrade_button) {
+    hud.remove_button(upgrade_button);
+    upgrade_button = -1;
+  }
+
+  if (towers.end() == selected_tower) {
+    return;
+  }
+
+  std::string tex_upgr = (0 >= upgrades_left(selected_tower)) ?
+    "upgrade_disabled.jpg" : "upgrade.jpg";
+
+  upgrade_button = hud.add_button(
+    IL::GL::texture(tex_upgr),
+    std::bind(
+      &TowerManager::upgrade_tower,
+      this,
+      std::placeholders::_1
+    ), bloc
+  );
+
+}
+
+void
 TowerManager::tower_select_if(int clickx, int clicky)
 {
-  try {
-    HUD &hud = HUD::instance();
-    if (-1 != upgrade_button) {
-      hud.remove_button(upgrade_button);
-      hud.set_title("");
-      upgrade_button = -1;
-    }
+  HUD::instance().set_title("");
 
+  try {
     Vector3 pos3d = GLTransform::unproject(clickx, clicky);
     Vector3 search = Map::instance().get_center_of(pos3d.x, pos3d.z);
     search.y = 0.0f;
-    selected_tower = towers.find(search);
-    if (towers.end() == selected_tower) {
-      return;
-    }
 
-    hud.set_title(selected_tower->second->get_name());
-    upgrade_button = hud.add_button(
-      IL::GL::texture("upgrade.jpg"),
-      std::bind(
-        &TowerManager::upgrade_tower,
-        this,
-        std::placeholders::_1
-      ), HUD::BOTTOM_RIGHT
-    );
+    selected_tower = towers.find(search);
 
   } catch (const Exception& e) {
     /* clicked somewhere not part of map. just ignore */
     selected_tower = towers.end();
   }
+
+  if (towers.end() != selected_tower) {
+    HUD::instance().set_title(selected_tower->second->get_name());
+  }
+
+  tower_set_hud_buttons();
 }
 
 void

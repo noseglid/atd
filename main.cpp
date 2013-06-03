@@ -48,7 +48,7 @@ init_ATD()
   meta_manager  = new MetaManager();
 
   Game::instance();
-  Player::instance().alter_gold(100);
+  Player::instance().alter_gold(120);
   Player::instance().alter_lives(10);
 }
 

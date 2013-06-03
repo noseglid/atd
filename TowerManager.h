@@ -19,7 +19,6 @@ class TowerManager
   std::map<std::string, Tower*> dummy_towers;
   std::map<std::string, Json::Value> available_towers;
 
-  int upgrade_button;
   tlist_t::iterator selected_tower;
   tlist_t towers;
   Vector3 click;
@@ -36,7 +35,9 @@ class TowerManager
   void build_tower_set(std::string name, int i);
   void map_hover(const MapEvent& me);
 
+  int upgrades_left(tlist_t::const_iterator tower) const;
   bool tower_purchase_if();
+  void tower_set_hud_buttons();
   void tower_select_if(int clickx, int clicky);
 
   void mouseup(const GameEvent& ev);
