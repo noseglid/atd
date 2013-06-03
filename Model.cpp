@@ -418,9 +418,10 @@ Model::normalize()
 }
 
 void
-Model::draw(float elapsed)
+Model::draw(float elapsed, float opacity)
 {
   glEnable(GL_DEPTH_TEST);
+  glEnable(GL_COLOR_MATERIAL);
 
   if (0 < scene->mNumAnimations) {
     const aiAnimation *anim = scene->mAnimations[0];
@@ -428,9 +429,8 @@ Model::draw(float elapsed)
     this->animate(scene->mRootNode, animtime, aiMatrix4x4());
   }
 
-  glDisable(GL_COLOR_MATERIAL);
+  glColor4f(1.0f, 1.0f, 1.0f, opacity);
   this->rrender(scene->mRootNode);
-  glEnable(GL_COLOR_MATERIAL);
   this->rrenderbones(scene->mRootNode);
 }
 

@@ -25,7 +25,7 @@ class Tower : public Purchasable
 
 public:
   Tower(Json::Value spec, Vector3 pos);
-  void draw(const float& elapsed) const;
+  void draw(const float& elapsed, const float& opacity = 1.0) const;
   void draw_range_circle() const;
 
   void set_position(Vector3 pos);

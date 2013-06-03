@@ -54,7 +54,7 @@ public:
   static Model *load(std::string file);
 
   void normalize();
-  void draw(float animtime);
+  void draw(float animtime, float opacity = 1.0);
 };
 
 #endif

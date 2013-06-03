@@ -34,11 +34,11 @@ Tower::draw_range_circle() const
 }
 
 void
-Tower::draw(const float& elapsed) const
+Tower::draw(const float& elapsed, const float& opacity) const
 {
   glPushMatrix();
   glTranslatef(pos.x, pos.y, pos.z);
-  model->draw(elapsed);
+  model->draw(elapsed, opacity);
   glPopMatrix();
 
   for (Projectile *p : projectiles) {

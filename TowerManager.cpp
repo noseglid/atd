@@ -299,11 +299,8 @@ TowerManager::tick(const GameEvent& ev)
     Tower *t = dummy_towers.at(build_tower);
     t->set_position(dummy_tower_pos);
 
-    glEnable(GL_COLOR_MATERIAL);
-    glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
-
     glPushMatrix();
-      t->draw(elapsed);
+      t->draw(elapsed, 0.5f);
     glPopMatrix();
 
     glDisable(GL_COLOR_MATERIAL);
