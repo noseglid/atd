@@ -28,7 +28,7 @@ Text::init(const int& screen_width, const int& screen_height)
     throw Exception("Could not load font file.");
   }
 
-  if (!(Text::font_overlay = TTF_OpenFont("fonts/Celtic-Garamond-The-2nd.ttf",
+  if (!(Text::font_overlay = TTF_OpenFont("fonts/Riky-Vampdator.ttf",
                                           TEXT_OVERLAY_PTSIZE))) {
     throw Exception("Could not load font file.");
   }
@@ -54,28 +54,27 @@ Text::set_color(float r, float g, float b)
 GLuint
 Text::create_texture(const std::string& text, TTF_Font *font, int& w, int& h)
 {
-  glEnable(GL_BLEND);
-
-  TTF_SizeText(font, text.c_str(), &w, &h);
-  SDL_Surface *intermediary = SDL_CreateRGBSurface(0, w, h, 32,
-      0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
-
-  SDL_Surface *text_surface = TTF_RenderUTF8_Solid(font, text.c_str(), font_color);
-  SDL_BlitSurface(text_surface, 0, intermediary, 0);
-  SDL_FreeSurface(text_surface);
-
+  if (text.empty()) {
+    return 0;
+  }
 
   GLuint texture;
   glGenTextures(1, &texture);
   glBindTexture(GL_TEXTURE_2D, texture);
 
-  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  SDL_Surface *stext = TTF_RenderUTF8_Blended(font, text.c_str(), font_color);
+  if (NULL == stext) {
+    DBGERR("Could not create blended text, msg: " << text);
+    return 0;
+  }
 
-  glTexImage2D(GL_TEXTURE_2D, 0, 4, intermediary->w, intermediary->h, 0, GL_BGRA, GL_UNSIGNED_BYTE, intermediary->pixels);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-  SDL_FreeSurface(intermediary);
+  w = stext->w;
+  h = stext->h;
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, stext->w, stext->h, 0,
+               GL_BGRA, GL_UNSIGNED_BYTE, stext->pixels);
 
   return texture;
 }
@@ -126,6 +125,11 @@ Text::overlay(const std::string& text, const int& x, const int& y, const float& 
 
   int w, h;
   GLuint texture = Text::create_texture(text, font_overlay, w, h);
+  if (0 == texture) {
+    DBGWRN("Could not create texture from text: " << text);
+    return;
+  }
+
   glBindTexture(GL_TEXTURE_2D, texture);
   glColor3f(1.0f, 1.0f, 1.0f);
 
@@ -150,6 +154,11 @@ Text::scrolling(const std::string& text, const Vector3& pos)
 {
   WorldText wt;
   wt.texture = Text::create_texture(text, font_world, wt.width, wt.height);
+  if (0 == wt.texture) {
+    DBGWRN("Could not create scrolling texture from text: " << text);
+    return;
+  }
+
   wt.pos     = pos;
   wt.color   = font_color;
 

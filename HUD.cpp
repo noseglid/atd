@@ -135,18 +135,20 @@ HUD::tick() const
     draw_button(def);
   }
 
-  int title_width, title_height;
-  Text::set_color(0.853, 0.853, 0.853);
-  Text::size(title, &title_width, &title_height);
-  title_height *= 32.0f / TEXT_OVERLAY_PTSIZE;
-  title_width  *= 32.0f / TEXT_OVERLAY_PTSIZE;
-  Text::overlay(
-    title,
-    screen_width / 2 - title_width / 2,
-    BAR_OFFSET + BAR_HEIGHT / 2 + title_height / 2,
-    32.0f,
-    false
-  );
+  if (!title.empty()) {
+    int title_width, title_height;
+    Text::set_color(0.853, 0.853, 0.853);
+    Text::size(title, &title_width, &title_height);
+    title_height *= 32.0f / TEXT_OVERLAY_PTSIZE;
+    title_width  *= 32.0f / TEXT_OVERLAY_PTSIZE;
+    Text::overlay(
+      title,
+      screen_width / 2 - title_width / 2,
+      BAR_OFFSET + BAR_HEIGHT / 2 + title_height / 2,
+      32.0f,
+      false
+    );
+  }
 
   draw_stats();
 

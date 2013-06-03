@@ -9,8 +9,8 @@
 #include <OpenGL/gl.h>
 #include <SDL/SDL_ttf.h>
 
-#define TEXT_OVERLAY_PTSIZE 64
-#define TEXT_SCROLLING_PTSIZE 64
+#define TEXT_OVERLAY_PTSIZE 32
+#define TEXT_SCROLLING_PTSIZE 32
 
 struct WorldText
 {
