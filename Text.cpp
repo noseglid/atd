@@ -23,7 +23,7 @@ Text::Text()
 void
 Text::init(const int& screen_width, const int& screen_height)
 {
-  if (!(Text::font_world = TTF_OpenFont("fonts/Celtic-Garamond-The-2nd.ttf",
+  if (!(Text::font_world = TTF_OpenFont("fonts/Riky-Vampdator.ttf",
                                         TEXT_SCROLLING_PTSIZE))) {
     throw Exception("Could not load font file.");
   }
