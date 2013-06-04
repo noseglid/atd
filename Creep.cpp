@@ -8,11 +8,12 @@
 #include "Text.h"
 #include "GLTransform.h"
 
-Creep::Creep(Json::Value spec) :
+Creep::Creep(Json::Value spec, float animinc) :
   Mobile(spec["speed"].asNumber()),
   distance_moved(0),
   audio_death(Audio::instance().load_sfx(spec["audio"]["death"].asString())),
   model(Model::load(spec["model"].asString())),
+  animinc(animinc),
   total_health(spec["health"].asInt()),
   current_health(spec["health"].asInt()),
   reward(spec["reward"].asInt()),
@@ -98,7 +99,7 @@ Creep::draw(const float& elapsed) const
   glRotatef(rad2deg(angle), 0.0f, 1.0f, 0.0f);
 
   glPushMatrix();
-  this->model->draw(elapsed);
+  this->model->draw(elapsed + animinc);
   glPopMatrix();
 
   glPushMatrix();

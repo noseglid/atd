@@ -28,6 +28,8 @@ protected:
   PathCoord target;
   Vector3 vtarget;
 
+  float animinc;
+
   float total_health, current_health;
   int reward;
   int life_cost;
@@ -35,7 +37,7 @@ protected:
   Vector3 pos, dir;
 
 public:
-  Creep(Json::Value spec);
+  Creep(Json::Value spec, float animinc = 0);
   virtual ~Creep();
 
   virtual void struck(Projectile *p);

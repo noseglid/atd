@@ -60,7 +60,7 @@ CreepManager::check_spawn(const float& elapsed)
 
   spawn_t& spawn = wave.front();
   if (elapsed >= spawn.time) {
-    Creep *creep = new Creep(spawn.spec);
+    Creep *creep = new Creep(spawn.spec, 10.0f * rand() / RAND_MAX );
     creep->on("death", std::bind(&CreepManager::creep_death, this, creep));
     creep->on("accomplished", std::bind(&CreepManager::creep_accomplished, this, creep));
     creeps.push_back(creep);
