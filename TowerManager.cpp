@@ -203,8 +203,9 @@ TowerManager::keydown(const GameEvent& ge)
 {
   switch (ge.ev.key.keysym.sym) {
   case SDLK_ESCAPE:
-    build_tower_unset();
     selected_tower = towers.end();
+    build_tower_unset();
+    tower_update_hud();
     break;
   default:
     break;
