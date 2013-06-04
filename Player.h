@@ -28,6 +28,7 @@ public:
   void alter_lives(int delta);
 
   bool purchase(Purchasable *p);
+  int sell(Purchasable *p);
 };
 
 #endif

@@ -30,14 +30,15 @@ class TowerManager
   Tower *create_tower(std::string tower, Vector3 pos);
   void dummy_tower(int x, int y);
   bool purchase_tower(Vector3 pos);
-  void upgrade_tower(int i);
+  void upgrade_tower();
+  void sell_tower();
   void build_tower_unset();
   void build_tower_set(std::string name, int i);
   void map_hover(const MapEvent& me);
 
   int upgrades_left(tlist_t::const_iterator tower) const;
   bool tower_purchase_if();
-  void tower_set_hud_buttons();
+  void tower_update_hud();
   void tower_select_if(int clickx, int clicky);
 
   void mouseup(const GameEvent& ev);

@@ -37,3 +37,11 @@ Player::purchase(Purchasable *p)
   alter_gold(-p->price);
   return true;
 }
+
+int
+Player::sell(Purchasable *p)
+{
+  int return_value = floor(p->price * 0.5f);
+  alter_gold(return_value);
+  return return_value;
+}

@@ -10,6 +10,8 @@
 #include "HUD.h"
 #include "Faction.h"
 
+#define GOLD_COLOR 1.0f, 0.9f, 0.0f
+
 TowerManager::TowerManager() : selected_tower(towers.end())
 {
   Game& g = Game::instance();
@@ -123,7 +125,7 @@ TowerManager::purchase_tower(Vector3 pos)
 
   std::stringstream ss;
   ss << "-" << t->price << "g";
-  Text::set_color(1.0f, 0.9f, 0.0f);
+  Text::set_color(GOLD_COLOR);
   Text::scrolling(ss.str(), Vector3(pos.x, pos.y + 1.0f, pos.z));
   return true;
 }
@@ -141,7 +143,7 @@ TowerManager::upgrades_left(tlist_t::const_iterator tower) const
 }
 
 void
-TowerManager::upgrade_tower(int i)
+TowerManager::upgrade_tower()
 {
   if (0 == upgrades_left(selected_tower)) {
     return;
@@ -167,15 +169,33 @@ TowerManager::upgrade_tower(int i)
     upgrade["range"].asNumber(),
     upgrade["damage"].asNumber()
   );
-
+  t->price += dummy.price;
 
   std::stringstream ss;
   ss << "-" << upgrade["price"].asInt() << "g";
-  Text::set_color(1.0f, 0.9f, 0.0f);
+  Text::set_color(GOLD_COLOR);
   Text::scrolling(ss.str(), textpos);
 
-  /* Reset buttons so potentially grayscale upgrade button is shown */
-  tower_set_hud_buttons();
+  /* Reset buttons so potentially disabled upgrade button is shown */
+  tower_update_hud();
+}
+
+void
+TowerManager::sell_tower()
+{
+  int return_value = Player::instance().sell(selected_tower->second);
+
+  Vector3 textpos = selected_tower->second->get_position();
+  textpos.y += 1.0f;
+
+  std::stringstream ss;
+  ss << "+" << return_value << "g";
+  Text::set_color(GOLD_COLOR);
+  Text::scrolling(ss.str(), textpos);
+
+  towers.erase(selected_tower);
+  selected_tower = towers.end();
+  tower_update_hud();
 }
 
 void
@@ -227,16 +247,25 @@ TowerManager::tower_purchase_if()
 }
 
 void
-TowerManager::tower_set_hud_buttons()
+TowerManager::tower_update_hud()
 {
-  static int upgrade_button = -1;
+  static std::vector<int> added_buttons;
   static HUD& hud = HUD::instance();
   static HUD::BUTTON_LOCATION bloc = HUD::BOTTOM_RIGHT;
 
-  if (-1 != upgrade_button) {
-    hud.remove_button(upgrade_button);
-    upgrade_button = -1;
-  }
+  HUD::instance().set_title("");
+
+  added_buttons.erase(
+    std::remove_if(
+      added_buttons.begin(),
+      added_buttons.end(),
+        [](int buttonid) {
+          HUD::instance().remove_button(buttonid);
+          return true;
+        }
+      ),
+    added_buttons.end()
+  );
 
   if (towers.end() == selected_tower) {
     return;
@@ -245,22 +274,24 @@ TowerManager::tower_set_hud_buttons()
   std::string tex_upgr = (0 >= upgrades_left(selected_tower)) ?
     "upgrade_disabled.jpg" : "upgrade.jpg";
 
-  upgrade_button = hud.add_button(
+  added_buttons.push_back(hud.add_button(
     IL::GL::texture(tex_upgr),
-    std::bind(
-      &TowerManager::upgrade_tower,
-      this,
-      std::placeholders::_1
-    ), bloc
-  );
+    std::bind( &TowerManager::upgrade_tower, this),
+    bloc
+  ));
 
+  added_buttons.push_back(hud.add_button(
+    IL::GL::texture("sell.jpg"),
+    std::bind( &TowerManager::sell_tower, this),
+    bloc
+  ));
+
+  hud.set_title(selected_tower->second->get_name());
 }
 
 void
 TowerManager::tower_select_if(int clickx, int clicky)
 {
-  HUD::instance().set_title("");
-
   try {
     Vector3 pos3d = GLTransform::unproject(clickx, clicky);
     Vector3 search = Map::instance().get_center_of(pos3d.x, pos3d.z);
@@ -273,11 +304,7 @@ TowerManager::tower_select_if(int clickx, int clicky)
     selected_tower = towers.end();
   }
 
-  if (towers.end() != selected_tower) {
-    HUD::instance().set_title(selected_tower->second->get_name());
-  }
-
-  tower_set_hud_buttons();
+  tower_update_hud();
 }
 
 void
