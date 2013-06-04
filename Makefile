@@ -1,3 +1,6 @@
+# Dependencies
+# SDL, SDL_ttf, SDL_mixer (ogg), SDL_image (jpg), pjson, assimp
+
 CC      = clang++
 CFLAGS  = -O0 -g3 -c -Wall -pedantic $(shell sdl-config --cflags)
 CFLAGS += -DDEBUG -std=c++11 -stdlib=libc++
@@ -6,7 +9,7 @@ CFLAGS += -DSFXVOL=32 -DMUSICVOL=16
 
 LDFLAGS  = $(shell /Users/noseglid/opt/bin/sdl-config --libs)
 LDFLAGS += -L/Users/noseglid/opt/lib/
-LDFLAGS += -lassimp -ljpeg -ltga -lSDL_ttf -lSDL_mixer -lpjson -framework OpenGL -stdlib=libc++
+LDFLAGS += -lassimp -lSDL_ttf -lSDL_mixer -lSDL_image -lpjson -framework OpenGL -stdlib=libc++
 
 SRCS  = main.cpp
 SRCS += Player.cpp Game.cpp Map.cpp Path.cpp
@@ -26,7 +29,7 @@ SRCS += Projectile.cpp
 SRCS += math/Math.cpp math/Vector2.cpp math/Vector3.cpp math/Matrix4.cpp
 
 # Image
-SRCS += ImageLoader.cpp jpeg.cpp tga.cpp
+SRCS += ImageLoader.cpp
 
 OBJS := $(SRCS:.cpp=.o)
 DEPS := $(OBJS:.o=.d)

@@ -79,16 +79,16 @@ HUD::draw_button(button_def def) const
   glBindTexture(GL_TEXTURE_2D, def.texture);
 
   glBegin(GL_TRIANGLE_STRIP);
-    glTexCoord2f(0.0f, 1.0f);
+    glTexCoord2f(0.0f, 0.0f);
     glVertex2f(def.vertices.left, def.vertices.top);
 
-    glTexCoord2f(0.0f, 0.0f);
+    glTexCoord2f(0.0f, 1.0f);
     glVertex2f(def.vertices.left, def.vertices.bot);
 
-    glTexCoord2f(1.0f, 1.0f);
+    glTexCoord2f(1.0f, 0.0f);
     glVertex2f(def.vertices.right, def.vertices.top);
 
-    glTexCoord2f(1.0f, 0.0f);
+    glTexCoord2f(1.0f, 1.0f);
     glVertex2f(def.vertices.right, def.vertices.bot);
   glEnd();
 

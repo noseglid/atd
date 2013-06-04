@@ -12,27 +12,13 @@ BEGIN_NAMESPACE_IL
 
 class GL
 {
-  typedef unsigned char *(*ilfn)(
-    const char *path,
-    unsigned int *width,
-    unsigned int *height,
-    unsigned int *bpp
-  );
-
 public:
-  enum FILETYPE {
-    GUESS,
-    JPEG,
-    TGA
-  };
 
-  static GLuint texture(std::string path, FILETYPE t = GUESS);
+  static GLuint texture(std::string path);
 
 private:
   GL();
   GL& operator=(const GL& rhs);
-
-  static ilfn guess_ilfn(const std::string& path);
 };
 
 END_NAMESPACE_IL

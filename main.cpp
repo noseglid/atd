@@ -10,6 +10,7 @@
 #include "TowerManager.h"
 
 #include <SDL/SDL.h>
+#include <SDL_image.h>
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 
@@ -77,6 +78,9 @@ init_SDL()
   if (TTF_Init() < 0) {
     throw Exception("Could not initiate SDL TTF library.");
   }
+  if (IMG_Init(IMG_INIT_JPG) < 0) {
+    throw Exception("Could not initiate SDL Image library.");
+  }
 
   const SDL_version *v;
   v = SDL_Linked_Version();
@@ -85,6 +89,8 @@ init_SDL()
   DBG("SDL Mixer version: " << (int)v->major << "." << (int)v->minor << "." << (int)v->patch);
   v = TTF_Linked_Version();
   DBG("SDL TTF version: " << (int)v->major << "." << (int)v->minor << "." << (int)v->patch);
+  v = IMG_Linked_Version();
+  DBG("SDL Image version: " << (int)v->major << "." << (int)v->minor << "." << (int)v->patch);
 
   SDL_WM_SetCaption("ATD", NULL);
 }

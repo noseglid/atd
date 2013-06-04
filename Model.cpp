@@ -57,7 +57,7 @@ Model::get_bounding_box(aiVector3D& min, aiVector3D& max)
 Model::Model(std::string file)
 {
   DBG("Loading model: " << file);
-  importer.ReadFile(file, aiProcessPreset_TargetRealtime_Quality);
+  importer.ReadFile(file, aiProcessPreset_TargetRealtime_Quality | aiProcess_FlipUVs);
   scene = importer.GetScene();
   if (NULL == scene) {
     throw ModelException("Could not load file: " + file);
