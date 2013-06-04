@@ -18,14 +18,13 @@ GLuint
 GL::texture(std::string path, FILETYPE t)
 {
   path = "textures/" + path;
-  DBG("Loading texture from: " << path);
 
   auto it = loaded_textures.find(path);
   if (it != loaded_textures.end()) {
-    DBG("Using cached at texid: " << it->second);
     return it->second;
   }
 
+  DBG("Loading texture from: " << path);
 
   GLuint texid;
   glGenTextures(1, &texid);
