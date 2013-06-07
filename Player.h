@@ -3,6 +3,7 @@
 
 #include "Exception.h"
 #include "Purchasable.h"
+#include "hud/InfoBar.h"
 
 class PlayerDeath : public Exception
 {
@@ -12,7 +13,7 @@ public:
 
 class Player
 {
-  friend class HUD;
+  friend class HUD::InfoBar;
 
   int gold;
   int lives;
@@ -20,6 +21,9 @@ class Player
   Player();
   void operator=(Player const&);
   Player(const Player&);
+  void stats_text();
+
+  void tick() const;
 
 public:
   static Player& instance();

@@ -1,7 +1,8 @@
 #include "Game.h"
 #include "IO.h"
 #include "Text.h"
-#include "HUD.h"
+#include "hud/InfoBar.h"
+#include "hud/ButtonBar.h"
 #include "Map.h"
 #include "Player.h"
 #include "MetaManager.h"
@@ -37,7 +38,7 @@ init_ATD()
   DBG("Initing ATD...");
 
   Text::init(screen_width, screen_height);
-  HUD::init(screen_width, screen_height);
+  HUD::HUD::init(screen_width, screen_height);
 
   Json::Value levelspec = Json::deserialize(IO::file_get_contents("levels/test.map"));
   Map::instance().load(levelspec);

@@ -1,6 +1,5 @@
 #include "Map.h"
 #include "Game.h"
-#include "HUD.h"
 #include "GLTransform.h"
 #include "ImageLoader.h"
 #include "Exception.h"

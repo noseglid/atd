@@ -7,7 +7,8 @@
 #include "Player.h"
 #include "Creep.h"
 #include "Game.h"
-#include "HUD.h"
+#include "HUD/InfoBar.h"
+#include "HUD/ButtonBar.h"
 #include "Faction.h"
 
 #define GOLD_COLOR 1.0f, 0.9f, 0.0f
@@ -34,7 +35,7 @@ TowerManager::set_faction(Faction::Faction faction)
   for (std::string file : specs) {
     Json::Value jspec = Json::deserialize(IO::file_get_contents(file));
     available_towers.insert(std::make_pair(jspec["name"].asString(), jspec));
-    HUD::instance().add_button(
+    HUD::ButtonBar::instance().add_button(
       IL::GL::texture(jspec["hudtex"].asString()),
       std::bind(
         &TowerManager::build_tower_set,
@@ -91,7 +92,7 @@ void
 TowerManager::build_tower_unset()
 {
   build_tower.erase();
-  HUD::instance().mark_button(-1);
+  HUD::ButtonBar::instance().mark_button(-1);
   Map::instance().set_highlight(-1, -1);
 }
 
@@ -99,7 +100,7 @@ void
 TowerManager::build_tower_set(std::string tower, int i)
 {
   build_tower = tower;
-  HUD::instance().mark_button(i);
+  HUD::ButtonBar::instance().mark_button(i);
   Map::instance().set_highlight(-1, -1);
   dummy_tower(last_map_event.hovered.x, last_map_event.hovered.y);
 
@@ -221,7 +222,8 @@ TowerManager::mousedown(const GameEvent& ev)
 {
   SDL_MouseButtonEvent event = ev.ev.button;
 
-  if (event.button != SDL_BUTTON_LEFT || HUD::instance().in_turf(event.x, event.y)) {
+  if (event.button != SDL_BUTTON_LEFT ||
+      HUD::ButtonBar::instance().in_turf(event.x, event.y)) {
     return;
   }
 
@@ -255,17 +257,17 @@ void
 TowerManager::update_hud()
 {
   static std::vector<int> added_buttons;
-  static HUD& hud = HUD::instance();
-  static HUD::BUTTON_LOCATION bloc = HUD::BOTTOM_RIGHT;
+  static HUD::ButtonBar& hud = HUD::ButtonBar::instance();
+  static HUD::Bar::BUTTON_LOCATION bloc = HUD::Bar::BUTTON_LOCATION_RIGHT;
 
-  HUD::instance().set_title("");
+  HUD::InfoBar::instance().set_title("");
 
   added_buttons.erase(
     std::remove_if(
       added_buttons.begin(),
       added_buttons.end(),
         [](int buttonid) {
-          HUD::instance().remove_button(buttonid);
+          HUD::ButtonBar::instance().remove_button(buttonid);
           return true;
         }
       ),
@@ -291,7 +293,7 @@ TowerManager::update_hud()
     bloc
   ));
 
-  hud.set_title(selected_tower->second->get_name());
+  HUD::InfoBar::instance().set_title(selected_tower->second->get_name());
 }
 
 void
@@ -317,7 +319,7 @@ TowerManager::mouseup(const GameEvent& ge)
 {
   SDL_MouseButtonEvent event = ge.ev.button;
 
-  if (HUD::instance().in_turf(event.x, event.y)) return;
+  if (HUD::ButtonBar::instance().in_turf(event.x, event.y)) return;
 
   if (event.button == SDL_BUTTON_LEFT &&
       abs(event.x - click.x) < 3 &&

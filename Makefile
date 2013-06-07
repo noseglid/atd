@@ -4,7 +4,7 @@
 CC      = clang++
 CFLAGS  = -O0 -g3 -c -Wall -pedantic $(shell sdl-config --cflags)
 CFLAGS += -DDEBUG -std=c++11 -stdlib=libc++
-CFLAGS += -I/Users/noseglid/opt/include/
+CFLAGS += -I/Users/noseglid/opt/include/ -I.
 CFLAGS += -DSFXVOL=32 -DMUSICVOL=16
 
 LDFLAGS  = $(shell /Users/noseglid/opt/bin/sdl-config --libs)
@@ -16,7 +16,10 @@ SRCS += Player.cpp Game.cpp Map.cpp Path.cpp
 SRCS += KeyboardHandler.cpp MetaManager.cpp GLTransform.cpp GLShapes.cpp
 
 # Core
-SRCS += Mobile.cpp Model.cpp Camera.cpp Text.cpp HUD.cpp Audio.cpp
+SRCS += Mobile.cpp Model.cpp Camera.cpp Text.cpp Audio.cpp
+
+# Hud
+SRCS += hud/HUD.cpp hud/Bar.cpp hud/ButtonBar.cpp hud/InfoBar.cpp
 
 # Creep
 SRCS += CreepManager.cpp Creep.cpp DummyCreep.cpp
