@@ -11,6 +11,7 @@
 #include "Faction.h"
 
 #define GOLD_COLOR 1.0f, 0.9f, 0.0f
+#define INFO_COLOR 0.0f, 0.0f, 0.0f
 
 TowerManager::TowerManager() : selected_tower(towers.end())
 {
@@ -24,7 +25,6 @@ TowerManager::TowerManager() : selected_tower(towers.end())
   m.on("hover", std::bind(&TowerManager::map_hover, this, std::placeholders::_1));
 
   audio_build = Audio::instance().load_sfx("sfx/build1.ogg");
-
 }
 
 void
@@ -102,6 +102,10 @@ TowerManager::build_tower_set(std::string tower, int i)
   HUD::instance().mark_button(i);
   Map::instance().set_highlight(-1, -1);
   dummy_tower(last_map_event.hovered.x, last_map_event.hovered.y);
+
+  /* Deselect any selected tower */
+  selected_tower = towers.end();
+  update_hud();
 }
 
 bool
@@ -113,7 +117,7 @@ TowerManager::purchase_tower(Vector3 pos)
 
   Tower *t = create_tower(build_tower, pos);
   if (!Player::instance().purchase(t)) {
-    Text::set_color(1.0f, 1.0f, 1.0f);
+    Text::set_color(INFO_COLOR);
     Text::scrolling("You're broke mate!", pos);
     delete t;
     return false;
@@ -177,7 +181,7 @@ TowerManager::upgrade_tower()
   Text::scrolling(ss.str(), textpos);
 
   /* Reset buttons so potentially disabled upgrade button is shown */
-  tower_update_hud();
+  update_hud();
 }
 
 void
@@ -195,7 +199,7 @@ TowerManager::sell_tower()
 
   towers.erase(selected_tower);
   selected_tower = towers.end();
-  tower_update_hud();
+  update_hud();
 }
 
 void
@@ -203,9 +207,9 @@ TowerManager::keydown(const GameEvent& ge)
 {
   switch (ge.ev.key.keysym.sym) {
   case SDLK_ESCAPE:
-    selected_tower = towers.end();
     build_tower_unset();
-    tower_update_hud();
+    selected_tower = towers.end();
+    update_hud();
     break;
   default:
     break;
@@ -248,7 +252,7 @@ TowerManager::tower_purchase_if()
 }
 
 void
-TowerManager::tower_update_hud()
+TowerManager::update_hud()
 {
   static std::vector<int> added_buttons;
   static HUD& hud = HUD::instance();
@@ -277,13 +281,13 @@ TowerManager::tower_update_hud()
 
   added_buttons.push_back(hud.add_button(
     IL::GL::texture(tex_upgr),
-    std::bind( &TowerManager::upgrade_tower, this),
+    std::bind(&TowerManager::upgrade_tower, this),
     bloc
   ));
 
   added_buttons.push_back(hud.add_button(
     IL::GL::texture("sell.jpg"),
-    std::bind( &TowerManager::sell_tower, this),
+    std::bind(&TowerManager::sell_tower, this),
     bloc
   ));
 
@@ -305,7 +309,7 @@ TowerManager::tower_select_if(int clickx, int clicky)
     selected_tower = towers.end();
   }
 
-  tower_update_hud();
+  update_hud();
 }
 
 void
@@ -336,7 +340,17 @@ TowerManager::tick(const GameEvent& ev)
 {
   float elapsed = ev.elapsed;
 
-  if (selected_tower != towers.end()) {
+  if (!build_tower.empty() && dummy_tower_pos.length() > 0.0f) {
+    glPushMatrix();
+    dummy_towers.at(build_tower)->draw_range_circle();
+    glPopMatrix();
+
+    for (std::pair<Vector3, Tower*> t : towers) {
+      glPushMatrix();
+      t.second->draw_range_circle();
+      glPopMatrix();
+    }
+  } else if (selected_tower != towers.end()) {
     glPushMatrix();
     selected_tower->second->draw_range_circle();
     glPopMatrix();
@@ -356,7 +370,7 @@ TowerManager::tick(const GameEvent& ev)
     t->set_position(dummy_tower_pos);
 
     glPushMatrix();
-      t->draw(elapsed, 0.5f);
+    t->draw(elapsed, 0.5f);
     glPopMatrix();
 
     glDisable(GL_COLOR_MATERIAL);

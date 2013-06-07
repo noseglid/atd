@@ -38,7 +38,7 @@ class TowerManager
 
   int upgrades_left(tlist_t::const_iterator tower) const;
   bool tower_purchase_if();
-  void tower_update_hud();
+  void update_hud();
   void tower_select_if(int clickx, int clicky);
 
   void mouseup(const GameEvent& ev);
