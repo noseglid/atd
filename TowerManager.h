@@ -5,6 +5,7 @@
 #include "Map.h"
 #include "Audio.h"
 #include "Faction.h"
+#include "hud/InfoBox.h"
 
 #include <vector>
 
@@ -19,6 +20,7 @@ class TowerManager
   std::map<std::string, Tower*> dummy_towers;
   std::map<std::string, Json::Value> available_towers;
 
+  HUD::InfoBox::boxid_t boxid;
   tlist_t::iterator selected_tower;
   tlist_t towers;
   Vector3 click;
@@ -40,6 +42,8 @@ class TowerManager
   bool tower_purchase_if();
   void update_hud();
   void tower_select_if(int clickx, int clicky);
+  void select_tower(tlist_t::iterator it);
+  void reselect_tower();
 
   void mouseup(const GameEvent& ev);
   void mousedown(const GameEvent& ev);

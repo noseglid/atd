@@ -7,6 +7,7 @@
 #include "Player.h"
 #include "Creep.h"
 #include "Game.h"
+#include "HUD/InfoBox.h"
 #include "HUD/InfoBar.h"
 #include "HUD/ButtonBar.h"
 #include "Faction.h"
@@ -99,14 +100,14 @@ TowerManager::build_tower_unset()
 void
 TowerManager::build_tower_set(std::string tower, int i)
 {
+  /* Deselect any selected tower */
+  build_tower_unset();
+  select_tower(towers.end());
+
   build_tower = tower;
   HUD::ButtonBar::instance().mark_button(i);
   Map::instance().set_highlight(-1, -1);
   dummy_tower(last_map_event.hovered.x, last_map_event.hovered.y);
-
-  /* Deselect any selected tower */
-  selected_tower = towers.end();
-  update_hud();
 }
 
 bool
@@ -182,6 +183,7 @@ TowerManager::upgrade_tower()
   Text::scrolling(ss.str(), textpos);
 
   /* Reset buttons so potentially disabled upgrade button is shown */
+  reselect_tower();
   update_hud();
 }
 
@@ -199,8 +201,7 @@ TowerManager::sell_tower()
   Text::scrolling(ss.str(), textpos);
 
   towers.erase(selected_tower);
-  selected_tower = towers.end();
-  update_hud();
+  select_tower(towers.end());
 }
 
 void
@@ -209,8 +210,7 @@ TowerManager::keydown(const GameEvent& ge)
   switch (ge.ev.key.keysym.sym) {
   case SDLK_ESCAPE:
     build_tower_unset();
-    selected_tower = towers.end();
-    update_hud();
+    select_tower(towers.end());
     break;
   default:
     break;
@@ -229,7 +229,6 @@ TowerManager::mousedown(const GameEvent& ev)
 
   click.x = event.x;
   click.z = event.y;
-
 }
 
 bool
@@ -297,6 +296,38 @@ TowerManager::update_hud()
 }
 
 void
+TowerManager::select_tower(tlist_t::iterator it)
+{
+  /* Deselect tower */
+  HUD::InfoBox::instance().remove_box(boxid);
+  update_hud();
+
+  selected_tower = it;
+
+  /* If we do not wish to select a new one, stop here */
+  if (it == towers.end()) return;
+
+  Tower *t = it->second;
+
+  std::stringstream ss;
+  ss << t->get_name() << "\n \n"
+     << "Level: " << t->level << "\n"
+     << "Damage: " << t->damage << "\n"
+     << "Range: " << t->range << "\n"
+     << "Reload: " << t->reload;
+
+  boxid = HUD::InfoBox::instance().add_box(ss.str());
+}
+
+void
+TowerManager::reselect_tower()
+{
+  auto current = selected_tower;
+  select_tower(towers.end());
+  select_tower(current);
+}
+
+void
 TowerManager::tower_select_if(int clickx, int clicky)
 {
   try {
@@ -304,15 +335,15 @@ TowerManager::tower_select_if(int clickx, int clicky)
     Vector3 search = Map::instance().get_center_of(pos3d.x, pos3d.z);
     search.y = 0.0f;
 
-    selected_tower = towers.find(search);
-
+    select_tower(towers.find(search));
   } catch (const Exception& e) {
-    /* clicked somewhere not part of map. just ignore */
-    selected_tower = towers.end();
+    /* clicked somewhere not part of map */
+    select_tower(towers.end());
   }
 
   update_hud();
 }
+
 
 void
 TowerManager::mouseup(const GameEvent& ge)
@@ -343,6 +374,7 @@ TowerManager::tick(const GameEvent& ev)
   float elapsed = ev.elapsed;
 
   if (!build_tower.empty() && dummy_tower_pos.length() > 0.0f) {
+    /* Currently trying to build a tower */
     glPushMatrix();
     dummy_towers.at(build_tower)->draw_range_circle();
     glPopMatrix();
@@ -353,6 +385,7 @@ TowerManager::tick(const GameEvent& ev)
       glPopMatrix();
     }
   } else if (selected_tower != towers.end()) {
+    /* There is a tower selected */
     glPushMatrix();
     selected_tower->second->draw_range_circle();
     glPopMatrix();

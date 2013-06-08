@@ -7,6 +7,8 @@
 BEGIN_NS_HUD
 
 #define INFO_COLOR 1.0f, 1.0f, 1.0f
+#define TITLE_PTSIZE 48.0f
+#define INFO_PTSIZE 24.0f
 
 InfoBar::InfoBar()
 {
@@ -50,22 +52,24 @@ InfoBar::tick() const
   if (!title.empty()) {
     int title_width, title_height;
     Text::set_color(0.853, 0.853, 0.853);
-    Text::size(title, &title_width, &title_height);
-    title_height *= 32.0f / TEXT_OVERLAY_PTSIZE;
-    title_width  *= 32.0f / TEXT_OVERLAY_PTSIZE;
+    Text::size(title, &title_width, &title_height, TITLE_PTSIZE);
     Text::overlay(
       title,
       HUD::screen_width / 2 - title_width / 2,
       BAR_OFFSET + BAR_HEIGHT / 2 + title_height / 2,
-      32.0f,
+      TITLE_PTSIZE,
       false
     );
   }
 
-  Text::set_color(INFO_COLOR);
-  int i = 0;
-  for (std::string line : info_text) {
-    Text::overlay(line, 10.0f, 30.0f + (i++) * 20.0f, 16.0f, false);
+  if (!info_text.empty()) {
+    Text::set_color(INFO_COLOR);
+    int i = 0;
+    int line_height;
+    Text::size(info_text.at(0), NULL, &line_height, INFO_PTSIZE);
+    for (std::string line : info_text) {
+      Text::overlay(line, 10.0f, (++i) * line_height + 5.0f, INFO_PTSIZE, false);
+    }
   }
 
   GLTransform::disable2D();

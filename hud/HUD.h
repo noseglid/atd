@@ -9,6 +9,7 @@ BEGIN_NS_HUD
 class HUD
 {
   friend class Bar;
+  friend class InfoBox;
   friend class InfoBar;
   friend class ButtonBar;
 

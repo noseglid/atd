@@ -38,9 +38,13 @@ Text::init(const int& screen_width, const int& screen_height)
 }
 
 void
-Text::size(const std::string& text, int *width, int *height)
+Text::size(const std::string& text, int *width, int *height, const float& ptsize)
 {
   TTF_SizeText(font_overlay, text.c_str(), width, height);
+  if (NULL != width)
+    *width  *= ptsize / TEXT_OVERLAY_PTSIZE;
+  if (NULL != height)
+    *height *= ptsize / TEXT_OVERLAY_PTSIZE;
 }
 
 void

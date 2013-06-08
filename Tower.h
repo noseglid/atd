@@ -13,6 +13,8 @@
 
 class Tower : public Purchasable
 {
+  friend class TowerManager;
+
   Vector3 pos;
   std::list<Projectile *> projectiles;
 

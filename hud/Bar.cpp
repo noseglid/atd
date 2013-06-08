@@ -50,25 +50,10 @@ void
 Bar::draw_banner(float yoffset) const
 {
   glBegin(GL_TRIANGLE_STRIP);
-    glVertex2f(
-      BAR_OFFSET,
-      yoffset + BAR_HEIGHT
-    );
-
-    glVertex2f(
-      BAR_OFFSET,
-      yoffset
-    );
-
-    glVertex2f(
-      HUD::screen_width - BAR_OFFSET,
-      yoffset + BAR_HEIGHT
-    );
-
-    glVertex2f(
-      HUD::screen_width - BAR_OFFSET,
-      yoffset
-    );
+  glVertex2f(BAR_OFFSET,                     yoffset + BAR_HEIGHT);
+  glVertex2f(BAR_OFFSET,                     yoffset             );
+  glVertex2f(HUD::screen_width - BAR_OFFSET, yoffset + BAR_HEIGHT);
+  glVertex2f(HUD::screen_width - BAR_OFFSET, yoffset             );
   glEnd();
 }
 

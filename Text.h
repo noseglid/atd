@@ -9,7 +9,7 @@
 #include <OpenGL/gl.h>
 #include <SDL/SDL_ttf.h>
 
-#define TEXT_OVERLAY_PTSIZE 32
+#define TEXT_OVERLAY_PTSIZE 48
 #define TEXT_SCROLLING_PTSIZE 32
 
 struct WorldText
@@ -35,11 +35,11 @@ class Text
 public:
 
   static void init(const int& screen_width, const int& screen_height);
-  static void size(const std::string& text, int *width = NULL, int *height = NULL);
+  static void size(const std::string& text, int *width = NULL, int *height = NULL, const float& ptsize = 16.0f);
 
   static void set_color(float r, float g, float b);
   static void overlay(const std::string& text, const int& x, const int& y,
-                      const float& factor = 1.0, bool offbottom = true, bool offleft = true);
+                      const float& ptsize = 16.0, bool offbottom = true, bool offleft = true);
   static void scrolling(const std::string& text, const Vector3& pos);
 
 };
