@@ -4,6 +4,7 @@
 #include "Bar.h"
 
 #include <vector>
+#include <string>
 
 BEGIN_NS_HUD
 

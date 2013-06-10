@@ -20,6 +20,7 @@ SRCS += Mobile.cpp Model.cpp Camera.cpp Text.cpp Audio.cpp
 
 # Hud
 SRCS += hud/HUD.cpp hud/Bar.cpp hud/ButtonBar.cpp hud/InfoBar.cpp hud/InfoBox.cpp
+SRCS += hud/Button.cpp
 
 # Creep
 SRCS += CreepManager.cpp Creep.cpp DummyCreep.cpp

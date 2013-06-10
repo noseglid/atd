@@ -25,11 +25,12 @@ InfoBox::instance()
   return instance;
 }
 
-InfoBox::boxid_t
-InfoBox::add_box(std::string text, bool follow_mouse)
+InfoBox::id_t
+InfoBox::add_box(std::string text, bool follow_mouse, int snap)
 {
   boxdef entry;
   entry.width = entry.height = entry.line_height = 0;
+  entry.snap = snap;
   std::stringstream ss(text);
   std::string elem;
   while (std::getline(ss, elem)) {
@@ -49,30 +50,60 @@ InfoBox::add_box(std::string text, bool follow_mouse)
   entry.x = follow_mouse ? -1 : HUD::screen_width - (entry.width + BAR_OFFSET);
   entry.y = follow_mouse ? -1 : HUD::screen_height - (entry.height + BAR_HEIGHT + 2 * BAR_OFFSET);
 
-  boxlist.push_back(entry);
-  return boxlist.end() - 1;
+  return boxlist.insert(boxlist.begin(), entry);
 }
 
 void
-InfoBox::remove_box(boxid_t id)
+InfoBox::remove_box(id_t& id)
 {
   if (id == boxlist.end()) {
     return;
   }
 
   boxlist.erase(id);
+  id = boxlist.end();
+}
+
+InfoBox::id_t
+InfoBox::noid()
+{
+  return boxlist.end();
 }
 
 void
 InfoBox::tick() const
 {
   GLTransform::enable2D();
-  glDisable(GL_TEXTURE_2D);
 
-  glColor4f(0.4f, 0.4f, 0.4f, 0.7f);
   for (boxdef def : boxlist) {
-    int x = (-1 == def.x) ? mousex : def.x;
-    int y = (-1 == def.y) ? mousey : def.y;
+    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_LIGHTING);
+    glColor4f(0.4f, 0.4f, 0.8f, 0.7f);
+
+    int x = def.x;
+    int y = def.y;
+    if (-1 == def.x && -1 == def.y) {
+      x = mousex;
+      y = mousey;
+      switch (def.snap) {
+        case 0:
+          y -= def.height;
+          break;
+        case 1:
+          break;
+        case 2:
+          x -= def.width;
+          break;
+        case 3:
+          x -= def.width;
+          y -= def.height;
+          break;
+        default:
+          DBGWRN("Invalid snap value, defaulting to 0: " << def.snap);
+          break;
+      }
+    }
+
     glBegin(GL_TRIANGLE_STRIP);
     glVertex2f(x, HUD::screen_height - (y));
     glVertex2f(x, HUD::screen_height - (y + def.height));

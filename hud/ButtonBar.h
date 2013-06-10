@@ -1,14 +1,19 @@
 #ifndef __HUD__BOTTOMBAR_H__
 #define __HUD__BOTTOMBAR_H__
 
-#include "Bar.h"
 #include "Game.h"
+#include "hud/Bar.h"
+#include "hud/Button.h"
+
+#include <de.h>
 
 BEGIN_NS_HUD
 
-class ButtonBar : public Bar
+class ButtonBar : public Bar, public de::Emitter<int>
 {
-  void mousedown(const GameEvent& ev) const;
+  int nbuttonsat[Button::LOCATION_END];
+
+  std::vector<Button *> buttons;
 
   ButtonBar();
 
@@ -16,7 +21,10 @@ class ButtonBar : public Bar
 
 public:
   static ButtonBar& instance();
-  void calc_button_vertices(int xindex, float *left, float *right, float *top, float *bot) const;
+
+  int add_button(Button *button, Button::LOCATION loc = Button::LOCATION_LEFT);
+  void remove_button(Button *button);
+  void unmark_all();
 };
 
 

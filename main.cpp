@@ -50,7 +50,7 @@ init_ATD()
   meta_manager  = new MetaManager();
 
   Game::instance();
-  Player::instance().alter_gold(120);
+  Player::instance().alter_gold(12000);
   Player::instance().alter_lives(10);
 }
 
@@ -70,7 +70,7 @@ init_SDL()
     throw Exception("Could not set video modes.");
   }
 
-  if (Mix_Init(MIX_INIT_FLAC|MIX_INIT_OGG) < 0) {
+  if (Mix_Init(MIX_INIT_OGG) < 0) {
     throw Exception("Could not initiate SDL mixer file formats.");
   }
   if (-1 == Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 4096)) {
@@ -100,11 +100,10 @@ void
 init_OpenGL()
 {
   DBG("Initing OpenGL...");
-
-  DBG("OpenGL version: " << glGetString(GL_VERSION));
-  DBG("OpenGL vendor: " << glGetString(GL_VENDOR));
+  DBG("OpenGL version: "  << glGetString(GL_VERSION));
+  DBG("OpenGL vendor: "   << glGetString(GL_VENDOR));
   DBG("OpenGL renderer: " << glGetString(GL_RENDERER));
-  DBG("OpenGL shading: " << glGetString(GL_SHADING_LANGUAGE_VERSION));
+  DBG("OpenGL shading: "  << glGetString(GL_SHADING_LANGUAGE_VERSION));
 
   glEnable(GL_CULL_FACE);
   glEnable(GL_LINE_SMOOTH);

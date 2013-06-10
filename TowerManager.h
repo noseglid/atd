@@ -6,6 +6,7 @@
 #include "Audio.h"
 #include "Faction.h"
 #include "hud/InfoBox.h"
+#include "hud/Button.h"
 
 #include <vector>
 
@@ -20,7 +21,6 @@ class TowerManager
   std::map<std::string, Tower*> dummy_towers;
   std::map<std::string, Json::Value> available_towers;
 
-  HUD::InfoBox::boxid_t boxid;
   tlist_t::iterator selected_tower;
   tlist_t towers;
   Vector3 click;
@@ -35,7 +35,10 @@ class TowerManager
   void upgrade_tower();
   void sell_tower();
   void build_tower_unset();
-  void build_tower_set(std::string name, int i);
+
+  void prepare_tower(std::string tower, HUD::Button *button);
+  void button_mouse_event(bool on, Json::Value spec, HUD::Button *button);
+
   void map_hover(const MapEvent& me);
 
   int upgrades_left(tlist_t::const_iterator tower) const;

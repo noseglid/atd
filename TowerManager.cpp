@@ -10,6 +10,7 @@
 #include "HUD/InfoBox.h"
 #include "HUD/InfoBar.h"
 #include "HUD/ButtonBar.h"
+#include "HUD/Button.h"
 #include "Faction.h"
 
 #define GOLD_COLOR 1.0f, 0.9f, 0.0f
@@ -35,18 +36,21 @@ TowerManager::set_faction(Faction::Faction faction)
   std::list<std::string> specs = Faction::Loader::tower_specs(faction);
   for (std::string file : specs) {
     Json::Value jspec = Json::deserialize(IO::file_get_contents(file));
-    available_towers.insert(std::make_pair(jspec["name"].asString(), jspec));
-    HUD::ButtonBar::instance().add_button(
-      IL::GL::texture(jspec["hudtex"].asString()),
-      std::bind(
-        &TowerManager::build_tower_set,
-        this,
-        jspec["name"].asString(),
-        std::placeholders::_1
-      )
-    );
-    Tower *t = create_tower(jspec["name"].asString(), Vector3());
-    dummy_towers.insert(std::make_pair(jspec["name"].asString(), t));
+    std::string name = jspec["name"].asString();
+
+    HUD::Button *button = new HUD::Button(IL::GL::texture(jspec["hudtex"].asString()));
+    HUD::ButtonBar::instance().add_button(button);
+    button->on("click", std::bind(&TowerManager::prepare_tower, this, name, std::placeholders::_1));
+    button->on("mouseentry",
+               std::bind(&TowerManager::button_mouse_event, this,
+                         true, jspec, std::placeholders::_1));
+    button->on("mouseexit",
+               std::bind(&TowerManager::button_mouse_event, this,
+                          false, jspec, std::placeholders::_1));
+
+    available_towers.insert(std::make_pair(name, jspec));
+
+    dummy_towers.insert(std::make_pair(name, create_tower(name, Vector3())));
   }
 }
 
@@ -93,21 +97,46 @@ void
 TowerManager::build_tower_unset()
 {
   build_tower.erase();
-  HUD::ButtonBar::instance().mark_button(-1);
+  HUD::ButtonBar::instance().unmark_all();
   Map::instance().set_highlight(-1, -1);
 }
 
+/* Callback from clicking HUD button to build tower */
 void
-TowerManager::build_tower_set(std::string tower, int i)
+TowerManager::prepare_tower(std::string tower, HUD::Button *button)
 {
   /* Deselect any selected tower */
   build_tower_unset();
   select_tower(towers.end());
 
   build_tower = tower;
-  HUD::ButtonBar::instance().mark_button(i);
+  button->mark();
   Map::instance().set_highlight(-1, -1);
   dummy_tower(last_map_event.hovered.x, last_map_event.hovered.y);
+}
+
+void
+TowerManager::button_mouse_event(bool on, Json::Value spec, HUD::Button *button)
+{
+  static std::map<int, HUD::InfoBox::id_t> infoboxes;
+
+  if (on) {
+    std::stringstream ss;
+    ss << spec["name"].asString() << "\n \n"
+       << "Price: " << spec["price"].asInt() << "\n"
+       << "Type: " << spec["type"].asString() << "\n"
+       << "Base damage: " << spec["damage"].asNumber() << "\n"
+       << "Base range: "  << spec["range"].asNumber()  << "\n"
+       << "Base reload: " << spec["reload"].asNumber();
+    HUD::InfoBox::id_t id = HUD::InfoBox::instance().add_box(ss.str(), true, 0);
+    infoboxes.insert(std::make_pair(button->get_index(), id));
+  } else {
+    auto it = infoboxes.find(button->get_index());
+    if (it != infoboxes.end()) {
+      HUD::InfoBox::instance().remove_box(it->second);
+      infoboxes.erase(it);
+    }
+  }
 }
 
 bool
@@ -209,8 +238,8 @@ TowerManager::keydown(const GameEvent& ge)
 {
   switch (ge.ev.key.keysym.sym) {
   case SDLK_ESCAPE:
-    build_tower_unset();
     select_tower(towers.end());
+    build_tower_unset();
     break;
   default:
     break;
@@ -255,23 +284,23 @@ TowerManager::tower_purchase_if()
 void
 TowerManager::update_hud()
 {
-  static std::vector<int> added_buttons;
-  static HUD::ButtonBar& hud = HUD::ButtonBar::instance();
-  static HUD::Bar::BUTTON_LOCATION bloc = HUD::Bar::BUTTON_LOCATION_RIGHT;
+  static HUD::Button *btnupgr = NULL;
+  static HUD::Button *btnsell = NULL;
+  static HUD::ButtonBar& bar = HUD::ButtonBar::instance();
 
-  HUD::InfoBar::instance().set_title("");
+  if (NULL != btnupgr) {
+    btnupgr->disable("click");
+    bar.remove_button(btnupgr);
+    delete btnupgr;
+    btnupgr = NULL;
+  }
 
-  added_buttons.erase(
-    std::remove_if(
-      added_buttons.begin(),
-      added_buttons.end(),
-        [](int buttonid) {
-          HUD::ButtonBar::instance().remove_button(buttonid);
-          return true;
-        }
-      ),
-    added_buttons.end()
-  );
+  if (NULL != btnsell) {
+    btnsell->disable("click");
+    bar.remove_button(btnsell);
+    delete btnsell;
+    btnsell = NULL;
+  }
 
   if (towers.end() == selected_tower) {
     return;
@@ -280,43 +309,42 @@ TowerManager::update_hud()
   std::string tex_upgr = (0 >= upgrades_left(selected_tower)) ?
     "upgrade_disabled.jpg" : "upgrade.jpg";
 
-  added_buttons.push_back(hud.add_button(
-    IL::GL::texture(tex_upgr),
-    std::bind(&TowerManager::upgrade_tower, this),
-    bloc
-  ));
+  btnupgr = new HUD::Button(IL::GL::texture(tex_upgr));
+  btnsell = new HUD::Button(IL::GL::texture("sell.jpg"));
 
-  added_buttons.push_back(hud.add_button(
-    IL::GL::texture("sell.jpg"),
-    std::bind(&TowerManager::sell_tower, this),
-    bloc
-  ));
+  btnupgr->on("click", std::bind(&TowerManager::upgrade_tower, this));
+  btnsell->on("click", std::bind(&TowerManager::sell_tower, this));
 
-  HUD::InfoBar::instance().set_title(selected_tower->second->get_name());
+  bar.add_button(btnupgr, HUD::Button::LOCATION_RIGHT);
+  bar.add_button(btnsell, HUD::Button::LOCATION_RIGHT);
 }
 
 void
 TowerManager::select_tower(tlist_t::iterator it)
 {
-  /* Deselect tower */
+  static HUD::InfoBox::id_t boxid = HUD::InfoBox::instance().noid();
   HUD::InfoBox::instance().remove_box(boxid);
-  update_hud();
 
   selected_tower = it;
 
   /* If we do not wish to select a new one, stop here */
-  if (it == towers.end()) return;
+  if (it == towers.end()) {
+    update_hud();
+    return;
+  }
 
   Tower *t = it->second;
 
   std::stringstream ss;
   ss << t->get_name() << "\n \n"
-     << "Level: " << t->level << "\n"
+     << "Level: "  << t->level  << "\n"
      << "Damage: " << t->damage << "\n"
-     << "Range: " << t->range << "\n"
+     << "Range: "  << t->range  << "\n"
      << "Reload: " << t->reload;
 
   boxid = HUD::InfoBox::instance().add_box(ss.str());
+
+  update_hud();
 }
 
 void
@@ -336,6 +364,7 @@ TowerManager::tower_select_if(int clickx, int clicky)
     search.y = 0.0f;
 
     select_tower(towers.find(search));
+    build_tower_unset();
   } catch (const Exception& e) {
     /* clicked somewhere not part of map */
     select_tower(towers.end());

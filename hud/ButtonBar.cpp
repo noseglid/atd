@@ -1,4 +1,4 @@
-#include "ButtonBar.h"
+#include "hud/ButtonBar.h"
 #include "GLTransform.h"
 
 BEGIN_NS_HUD
@@ -12,8 +12,10 @@ ButtonBar::instance()
 
 ButtonBar::ButtonBar()
 {
+  nbuttonsat[Button::LOCATION_LEFT]  = 0;
+  nbuttonsat[Button::LOCATION_RIGHT] = 0;
+
   Game::instance().on("tick_nodepth", std::bind(&ButtonBar::tick, this));
-  Game::instance().on("mousedown", std::bind(&ButtonBar::mousedown, this, std::placeholders::_1));
 }
 
 void
@@ -25,24 +27,39 @@ ButtonBar::tick() const
   glDisable(GL_TEXTURE_2D);
   draw_banner(BAR_OFFSET);
 
-  for (button_def def : button_definitions) {
+  for (Button *b : buttons) {
+    glPushMatrix();
     glEnable(GL_TEXTURE_2D);
-    glColor3f(1.0f, 1.0f, 1.0f);
-    draw_button(def);
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+    b->draw();
+    glPopMatrix();
   }
 
   GLTransform::disable2D();
 }
 
-void
-ButtonBar::mousedown(const GameEvent& ge) const
+int
+ButtonBar::add_button(Button *button, Button::LOCATION loc)
 {
-  if (!in_turf(ge.ev.button.x, ge.ev.button.y)) return;
+  buttons.push_back(button);
+  int index = (loc == Button::LOCATION_LEFT ? 1 : -1) * (++nbuttonsat[loc]);
+  button->set_index(index);
+  return index;
+}
 
-  int bindex = button_index(ge.ev.button.x, ge.ev.button.y);
-  if (0 > bindex) return;
+void
+ButtonBar::remove_button(Button *button)
+{
+  nbuttonsat[button->get_location()]--;
+  buttons.erase(std::remove(buttons.begin(), buttons.end(), button), buttons.end());
+}
 
-  button_definitions.at(bindex).cb(bindex);
+void
+ButtonBar::unmark_all()
+{
+  for (Button *b : buttons) {
+    b->mark(false);
+  }
 }
 
 END_NS_HUD

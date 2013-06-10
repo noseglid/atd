@@ -3,6 +3,7 @@
 #include "GLTransform.h"
 #include "ImageLoader.h"
 #include "Exception.h"
+#include "hud/InfoBar.h"
 
 #include <iostream>
 #include <iterator>
@@ -82,6 +83,8 @@ Map::load(const Json::Value& levelspec)
   create_edge_heightmap();
   generate_map_normals();
   generate_edge_normals();
+
+  HUD::InfoBar::instance().set_title(levelspec["name"].asString());
 }
 
 void
