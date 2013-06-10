@@ -52,7 +52,7 @@ Game::run()
   Map& map = Map::instance();
   Camera::instance().set_limits(
     1.0f, (float)map.get_width() - 1.0f,
-    0.5f, 10.0f,
+    4.0f, 12.0f,
     1.0f, (float)map.get_height() - 1.0f
   );
 

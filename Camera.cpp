@@ -1,5 +1,6 @@
 #include "Camera.h"
 #include "Game.h"
+#include "hud/ButtonBar.h"
 
 #include <OpenGL/glu.h>
 #include <iostream>
@@ -89,6 +90,10 @@ Camera::mousebutton(const GameEvent& ev)
 void
 Camera::mousemotion(const GameEvent& ev)
 {
+  if (HUD::ButtonBar::instance().in_turf(ev.ev.motion.x, ev.ev.motion.y)) {
+    return;
+  }
+
   SDL_MouseMotionEvent event = ev.ev.motion;
 
   SDLMod mod = SDL_GetModState();
