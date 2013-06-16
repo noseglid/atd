@@ -120,7 +120,6 @@ init_OpenGL()
   glLoadIdentity();
   gluPerspective(45, (double)screen_width / (double)screen_height, 0.1, 100.0);
   glMatrixMode(GL_MODELVIEW);
-  glPointSize(3);
 
   glEnable(GL_LIGHTING);
   GLfloat lmodel_ambient[] = { 0.2, 0.2, 0.2, 1.0 };

@@ -25,6 +25,11 @@ class TowerManager
   tlist_t towers;
   Vector3 click;
 
+  HUD::Button *btnupgr;
+
+  std::map<HUD::Button*, HUD::InfoBox*> browseboxes;
+  HUD::InfoBox *towerinfo;
+
   MapEvent last_map_event;
 
   Mix_Chunk *audio_build;
@@ -45,6 +50,7 @@ class TowerManager
   bool tower_purchase_if();
   void update_hud();
   void tower_select_if(int clickx, int clicky);
+  void set_tower_infobox();
   void select_tower(tlist_t::iterator it);
   void reselect_tower();
 
@@ -52,6 +58,7 @@ class TowerManager
   void mousedown(const GameEvent& ev);
   void keydown(const GameEvent& ev);
   void tick(const GameEvent& ev);
+  void tick_nodepth(const GameEvent& ev);
 
 public:
   TowerManager();

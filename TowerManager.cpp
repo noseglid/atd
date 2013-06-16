@@ -1,4 +1,5 @@
 #include "TowerManager.h"
+#include "Common.h"
 #include "GLTransform.h"
 #include "GLShapes.h"
 #include "IO.h"
@@ -16,13 +17,14 @@
 #define GOLD_COLOR 1.0f, 0.9f, 0.0f
 #define INFO_COLOR 0.0f, 0.0f, 0.0f
 
-TowerManager::TowerManager() : selected_tower(towers.end())
+TowerManager::TowerManager() : selected_tower(towers.end()), btnupgr(NULL), towerinfo(NULL)
 {
   Game& g = Game::instance();
-  g.on("tick",      std::bind(&TowerManager::tick,      this, std::placeholders::_1));
-  g.on("mousedown", std::bind(&TowerManager::mousedown, this, std::placeholders::_1));
-  g.on("mouseup",   std::bind(&TowerManager::mouseup,   this, std::placeholders::_1));
-  g.on("keydown",   std::bind(&TowerManager::keydown,   this, std::placeholders::_1));
+  g.on("tick",         std::bind(&TowerManager::tick,         this, std::placeholders::_1));
+  g.on("tick_nodepth", std::bind(&TowerManager::tick_nodepth, this, std::placeholders::_1));
+  g.on("mousedown",    std::bind(&TowerManager::mousedown,    this, std::placeholders::_1));
+  g.on("mouseup",      std::bind(&TowerManager::mouseup,      this, std::placeholders::_1));
+  g.on("keydown",      std::bind(&TowerManager::keydown,      this, std::placeholders::_1));
 
   Map& m = Map::instance();
   m.on("hover", std::bind(&TowerManager::map_hover, this, std::placeholders::_1));
@@ -101,7 +103,9 @@ TowerManager::build_tower_unset()
   Map::instance().set_highlight(-1, -1);
 }
 
-/* Callback from clicking HUD button to build tower */
+/**
+ * Callback from clicking HUD button to build tower
+ */
 void
 TowerManager::prepare_tower(std::string tower, HUD::Button *button)
 {
@@ -118,24 +122,24 @@ TowerManager::prepare_tower(std::string tower, HUD::Button *button)
 void
 TowerManager::button_mouse_event(bool on, Json::Value spec, HUD::Button *button)
 {
-  static std::map<int, HUD::InfoBox::id_t> infoboxes;
+  auto it = browseboxes.find(button);
+  if (browseboxes.end() != it) {
+    delete it->second;
+    browseboxes.erase(it);
+  }
 
   if (on) {
-    std::stringstream ss;
-    ss << spec["name"].asString() << "\n \n"
-       << "Price: " << spec["price"].asInt() << "\n"
-       << "Type: " << spec["type"].asString() << "\n"
-       << "Base damage: " << spec["damage"].asNumber() << "\n"
-       << "Base range: "  << spec["range"].asNumber()  << "\n"
-       << "Base reload: " << spec["reload"].asNumber();
-    HUD::InfoBox::id_t id = HUD::InfoBox::instance().add_box(ss.str(), true, 0);
-    infoboxes.insert(std::make_pair(button->get_index(), id));
-  } else {
-    auto it = infoboxes.find(button->get_index());
-    if (it != infoboxes.end()) {
-      HUD::InfoBox::instance().remove_box(it->second);
-      infoboxes.erase(it);
-    }
+    using HUD::InfoBox;
+    InfoBox *box = new InfoBox(InfoBox::SNAP_BOTLEFT, true);
+    *box
+      << InfoBox::size(32.0f) << InfoBox::orange << spec["name"].asString() << "\n"
+      << InfoBox::size(16.0f) << InfoBox::indent(18.0f)
+      << InfoBox::white << "Type: "        << InfoBox::green << spec["type"].asString()   << "\n"
+      << InfoBox::white << "Price: "       << InfoBox::green << spec["price"].asNumber()  << "\n"
+      << InfoBox::white << "Base damage: " << InfoBox::green << spec["damage"].asNumber() << "\n"
+      << InfoBox::white << "Base range: "  << InfoBox::green << spec["range"].asNumber()  << "\n"
+      << InfoBox::white << "Base reload: " << InfoBox::green << spec["reload"].asNumber();
+    browseboxes.insert(std::make_pair(button, box));
   }
 }
 
@@ -170,11 +174,14 @@ TowerManager::upgrades_left(tlist_t::const_iterator tower) const
 {
   auto avail_it = available_towers.find(tower->second->get_name());
   if (available_towers.end() == avail_it) {
+    /* this is weird, selected a tower which doesn't exist */
     DBGERR("No tower named: '" << selected_tower->second->get_name() << "'");
     return -1;
   }
 
-  return (avail_it->second["upgrades"].asArray().size() - (tower->second->get_level() - 1));
+  int total = avail_it->second["upgrades"].asArray().size();
+  int used  = (tower->second->get_level() - 1);
+  return (total - used);
 }
 
 void
@@ -211,9 +218,11 @@ TowerManager::upgrade_tower()
   Text::set_color(GOLD_COLOR);
   Text::scrolling(ss.str(), textpos);
 
-  /* Reset buttons so potentially disabled upgrade button is shown */
-  reselect_tower();
-  update_hud();
+  set_tower_infobox();
+  if (0 >= upgrades_left(selected_tower)) {
+    btnupgr->set_texture(IL::GL::texture("upgrade_disabled.jpg"));
+    /* No more upgrades, disable button - BUT HOW?! */
+  }
 }
 
 void
@@ -284,22 +293,19 @@ TowerManager::tower_purchase_if()
 void
 TowerManager::update_hud()
 {
-  static HUD::Button *btnupgr = NULL;
   static HUD::Button *btnsell = NULL;
   static HUD::ButtonBar& bar = HUD::ButtonBar::instance();
 
   if (NULL != btnupgr) {
     btnupgr->disable("click");
     bar.remove_button(btnupgr);
-    delete btnupgr;
-    btnupgr = NULL;
+    PTRDEL(btnupgr);
   }
 
   if (NULL != btnsell) {
     btnsell->disable("click");
     bar.remove_button(btnsell);
-    delete btnsell;
-    btnsell = NULL;
+    PTRDEL(btnsell);
   }
 
   if (towers.end() == selected_tower) {
@@ -320,30 +326,35 @@ TowerManager::update_hud()
 }
 
 void
+TowerManager::set_tower_infobox()
+{
+  Tower *t = selected_tower->second;
+
+  using HUD::InfoBox;
+  PTRDEL(towerinfo);
+  towerinfo = new HUD::InfoBox(HUD::InfoBox::SNAP_TOPRIGHT);
+  (*towerinfo)
+    << InfoBox::size(32.0f) << InfoBox::orange << t->get_name() << "\n"
+    << InfoBox::size(16.0f) << InfoBox::indent(18.0f)
+    << InfoBox::white << "Level: "       << InfoBox::green << t->level  << "\n"
+    << InfoBox::white << "Base damage: " << InfoBox::green << t->damage << "\n"
+    << InfoBox::white << "Base range: "  << InfoBox::green << t->range  << "\n"
+    << InfoBox::white << "Base reload: " << InfoBox::green << t->reload;
+}
+
+void
 TowerManager::select_tower(tlist_t::iterator it)
 {
-  static HUD::InfoBox::id_t boxid = HUD::InfoBox::instance().noid();
-  HUD::InfoBox::instance().remove_box(boxid);
-
   selected_tower = it;
 
   /* If we do not wish to select a new one, stop here */
-  if (it == towers.end()) {
+  if (selected_tower == towers.end()) {
+    PTRDEL(towerinfo);
     update_hud();
     return;
   }
 
-  Tower *t = it->second;
-
-  std::stringstream ss;
-  ss << t->get_name() << "\n \n"
-     << "Level: "  << t->level  << "\n"
-     << "Damage: " << t->damage << "\n"
-     << "Range: "  << t->range  << "\n"
-     << "Reload: " << t->reload;
-
-  boxid = HUD::InfoBox::instance().add_box(ss.str());
-
+  set_tower_infobox();
   update_hud();
 }
 
@@ -394,6 +405,18 @@ TowerManager::mouseup(const GameEvent& ge)
     } else {
       tower_select_if(event.x, event.y);
     }
+  }
+}
+
+void
+TowerManager::tick_nodepth(const GameEvent& ev)
+{
+  if (NULL != towerinfo) {
+    towerinfo->draw();
+  }
+
+  for (std::pair<HUD::Button*, HUD::InfoBox*> entry : browseboxes) {
+    entry.second->draw();
   }
 }
 

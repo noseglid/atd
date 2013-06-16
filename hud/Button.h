@@ -37,6 +37,7 @@ public:
   Button(GLuint texture);
   ~Button();
 
+  void set_texture(GLuint texture);
   void set_index(int index);
   int get_index() const;
   LOCATION get_location() const;

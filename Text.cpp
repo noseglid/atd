@@ -14,6 +14,8 @@ Text Text::instance = Text();
 std::vector<WorldText> Text::scrollings = std::vector<WorldText>();
 SDL_Color font_color;
 
+#define SIZE_FACTOR(x) ((x) / TEXT_OVERLAY_PTSIZE)
+
 Text::Text()
 {
   Game::instance().on("tick_nodepth", std::bind(&Text::tick, this));
@@ -33,6 +35,8 @@ Text::init(const int& screen_width, const int& screen_height)
     throw Exception("Could not load font file.");
   }
 
+  TTF_SetFontKerning(Text::font_overlay, 1);
+
   Text::screen_width  = screen_width;
   Text::screen_height = screen_height;
 }
@@ -42,9 +46,15 @@ Text::size(const std::string& text, int *width, int *height, const float& ptsize
 {
   TTF_SizeText(font_overlay, text.c_str(), width, height);
   if (NULL != width)
-    *width  *= ptsize / TEXT_OVERLAY_PTSIZE;
+    *width  *= SIZE_FACTOR(ptsize);
   if (NULL != height)
-    *height *= ptsize / TEXT_OVERLAY_PTSIZE;
+    *height *= SIZE_FACTOR(ptsize);
+}
+
+int
+Text::overlay_line_skip(float ptsize)
+{
+  return TTF_FontLineSkip(font_overlay) * SIZE_FACTOR(ptsize);
 }
 
 void
@@ -137,17 +147,19 @@ Text::overlay(const std::string& text, const int& x, const int& y, const float& 
   glBindTexture(GL_TEXTURE_2D, texture);
   glColor3f(1.0f, 1.0f, 1.0f);
 
-  h *= (ptsize / TEXT_OVERLAY_PTSIZE);
-  w *= (ptsize / TEXT_OVERLAY_PTSIZE);
+  h *= SIZE_FACTOR(ptsize);
+  w *= SIZE_FACTOR(ptsize);
 
   float yoffset = (offbottom) ? 2 * y : screen_height;
   float xoffset = (offleft)   ? 2 * x : screen_width;
+
   glBegin(GL_TRIANGLE_STRIP);
-    glTexCoord2f(0.0f, 0.0f); glVertex2f(xoffset - x,     yoffset - y + h);
-    glTexCoord2f(0.0f, 1.0f); glVertex2f(xoffset - x,     yoffset - y);
-    glTexCoord2f(1.0f, 0.0f); glVertex2f(xoffset - x + w, yoffset - y + h);
-    glTexCoord2f(1.0f, 1.0f); glVertex2f(xoffset - x + w, yoffset - y);
+    glTexCoord2f(0.0f, 0.0f); glVertex2f(xoffset - x,     yoffset - y);
+    glTexCoord2f(0.0f, 1.0f); glVertex2f(xoffset - x,     yoffset - y - h);
+    glTexCoord2f(1.0f, 0.0f); glVertex2f(xoffset - x + w, yoffset - y);
+    glTexCoord2f(1.0f, 1.0f); glVertex2f(xoffset - x + w, yoffset - y - h);
   glEnd();
+
   glDeleteTextures(1, &texture);
 
   GLTransform::disable2D();
@@ -163,8 +175,8 @@ Text::scrolling(const std::string& text, const Vector3& pos)
     return;
   }
 
-  wt.pos     = pos;
-  wt.color   = font_color;
+  wt.pos   = pos;
+  wt.color = font_color;
 
   scrollings.push_back(wt);
 }

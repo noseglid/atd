@@ -10,10 +10,8 @@ Button::Button(GLuint texture) : texture(texture), marked(false), mouse_in_turf(
 {
   Game& g = Game::instance();
 
-  mousedown   = g.on("mousedown",
-                     std::bind(&Button::signal, this, "click", std::placeholders::_1));
-  mousemotion = g.on("mousemotion",
-                     std::bind(&Button::signal, this, "hover", std::placeholders::_1));
+  mousedown   = g.on("mousedown", std::bind(&Button::signal, this, "click", std::placeholders::_1));
+  mousemotion = g.on("mousemotion", std::bind(&Button::signal, this, "hover", std::placeholders::_1));
 }
 
 Button::~Button()
@@ -44,6 +42,12 @@ Button::signal(std::string signal, const GameEvent& ge)
   if (is_inside) {
     emit(signal, this);
   }
+}
+
+void
+Button::set_texture(GLuint texture)
+{
+  this->texture = texture;
 }
 
 void

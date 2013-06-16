@@ -15,29 +15,12 @@ Game::handle_event(const SDL_Event& ev)
 {
   std::string signal;
   switch (ev.type) {
-    case SDL_QUIT:
-      stop();
-      return;
-
-    case SDL_KEYDOWN:
-      signal = "keydown";
-      break;
-
-    case SDL_KEYUP:
-      signal = "keyup";
-      break;
-
-    case SDL_MOUSEBUTTONDOWN:
-      signal = "mousedown";
-      break;
-
-    case SDL_MOUSEBUTTONUP:
-      signal = "mouseup";
-      break;
-
-    case SDL_MOUSEMOTION:
-      signal = "mousemotion";
-      break;
+    case SDL_QUIT:            stop();                 return;
+    case SDL_KEYDOWN:         signal = "keydown";     break;
+    case SDL_KEYUP:           signal = "keyup";       break;
+    case SDL_MOUSEBUTTONDOWN: signal = "mousedown";   break;
+    case SDL_MOUSEBUTTONUP:   signal = "mouseup";     break;
+    case SDL_MOUSEMOTION:     signal = "mousemotion"; break;
   }
 
   emit(signal, GameEvent(elapsed, ev));

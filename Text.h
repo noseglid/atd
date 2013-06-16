@@ -36,6 +36,7 @@ public:
 
   static void init(const int& screen_width, const int& screen_height);
   static void size(const std::string& text, int *width = NULL, int *height = NULL, const float& ptsize = 16.0f);
+  static int overlay_line_skip(float ptsize);
 
   static void set_color(float r, float g, float b);
   static void overlay(const std::string& text, const int& x, const int& y,

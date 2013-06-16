@@ -56,7 +56,7 @@ InfoBar::tick() const
     Text::overlay(
       title,
       HUD::screen_width / 2 - title_width / 2,
-      BAR_OFFSET + BAR_HEIGHT / 2 + title_height / 2,
+      BAR_OFFSET + BAR_HEIGHT / 2 - title_height / 2,
       TITLE_PTSIZE,
       false
     );
@@ -68,7 +68,7 @@ InfoBar::tick() const
     int line_height;
     Text::size(info_text.at(0), NULL, &line_height, INFO_PTSIZE);
     for (std::string line : info_text) {
-      Text::overlay(line, 10.0f, (++i) * line_height + 5.0f, INFO_PTSIZE, false);
+      Text::overlay(line, 10.0f, (i++) * line_height + 5.0f, INFO_PTSIZE, false);
     }
   }
 
