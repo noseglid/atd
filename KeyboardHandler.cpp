@@ -13,12 +13,6 @@ KeyboardHandler::keydown(const GameEvent& ev)
 {
   SDL_KeyboardEvent event = ev.ev.key;
   switch  (event.keysym.sym) {
-    case SDLK_f:
-      GLboolean fog;
-      glGetBooleanv(GL_FOG, &fog);
-      ((GL_TRUE == fog) ? glDisable : glEnable)(GL_FOG);
-      break;
-
     case SDLK_q:
       Game::instance().stop();
       break;
