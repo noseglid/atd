@@ -44,7 +44,7 @@ TowerManager::set_faction(Faction::Faction faction)
 
     HUD::Button *button = new HUD::Button(IL::GL::texture(jspec["hudtex"].asString()));
     HUD::ButtonBar::instance().add_button(button);
-    button->on("click", std::bind(&TowerManager::prepare_tower, this, name, std::placeholders::_1));
+    button->on("leftclick", std::bind(&TowerManager::prepare_tower, this, name, std::placeholders::_1));
     button->on("mouseentry",
                std::bind(&TowerManager::button_mouse_event, this,
                          true, jspec, std::placeholders::_1));
@@ -299,13 +299,13 @@ TowerManager::update_hud()
   static HUD::ButtonBar& bar = HUD::ButtonBar::instance();
 
   if (NULL != btnupgr) {
-    btnupgr->disable("click");
+    btnupgr->disable("leftclick");
     bar.remove_button(btnupgr);
     PTRDEL(btnupgr);
   }
 
   if (NULL != btnsell) {
-    btnsell->disable("click");
+    btnsell->disable("leftclick");
     bar.remove_button(btnsell);
     PTRDEL(btnsell);
   }

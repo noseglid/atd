@@ -40,7 +40,13 @@ Button::signal(std::string signal, const GameEvent& ge)
   }
 
   if (is_inside) {
-    emit(signal, this);
+    std::string osignal = "click";
+    switch (ge.ev.button.button) {
+      case SDL_BUTTON_LEFT:   osignal = "leftclick";   break;
+      case SDL_BUTTON_MIDDLE: osignal = "middleclick"; break;
+      case SDL_BUTTON_RIGHT:  osignal = "rightclick";  break;
+    }
+    emit(osignal, this);
   }
 }
 
