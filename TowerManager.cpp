@@ -135,7 +135,10 @@ TowerManager::button_mouse_event(bool on, Json::Value spec, HUD::Button *button)
     using HUD::InfoBox;
     InfoBox *box = new InfoBox(InfoBox::SNAP_BOTLEFT, true);
     *box
-      << InfoBox::size(32.0f) << InfoBox::orange << spec["name"].asString() << "\n"
+      << InfoBox::size(32.0f) << InfoBox::orange
+      << spec["name"].asString() << "\n"
+      << InfoBox::size(18.0f) << InfoBox::indent(8.0f) << InfoBox::purple
+      << Text::linebreak(spec["description"].asString()) << "\n"
       << InfoBox::size(16.0f) << InfoBox::indent(18.0f)
       << InfoBox::white << "Type: "        << InfoBox::green << spec["type"].asString()   << "\n"
       << InfoBox::white << "Price: "       << InfoBox::green << spec["price"].asNumber()  << "\n"

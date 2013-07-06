@@ -100,6 +100,7 @@ public:
   static color white;
   static color black;
   static color orange;
+  static color purple;
 
   /**
    * Creates a new infobox. Content can be added with operator<<() and it can be shown

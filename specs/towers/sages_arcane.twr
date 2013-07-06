@@ -1,13 +1,14 @@
 {
-  "type"     : "normal",
-  "name"     : "Arcane",
-  "model"    : "towers/sages_arcane.dae",
-  "hudtex"   : "tower_basic1.jpg",
-  "price"    : 80,
-  "reload"   : 1.4,
-  "range"    : 2.0,
-  "damage"   : 31.0,
-  "upgrades" : [
+  "type"        : "normal",
+  "description" : "The Arcane tower. The flagship of towers from the sages of cratania.",
+  "name"        : "Arcane",
+  "model"       : "towers/sages_arcane.dae",
+  "hudtex"      : "tower_basic1.jpg",
+  "price"       : 80,
+  "reload"      : 1.4,
+  "range"       : 2.0,
+  "damage"      : 31.0,
+  "upgrades"    : [
     {
       "price"  : 20,
       "range"  : 2.5,

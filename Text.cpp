@@ -180,3 +180,14 @@ Text::scrolling(const std::string& text, const Vector3& pos)
 
   scrollings.push_back(wt);
 }
+
+std::string
+Text::linebreak(std::string s, int col)
+{
+  int i = col;
+  while (i < s.length()) {
+    s.insert(i, 1, '\n');
+    i += col;
+  }
+  return s;
+}

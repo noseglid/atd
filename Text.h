@@ -43,6 +43,8 @@ public:
                       const float& ptsize = 16.0, bool offbottom = true, bool offleft = true);
   static void scrolling(const std::string& text, const Vector3& pos);
 
+  static std::string linebreak(std::string s, int col = 40);
+
 };
 
 #endif

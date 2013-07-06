@@ -13,6 +13,7 @@ InfoBox::color InfoBox::blue    (0.00f, 0.00f, 1.00f);
 InfoBox::color InfoBox::white   (1.00f, 1.00f, 1.00f);
 InfoBox::color InfoBox::black   (0.00f, 0.00f, 0.00f);
 InfoBox::color InfoBox::orange  (1.00f, 0.50f, 0.00f);
+InfoBox::color InfoBox::purple  (1.00f, 0.50f, 1.00f);
 
 static int mousex, mousey;
 
