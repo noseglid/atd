@@ -20,7 +20,7 @@ class Tower : public Purchasable
 
   Creep *get_target();
 
-  std::string name;
+  std::string name, type;
   int level;
   float reload, range, damage, last_shot;
   Model *model;
@@ -36,6 +36,7 @@ public:
   Vector3 get_position() const;
   std::string get_name() const;
   int get_level() const;
+  bool is_hero() const;
 
   void remove_projectile(Projectile *p);
   void projectile_hit(Projectile *projectile, Creep *creep,

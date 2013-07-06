@@ -44,7 +44,8 @@ TowerManager::set_faction(Faction::Faction faction)
 
     HUD::Button *button = new HUD::Button(IL::GL::texture(jspec["hudtex"].asString()));
     HUD::ButtonBar::instance().add_button(button);
-    button->on("leftclick", std::bind(&TowerManager::prepare_tower, this, name, std::placeholders::_1));
+    button->on("leftclick",
+               std::bind(&TowerManager::prepare_tower, this, name, std::placeholders::_1));
     button->on("mouseentry",
                std::bind(&TowerManager::button_mouse_event, this,
                          true, jspec, std::placeholders::_1));
@@ -153,11 +154,27 @@ TowerManager::purchase_tower(Vector3 pos)
   }
 
   Tower *t = create_tower(build_tower, pos);
-  if (!Player::instance().purchase(t)) {
+
+  auto purchase_fail = [pos, t](std::string msg) {
     Text::set_color(INFO_COLOR);
-    Text::scrolling("You're broke mate!", pos);
+    Text::scrolling(msg, pos);
     delete t;
     return false;
+  };
+
+  if (!Player::instance().purchase(t)) {
+    return purchase_fail("Not enough gold");
+  }
+
+  if (t->is_hero()) {
+    /* Trying to purchase a hero tower. If we already have one, fail - only one is allowed. */
+    tlist_t::iterator it = std::find_if(towers.begin(), towers.end(),
+      [](std::pair<Vector3, Tower *> entry) {
+        return entry.second->is_hero();
+      }
+    );
+
+    if (it != towers.end()) return purchase_fail("Only one hero tower allowed");
   }
 
   towers.insert(std::make_pair(pos, t));

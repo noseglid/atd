@@ -10,6 +10,7 @@ Tower::Tower(Json::Value spec, Vector3 pos) :
   Purchasable(spec["price"].asInt()),
   pos(pos),
   name(spec["name"].asString()),
+  type(spec["type"].asString()),
   level(1),
   reload(spec["reload"].asNumber()),
   range(spec["range"].asNumber()),
@@ -73,6 +74,12 @@ std::string
 Tower::get_name() const
 {
   return name;
+}
+
+bool
+Tower::is_hero() const
+{
+  return ("hero" == type);
 }
 
 int
