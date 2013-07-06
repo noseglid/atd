@@ -30,6 +30,8 @@ TowerManager::TowerManager() : selected_tower(towers.end()), btnupgr(NULL), towe
   m.on("hover", std::bind(&TowerManager::map_hover, this, std::placeholders::_1));
 
   audio_build = Audio::instance().load_sfx("sfx/build1.ogg");
+
+  upgradeinfo = new HUD::InfoBox(HUD::InfoBox::SNAP_BOTRIGHT, true);
 }
 
 void
@@ -312,14 +314,27 @@ TowerManager::update_hud()
     return;
   }
 
+  auto hover_upgr = [this](bool on, HUD::Button *btn) {
+    if (!on) {
+      this->upgradeinfo->clear();
+      return;
+    }
+
+    (*(this->upgradeinfo))
+      << "Upgrade information here: " << (on ? "on!" : "off!");
+  };
+
   std::string tex_upgr = (0 >= upgrades_left(selected_tower)) ?
     "upgrade_disabled.jpg" : "upgrade.jpg";
 
   btnupgr = new HUD::Button(IL::GL::texture(tex_upgr));
   btnsell = new HUD::Button(IL::GL::texture("sell.jpg"));
 
-  btnupgr->on("click", std::bind(&TowerManager::upgrade_tower, this));
-  btnsell->on("click", std::bind(&TowerManager::sell_tower, this));
+  btnsell->on("leftclick", std::bind(&TowerManager::sell_tower, this));
+  btnupgr->on("leftclick", std::bind(&TowerManager::upgrade_tower, this));
+  btnupgr->on("mouseentry", std::bind(hover_upgr, true, std::placeholders::_1));
+  btnupgr->on("mouseexit", std::bind(hover_upgr, false, std::placeholders::_1));
+
 
   bar.add_button(btnupgr, HUD::Button::LOCATION_RIGHT);
   bar.add_button(btnsell, HUD::Button::LOCATION_RIGHT);
@@ -411,6 +426,7 @@ TowerManager::mouseup(const GameEvent& ge)
 void
 TowerManager::tick_nodepth(const GameEvent& ev)
 {
+  upgradeinfo->draw();
   if (NULL != towerinfo) {
     towerinfo->draw();
   }

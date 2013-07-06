@@ -28,7 +28,7 @@ class TowerManager
   HUD::Button *btnupgr;
 
   std::map<HUD::Button*, HUD::InfoBox*> browseboxes;
-  HUD::InfoBox *towerinfo;
+  HUD::InfoBox *towerinfo, *upgradeinfo;
 
   MapEvent last_map_event;
 

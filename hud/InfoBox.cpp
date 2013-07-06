@@ -87,52 +87,11 @@ InfoBox::clear()
   top = left = INT_MAX;
 }
 
-#if 0
-InfoBox::id_t
-InfoBox::add_box(std::string text, bool follow_mouse, int snap)
-{
-  boxdef entry;
-  entry.width = 80;
-  entry.height = 140;
-  entry.snap = snap;
-
-  boxcontent content;
-  content.color = Vector3(1.0f, 0.5f, 0.0f);
-  content.ptsize = 24.0f;
-  content.x = 0.0f;
-  content.y = 0.0f;
-  content.text = "Arcane arcate";
-
-  entry.content.push_back(content);
-
-  /*
-  std::stringstream ss(text);
-  std::string elem;
-  while (std::getline(ss, elem)) {
-    entry.lines.push_back(elem);
-
-    int width = 0, height = 0;
-    Text::size(elem, &width, &height, PTSIZE);
-
-    entry.width       = std::max(width, entry.width);
-    entry.height     += height;
-    entry.line_height = std::max(height, entry.line_height);
-  }
-
-  entry.width  += 2 * TEXT_PADDING;
-  entry.height += 2 * TEXT_MARGIN;
-
-  */
-  entry.x = follow_mouse ? -1 : HUD::screen_width - (entry.width + BAR_OFFSET);
-  entry.y = follow_mouse ? -1 : HUD::screen_height - (entry.height + BAR_HEIGHT + 2 * BAR_OFFSET);
-
-  return boxlist.insert(boxlist.begin(), entry);
-}
-#endif
-
 void
 InfoBox::draw()
 {
+  if (0 == content.size()) return;
+
   GLTransform::enable2D();
 
   if (followmouse) {
