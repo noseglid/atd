@@ -74,7 +74,7 @@ init_SDL()
     throw Exception("Could not initiate SDL mixer file formats.");
   }
   if (-1 == Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 4096)) {
-    throw Exception("Could not initate SDL Mixer library.");
+    throw Exception("Could not initiate SDL Mixer library.");
   }
   if (TTF_Init() < 0) {
     throw Exception("Could not initiate SDL TTF library.");
