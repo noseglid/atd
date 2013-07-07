@@ -1,15 +1,12 @@
-# Dependencies
-# SDL, SDL_ttf, SDL_mixer (ogg), SDL_image (jpg), pjson, assimp
-
-CC      = clang++
-CFLAGS  = -O0 -g3 -c -Wall -pedantic $(shell sdl-config --cflags)
+CXX     = clang++
+CFLAGS  = -O0 -g3 -c -Wall -pedantic $(shell deps/target/bin/sdl-config --cflags)
 CFLAGS += -DDEBUG -std=c++11 -stdlib=libc++
-CFLAGS += -I/Users/noseglid/opt/include/ -I.
+CFLAGS += -Ideps/target/include -I.
 CFLAGS += -DSFXVOL=32 -DMUSICVOL=16
 
-LDFLAGS  = $(shell /Users/noseglid/opt/bin/sdl-config --libs)
-LDFLAGS += -L/Users/noseglid/opt/lib/
-LDFLAGS += -lassimp -lSDL_ttf -lSDL_mixer -lSDL_image -lpjson -framework OpenGL -stdlib=libc++
+LDFLAGS  = $(shell deps/target/bin/sdl-config --libs)
+LDFLAGS += -Ldeps/target/lib -stdlib=libc++ -headerpad_max_install_names
+LDFLAGS += -Wl,-framework,OpenGL -lpjson -lassimp -lSDL_ttf -lSDL_mixer -lSDL_image
 
 SRCS  = main.cpp
 SRCS += Player.cpp Game.cpp Map.cpp Path.cpp
@@ -49,8 +46,8 @@ all: $(BIN)
 # Also adds empty targets for real files so that a removal
 # of any such file wont exit with failure (but rather rebuild the target)
 %.o: %.cpp Makefile
-	$(CC) $(CFLAGS) $< -o $@
-	$(CC) -MM $(CFLAGS) $< > $*.d
+	$(CXX) $(CFLAGS) $< -o $@
+	$(CXX) -MM $(CFLAGS) $< > $*.d
 	@mv -f $*.d $*.d.tmp
 	@sed -e 's|.*:|$*.o:|' < $*.d.tmp > $*.d
 	@cp -f $*.d $*.d.tmp
@@ -59,9 +56,27 @@ all: $(BIN)
 	@rm -f $*.d.tmp
 
 $(BIN): $(OBJS)
-	$(CC) $^ $(LDFLAGS) -o $@
+	$(CXX) $^ $(LDFLAGS) -o $@
+	install_name_tool -change libassimp.3.dylib $(shell pwd)/deps/target/lib/libassimp.3.dylib $(BIN)
 
-clean:
+RESOURCES=levels fonts models sound specs textures
+release_osx: $(BIN)
+	mkdir -p $(BIN).app
+	mkdir -p $(BIN).app/Contents
+	mkdir -p $(BIN).app/Contents/MacOS
+	mkdir -p $(BIN).app/Contents/libs
+	mkdir -p $(BIN).app/Contents/Resources
+	cp osx/icon.icns $(BIN).app/Contents/Resources/
+	cp osx/Info.plist $(BIN).app/Contents
+	cp osx/launch.sh $(BIN).app/Contents/MacOS
+	cp $(BIN) $(BIN).app/Contents/MacOS
+	DYLD_LIBRARY_PATH=deps/target/lib ./deps/target/bin/dylibbundler -od -b -x $(BIN).app/Contents/MacOS/atd -d $(BIN).app/Contents/libs/
+	$(foreach var, $(RESOURCES), cp -r $(var) $(BIN).app/Contents/Resources/;)
+
+release_clean_osx:
+	rm -rf $(BIN).app
+
+clean: release_clean_osx
 	rm -f $(OBJS) $(DEPS) $(BIN)
 
 -include $(DEPS)
