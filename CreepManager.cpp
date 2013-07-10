@@ -92,7 +92,7 @@ CreepManager::creep_death(Creep *creep)
 
   std::stringstream ss;
   ss << "+" << creep->reward << "g";
-  Text::set_color(1.0f, 0.9f, 0.0f);
+  Text::set_color(utils::colors::gold);
   Text::scrolling(ss.str(), creep->get_position());
 
   remove_creep(creep);
@@ -105,7 +105,7 @@ CreepManager::creep_accomplished(Creep *creep)
 
   std::stringstream ss;
   ss << "-" << creep->life_cost;
-  Text::set_color(1.0f, 1.0f, 1.0f);
+  Text::set_color(utils::colors::white);
   Text::scrolling(ss.str(), creep->get_position());
 
   remove_creep(creep);

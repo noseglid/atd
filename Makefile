@@ -32,6 +32,9 @@ SRCS += math/Math.cpp math/Vector2.cpp math/Vector3.cpp math/Matrix4.cpp
 # Image
 SRCS += ImageLoader.cpp
 
+# Utils
+SRCS += utils/Color.cpp
+
 OBJS := $(SRCS:.cpp=.o)
 DEPS := $(OBJS:.o=.d)
 

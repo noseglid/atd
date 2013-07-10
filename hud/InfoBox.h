@@ -2,6 +2,7 @@
 #define __HUD__INFOBOX_H__
 
 #include "hud/HUD.h"
+#include "utils/Color.h"
 #include "Game.h"
 #include "Text.h"
 
@@ -27,7 +28,7 @@ public:
 private:
   struct boxcontent {
     int x, y;
-    float r, g, b;
+    utils::Color clr;
     float ptsize;
     std::string text;
   };
@@ -41,7 +42,7 @@ private:
 
   int inputx, inputy;
   float input_ptsize, input_indent;
-  float inputr, inputg, inputb;
+  utils::Color clr;
 
   void set_bounding_box();
 
@@ -51,9 +52,7 @@ private:
     boxcontent entry;
     entry.x      = inputx + ((inputx == BOX_PADDING) ? input_indent : 0);
     entry.y      = inputy;
-    entry.r      = inputr;
-    entry.g      = inputg;
-    entry.b      = inputb;
+    entry.clr    = clr;
     entry.ptsize = input_ptsize;
 
     std::stringstream ss;
@@ -94,14 +93,6 @@ public:
     color(float r, float g, float b) : r(r), g(g), b(b) {}
   };
 
-  static color red;
-  static color green;
-  static color blue;
-  static color white;
-  static color black;
-  static color orange;
-  static color purple;
-
   /**
    * Creates a new infobox. Content can be added with operator<<() and it can be shown
    * with draw().
@@ -132,11 +123,9 @@ public:
     return *this;
   }
 
-  InfoBox& operator<<(color c)
+  InfoBox& operator<<(utils::Color clr)
   {
-    inputr = c.r;
-    inputg = c.g;
-    inputb = c.b;
+    this->clr = clr;
     return *this;
   }
 

@@ -140,11 +140,12 @@ TowerManager::button_mouse_event(bool on, Json::Value spec, HUD::Button *button)
       << InfoBox::size(18.0f) << InfoBox::indent(8.0f) << InfoBox::purple
       << Text::linebreak(spec["description"].asString()) << "\n"
       << InfoBox::size(16.0f) << InfoBox::indent(18.0f)
-      << InfoBox::white << "Type: "        << InfoBox::green << spec["type"].asString()   << "\n"
-      << InfoBox::white << "Price: "       << InfoBox::green << spec["price"].asNumber()  << "\n"
-      << InfoBox::white << "Base damage: " << InfoBox::green << spec["damage"].asNumber() << "\n"
-      << InfoBox::white << "Base range: "  << InfoBox::green << spec["range"].asNumber()  << "\n"
-      << InfoBox::white << "Base reload: " << InfoBox::green << spec["reload"].asNumber();
+      << utils::colors::white << "Type: "        << utils::colors::green << spec["type"].asString()   << "\n"
+      << utils::colors::white << "Price: "       << utils::colors::gold  << spec["price"].asNumber()
+      << utils::colors::white << " g" << "\n"
+      << utils::colors::white << "Base damage: " << utils::colors::green << spec["damage"].asNumber() << "\n"
+      << utils::colors::white << "Base range: "  << utils::colors::green << spec["range"].asNumber()  << "\n"
+      << utils::colors::white << "Base reload: " << utils::colors::green << spec["reload"].asNumber();
     browseboxes.insert(std::make_pair(button, box));
   }
 }
@@ -159,7 +160,7 @@ TowerManager::purchase_tower(Vector3 pos)
   Tower *t = create_tower(build_tower, pos);
 
   auto purchase_fail = [pos, t](std::string msg) {
-    Text::set_color(INFO_COLOR);
+    Text::set_color(utils::colors::white);
     Text::scrolling(msg, pos);
     delete t;
     return false;
@@ -186,7 +187,7 @@ TowerManager::purchase_tower(Vector3 pos)
 
   std::stringstream ss;
   ss << "-" << t->price << "g";
-  Text::set_color(GOLD_COLOR);
+  Text::set_color(utils::colors::gold);
   Text::scrolling(ss.str(), Vector3(pos.x, pos.y + 1.0f, pos.z));
   return true;
 }
@@ -237,7 +238,7 @@ TowerManager::upgrade_tower()
 
   std::stringstream ss;
   ss << "-" << upgrade["price"].asInt() << "g";
-  Text::set_color(GOLD_COLOR);
+  Text::set_color(utils::colors::gold);
   Text::scrolling(ss.str(), textpos);
 
   set_tower_infobox();
@@ -257,7 +258,7 @@ TowerManager::sell_tower()
 
   std::stringstream ss;
   ss << "+" << return_value << "g";
-  Text::set_color(GOLD_COLOR);
+  Text::set_color(utils::colors::gold);
   Text::scrolling(ss.str(), textpos);
 
   towers.erase(selected_tower);
@@ -369,12 +370,12 @@ TowerManager::set_tower_infobox()
   PTRDEL(towerinfo);
   towerinfo = new HUD::InfoBox(HUD::InfoBox::SNAP_TOPRIGHT);
   (*towerinfo)
-    << InfoBox::size(32.0f) << InfoBox::orange << t->get_name() << "\n"
+    << InfoBox::size(32.0f) << utils::colors::orange << t->get_name() << "\n"
     << InfoBox::size(16.0f) << InfoBox::indent(18.0f)
-    << InfoBox::white << "Level: "       << InfoBox::green << t->level  << "\n"
-    << InfoBox::white << "Base damage: " << InfoBox::green << t->damage << "\n"
-    << InfoBox::white << "Base range: "  << InfoBox::green << t->range  << "\n"
-    << InfoBox::white << "Base reload: " << InfoBox::green << t->reload;
+    << utils::colors::white << "Level: "       << utils::colors::green << t->level  << "\n"
+    << utils::colors::white << "Base damage: " << utils::colors::green << t->damage << "\n"
+    << utils::colors::white << "Base range: "  << utils::colors::green << t->range  << "\n"
+    << utils::colors::white << "Base reload: " << utils::colors::green << t->reload;
 }
 
 void

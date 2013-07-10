@@ -2,6 +2,7 @@
 #define __TEXT_H__
 
 #include "math/Math.h"
+#include "utils/Color.h"
 
 #include <string>
 #include <vector>
@@ -16,7 +17,7 @@ struct WorldText
 {
   GLuint texture;
   Vector3 pos, delta;
-  SDL_Color color;
+  utils::Color color;
   int width, height;
 };
 
@@ -38,7 +39,7 @@ public:
   static void size(const std::string& text, int *width = NULL, int *height = NULL, const float& ptsize = 16.0f);
   static int overlay_line_skip(float ptsize);
 
-  static void set_color(float r, float g, float b);
+  static void set_color(utils::Color clr);
   static void overlay(const std::string& text, const int& x, const int& y,
                       const float& ptsize = 16.0, bool offbottom = true, bool offleft = true);
   static void scrolling(const std::string& text, const Vector3& pos);

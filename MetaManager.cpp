@@ -2,6 +2,7 @@
 #include "Text.h"
 #include "Debug.h"
 #include "Game.h"
+#include "utils/Color.h"
 
 #include <sstream>
 
@@ -30,7 +31,7 @@ MetaManager::tick(const GameEvent& ev)
     std::stringstream ss;
     ss.precision(4);
     ss << "FPS: " << current_fps;
-    Text::set_color(0.8f, 0.8f, 0.8f);
+    Text::set_color(utils::colors::white);
     Text::overlay(ss.str(), 100, 200, 16.0f, false, false);
   }
 }

@@ -12,14 +12,13 @@ int Text::screen_width  = 0;
 int Text::screen_height = 0;
 Text Text::instance = Text();
 std::vector<WorldText> Text::scrollings = std::vector<WorldText>();
-SDL_Color font_color;
+utils::Color font_color(1.0f, 1.0f, 1.0f);
 
 #define SIZE_FACTOR(x) ((x) / TEXT_OVERLAY_PTSIZE)
 
 Text::Text()
 {
   Game::instance().on("tick_nodepth", std::bind(&Text::tick, this));
-  font_color = { 255, 255, 255 };
 }
 
 void
@@ -58,11 +57,9 @@ Text::overlay_line_skip(float ptsize)
 }
 
 void
-Text::set_color(float r, float g, float b)
+Text::set_color(utils::Color clr)
 {
-  font_color.r = r * 255;
-  font_color.g = g * 255;
-  font_color.b = b * 255;
+  font_color = clr;
 }
 
 GLuint
@@ -76,7 +73,7 @@ Text::create_texture(const std::string& text, TTF_Font *font, int& w, int& h)
   glGenTextures(1, &texture);
   glBindTexture(GL_TEXTURE_2D, texture);
 
-  SDL_Surface *stext = TTF_RenderUTF8_Blended(font, text.c_str(), font_color);
+  SDL_Surface *stext = TTF_RenderUTF8_Blended(font, text.c_str(), font_color.to_sdl());
   if (NULL == stext) {
     DBGERR("Could not create blended text, msg: " << text);
     return 0;
@@ -107,7 +104,7 @@ Text::tick()
     glBindTexture(GL_TEXTURE_2D, wt.texture);
     glTranslatef(wt.pos.x + wt.delta.x, wt.pos.y + wt.delta.y, wt.pos.z + wt.delta.z);
     GLTransform::billboard();
-    glColor3f(wt.color.r / 255.0f, wt.color.g / 255.0f, wt.color.b / 255.0f);
+    glColor3f(wt.color.r, wt.color.g, wt.color.b);
     float height = 0.25f;
     float width = (float)wt.width/(float)wt.height * height;
     glBegin(GL_TRIANGLE_STRIP);

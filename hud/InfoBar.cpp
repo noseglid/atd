@@ -6,7 +6,6 @@
 
 BEGIN_NS_HUD
 
-#define INFO_COLOR 1.0f, 1.0f, 1.0f
 #define TITLE_PTSIZE 48.0f
 #define INFO_PTSIZE 24.0f
 
@@ -51,7 +50,7 @@ InfoBar::tick() const
 
   if (!title.empty()) {
     int title_width, title_height;
-    Text::set_color(0.853, 0.853, 0.853);
+    Text::set_color(utils::colors::lightgray);
     Text::size(title, &title_width, &title_height, TITLE_PTSIZE);
     Text::overlay(
       title,
@@ -63,7 +62,7 @@ InfoBar::tick() const
   }
 
   if (!info_text.empty()) {
-    Text::set_color(INFO_COLOR);
+    Text::set_color(utils::colors::white);
     int i = 0;
     int line_height;
     Text::size(info_text.at(0), NULL, &line_height, INFO_PTSIZE);

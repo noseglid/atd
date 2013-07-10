@@ -7,14 +7,6 @@
 
 BEGIN_NS_HUD
 
-InfoBox::color InfoBox::red     (1.00f, 0.00f, 0.00f);
-InfoBox::color InfoBox::green   (0.00f, 1.00f, 0.00f);
-InfoBox::color InfoBox::blue    (0.00f, 0.00f, 1.00f);
-InfoBox::color InfoBox::white   (1.00f, 1.00f, 1.00f);
-InfoBox::color InfoBox::black   (0.00f, 0.00f, 0.00f);
-InfoBox::color InfoBox::orange  (1.00f, 0.50f, 0.00f);
-InfoBox::color InfoBox::purple  (1.00f, 0.50f, 1.00f);
-
 static int mousex, mousey;
 
 void
@@ -28,7 +20,7 @@ static mousemotion(const GameEvent& ge)
 InfoBox::InfoBox(SNAP snap, bool followmouse) :
   left(INT_MAX), top(INT_MAX), snap(snap), followmouse(followmouse),
   inputx(BOX_PADDING), inputy(BOX_PADDING), input_ptsize(18.0f),
-  input_indent(0.0f), inputr(1.0f), inputg(1.0f), inputb(1.0f)
+  input_indent(0.0f), clr(1.0f, 1.0f, 1.0f)
 {
   auto fn = std::bind(mousemotion, std::placeholders::_1);
   mousemotion_emit = Game::instance().on("mousemotion", fn);
@@ -122,7 +114,7 @@ InfoBox::draw()
   glEnd();
 
   for (boxcontent c : content) {
-    Text::set_color(c.r, c.g, c.b);
+    Text::set_color(c.clr);
     Text::overlay(c.text, basex + c.x + BOX_PADDING, basey - c.y + BOX_PADDING, c.ptsize);
   }
 
