@@ -87,10 +87,12 @@ public:
     indent(float indentsize) : indentsize(indentsize) {}
   };
 
-  struct color
+  template <class T>
+  struct colornumber
   {
-    float r, g, b;
-    color(float r, float g, float b) : r(r), g(g), b(b) {}
+    T comparable;
+    bool invert;
+    colornumber(T comparable, bool invert = false) : comparable(comparable), invert(invert) {}
   };
 
   /**
@@ -129,23 +131,30 @@ public:
     return *this;
   }
 
+  template <class T>
+  InfoBox& operator<<(colornumber<T> c)
+  {
+    utils::Color clr = utils::colors::white;
+    if (0 < c.comparable) clr = c.invert ? utils::colors::red : utils::colors::green;
+    if (0 > c.comparable) clr = c.invert ? utils::colors::green : utils::colors::red;
+
+    return *this << clr << (0 < c.comparable ? "+" : "") << c.comparable;
+  }
+
   InfoBox& operator<<(std::string text)
   {
     size_t prepos = 0, pos = 0;
     while (std::string::npos != (pos = text.find('\n', prepos))) {
-      std::string line = text.substr(prepos, pos);
+      std::string line = text.substr(prepos, pos - prepos);
       prepos = pos + 1; // Just ahead of the located '\n'
 
       if (!line.empty()) add(line);
       linebreak();
     }
 
-    if (prepos < text.size()) {
-      /* The text did not end with newline.
-         Take rest and add it without linebreak. */
-      std::string line = text.substr(prepos);
-      add(line);
-    }
+    /* Add the end of the string */
+    std::string line = text.substr(prepos);
+    if (!line.empty()) add(line);
 
     set_bounding_box();
     return *this;

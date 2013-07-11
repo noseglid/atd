@@ -1,6 +1,9 @@
 {
   "type"     : "normal",
-  "name"     : "Axe",
+  "desc" : {
+    "name"  : "Axe",
+    "info"  : "The standard Axe throwing tower. Builders Ltd.",
+  },
   "model"    : "towers/brutals_axe.dae",
   "hudtex"   : "tower_basic1.jpg",
   "price"    : 80,

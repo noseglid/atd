@@ -9,7 +9,7 @@
 Tower::Tower(Json::Value spec, Vector3 pos) :
   Purchasable(spec["price"].asInt()),
   pos(pos),
-  name(spec["name"].asString()),
+  name(spec["desc"]["name"].asString()),
   type(spec["type"].asString()),
   level(1),
   reload(spec["reload"].asNumber()),

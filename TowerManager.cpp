@@ -14,10 +14,7 @@
 #include "HUD/Button.h"
 #include "Faction.h"
 
-#define GOLD_COLOR 1.0f, 0.9f, 0.0f
-#define INFO_COLOR 0.0f, 0.0f, 0.0f
-
-TowerManager::TowerManager() : selected_tower(towers.end()), btnupgr(NULL), towerinfo(NULL)
+TowerManager::TowerManager() : selected_tower(towers.end()), btnupgr(NULL)
 {
   Game& g = Game::instance();
   g.on("tick",         std::bind(&TowerManager::tick,         this, std::placeholders::_1));
@@ -31,7 +28,9 @@ TowerManager::TowerManager() : selected_tower(towers.end()), btnupgr(NULL), towe
 
   audio_build = Audio::instance().load_sfx("sfx/build1.ogg");
 
+  towerinfo   = new HUD::InfoBox(HUD::InfoBox::SNAP_TOPRIGHT);
   upgradeinfo = new HUD::InfoBox(HUD::InfoBox::SNAP_BOTRIGHT, true);
+  sellinfo    = new HUD::InfoBox(HUD::InfoBox::SNAP_BOTRIGHT, true);
 }
 
 void
@@ -40,7 +39,7 @@ TowerManager::set_faction(Faction::Faction faction)
   std::list<std::string> specs = Faction::Loader::tower_specs(faction);
   for (std::string file : specs) {
     Json::Value jspec = Json::deserialize(IO::file_get_contents(file));
-    std::string name = jspec["name"].asString();
+    std::string name = jspec["desc"]["name"].asString();
 
     HUD::Button *button = new HUD::Button(IL::GL::texture(jspec["hudtex"].asString()));
     HUD::ButtonBar::instance().add_button(button);
@@ -133,12 +132,16 @@ TowerManager::button_mouse_event(bool on, Json::Value spec, HUD::Button *button)
 
   if (on) {
     using HUD::InfoBox;
+    std::string limit = spec["desc"].objectHasKey("limit") ?
+      std::string("Limit: ") + spec["desc"]["limit"].asString() + "\n" : "";
+
     InfoBox *box = new InfoBox(InfoBox::SNAP_BOTLEFT, true);
     *box
-      << InfoBox::size(32.0f) << InfoBox::orange
-      << spec["name"].asString() << "\n"
-      << InfoBox::size(18.0f) << InfoBox::indent(8.0f) << InfoBox::purple
-      << Text::linebreak(spec["description"].asString()) << "\n"
+      << InfoBox::size(32.0f) << utils::colors::orange
+      << spec["desc"]["name"].asString() << "\n"
+      << InfoBox::size(18.0f) << InfoBox::indent(8.0f) << utils::colors::lightgray
+      << Text::linebreak(spec["desc"]["info"].asString()) << "\n"
+      << utils::colors::red << limit << "\n"
       << InfoBox::size(16.0f) << InfoBox::indent(18.0f)
       << utils::colors::white << "Type: "        << utils::colors::green << spec["type"].asString()   << "\n"
       << utils::colors::white << "Price: "       << utils::colors::gold  << spec["price"].asNumber()
@@ -242,6 +245,8 @@ TowerManager::upgrade_tower()
   Text::scrolling(ss.str(), textpos);
 
   set_tower_infobox();
+  set_upgrade_infobox();
+
   if (0 >= upgrades_left(selected_tower)) {
     btnupgr->set_texture(IL::GL::texture("upgrade_disabled.jpg"));
     /* No more upgrades, disable button - BUT HOW?! */
@@ -252,6 +257,7 @@ void
 TowerManager::sell_tower()
 {
   int return_value = Player::instance().sell(selected_tower->second);
+  sellinfo->clear();
 
   Vector3 textpos = selected_tower->second->get_position();
   textpos.y += 1.0f;
@@ -314,6 +320,63 @@ TowerManager::tower_purchase_if()
 }
 
 void
+TowerManager::set_tower_infobox()
+{
+  Tower *t = selected_tower->second;
+
+  using HUD::InfoBox;
+  towerinfo->clear();
+  (*towerinfo)
+    << InfoBox::size(32.0f) << utils::colors::orange << t->get_name() << "\n"
+    << InfoBox::size(16.0f) << InfoBox::indent(18.0f)
+    << utils::colors::white << "Level: "       << utils::colors::green << t->level  << "\n"
+    << utils::colors::white << "Base damage: " << utils::colors::green << t->damage << "\n"
+    << utils::colors::white << "Base range: "  << utils::colors::green << t->range  << "\n"
+    << utils::colors::white << "Base reload: " << utils::colors::green << t->reload;
+}
+
+void
+TowerManager::set_sell_infobox()
+{
+  using HUD::InfoBox;
+  this->sellinfo->clear();
+
+  *this->sellinfo
+    << InfoBox::size(24.0f) << utils::colors::red << "Sell tower\n"
+    << InfoBox::size(18.0f) << utils::colors::white << "Gold return: "
+    << utils::colors::gold << floor(selected_tower->second->price * Player::sell_factor)
+    << utils::colors::white << " g";
+}
+
+void
+TowerManager::set_upgrade_infobox()
+{
+  using HUD::InfoBox;
+  this->upgradeinfo->clear();
+
+  if (0 == upgrades_left(selected_tower)) {
+    return;
+  }
+
+  Tower *t = selected_tower->second;
+  Json::Value upgrade = available_towers
+    .find(selected_tower->second->get_name())
+    ->second["upgrades"].asArray().at(t->get_level() - 1);
+
+  int delta_dmg      = upgrade["damage"].asInt() - t->damage;
+  float delta_range  = round(upgrade["range"].asNumber() - t->range);
+  float delta_reload = round(upgrade["reload"].asNumber() - t->reload);
+  *this->upgradeinfo
+    << InfoBox::size(24.0f) << utils::colors::green << "Upgrade tower\n"
+    << InfoBox::size(18.0f)
+    << utils::colors::white << "Price: "  << utils::colors::gold << upgrade["price"].asInt()
+    << utils::colors::white << " g\n"
+    << utils::colors::white << "Damage: " << InfoBox::colornumber<int>(delta_dmg,false)      << "\n"
+    << utils::colors::white << "Range: "  << InfoBox::colornumber<float>(delta_range,false)  << "\n"
+    << utils::colors::white << "Reload: " << InfoBox::colornumber<float>(delta_reload, true);
+}
+
+void
 TowerManager::update_hud()
 {
   static HUD::Button *btnsell = NULL;
@@ -335,47 +398,22 @@ TowerManager::update_hud()
     return;
   }
 
-  auto hover_upgr = [this](bool on, HUD::Button *btn) {
-    if (!on) {
-      this->upgradeinfo->clear();
-      return;
-    }
-
-    (*(this->upgradeinfo))
-      << "Upgrade information here: " << (on ? "on!" : "off!");
-  };
-
   std::string tex_upgr = (0 >= upgrades_left(selected_tower)) ?
     "upgrade_disabled.jpg" : "upgrade.jpg";
 
   btnupgr = new HUD::Button(IL::GL::texture(tex_upgr));
   btnsell = new HUD::Button(IL::GL::texture("sell.jpg"));
 
-  btnsell->on("leftclick", std::bind(&TowerManager::sell_tower, this));
-  btnupgr->on("leftclick", std::bind(&TowerManager::upgrade_tower, this));
-  btnupgr->on("mouseentry", std::bind(hover_upgr, true, std::placeholders::_1));
-  btnupgr->on("mouseexit", std::bind(hover_upgr, false, std::placeholders::_1));
+  btnsell->on("leftclick",  std::bind(&TowerManager::sell_tower, this));
+  btnsell->on("mouseentry", std::bind(&TowerManager::set_sell_infobox, this));
+  btnsell->on("mouseexit",  std::bind(&HUD::InfoBox::clear, sellinfo));
 
+  btnupgr->on("leftclick",  std::bind(&TowerManager::upgrade_tower, this));
+  btnupgr->on("mouseentry", std::bind(&TowerManager::set_upgrade_infobox, this));
+  btnupgr->on("mouseexit",  std::bind(&HUD::InfoBox::clear, upgradeinfo));
 
   bar.add_button(btnupgr, HUD::Button::LOCATION_RIGHT);
   bar.add_button(btnsell, HUD::Button::LOCATION_RIGHT);
-}
-
-void
-TowerManager::set_tower_infobox()
-{
-  Tower *t = selected_tower->second;
-
-  using HUD::InfoBox;
-  PTRDEL(towerinfo);
-  towerinfo = new HUD::InfoBox(HUD::InfoBox::SNAP_TOPRIGHT);
-  (*towerinfo)
-    << InfoBox::size(32.0f) << utils::colors::orange << t->get_name() << "\n"
-    << InfoBox::size(16.0f) << InfoBox::indent(18.0f)
-    << utils::colors::white << "Level: "       << utils::colors::green << t->level  << "\n"
-    << utils::colors::white << "Base damage: " << utils::colors::green << t->damage << "\n"
-    << utils::colors::white << "Base range: "  << utils::colors::green << t->range  << "\n"
-    << utils::colors::white << "Base reload: " << utils::colors::green << t->reload;
 }
 
 void
@@ -385,7 +423,7 @@ TowerManager::select_tower(tlist_t::iterator it)
 
   /* If we do not wish to select a new one, stop here */
   if (selected_tower == towers.end()) {
-    PTRDEL(towerinfo);
+    towerinfo->clear();
     update_hud();
     return;
   }
@@ -448,9 +486,8 @@ void
 TowerManager::tick_nodepth(const GameEvent& ev)
 {
   upgradeinfo->draw();
-  if (NULL != towerinfo) {
-    towerinfo->draw();
-  }
+  sellinfo->draw();
+  towerinfo->draw();
 
   for (std::pair<HUD::Button*, HUD::InfoBox*> entry : browseboxes) {
     entry.second->draw();

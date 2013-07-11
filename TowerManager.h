@@ -28,7 +28,7 @@ class TowerManager
   HUD::Button *btnupgr;
 
   std::map<HUD::Button*, HUD::InfoBox*> browseboxes;
-  HUD::InfoBox *towerinfo, *upgradeinfo;
+  HUD::InfoBox *towerinfo, *upgradeinfo, *sellinfo;
 
   MapEvent last_map_event;
 
@@ -46,11 +46,14 @@ class TowerManager
 
   void map_hover(const MapEvent& me);
 
+  void set_tower_infobox();
+  void set_upgrade_infobox();
+  void set_sell_infobox();
+  void update_hud();
+
   int upgrades_left(tlist_t::const_iterator tower) const;
   bool tower_purchase_if();
-  void update_hud();
   void tower_select_if(int clickx, int clicky);
-  void set_tower_infobox();
   void select_tower(tlist_t::iterator it);
   void reselect_tower();
 

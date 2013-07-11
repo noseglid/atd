@@ -7,5 +7,6 @@
 
 float deg2rad(const float& deg);
 float rad2deg(const float& rad);
+float round(const float& number);
 
 #endif

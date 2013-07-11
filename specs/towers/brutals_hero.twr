@@ -1,6 +1,10 @@
 {
   "type"     : "hero",
-  "name"     : "Poran",
+  "desc" : {
+    "name"  : "Badunkadonk",
+    "info"  : "The Badunkadonk itself. Strong, versatile and deadly.",
+    "limit" : "Only one may be built"
+  },
   "model"    : "towers/brutals_hero.dae",
   "hudtex"   : "tower_hero.jpg",
   "price"    : 135,

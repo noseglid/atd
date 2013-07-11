@@ -1,6 +1,10 @@
 {
   "type"        : "hero",
-  "description" : "Poran. The Hero tower of the sages. Limit: only one may be built",
+  "desc" : {
+    "name"  : "Poran",
+    "info"  : "The Hero tower of the sages. Its soul uncontested, with foundation of, well, stone.",
+    "limit" : "Only one may be built"
+  },
   "name"        : "Poran",
   "model"       : "towers/sages_hero.dae",
   "hudtex"      : "tower_hero.jpg",

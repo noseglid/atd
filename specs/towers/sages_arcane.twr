@@ -1,7 +1,9 @@
 {
   "type"        : "normal",
-  "description" : "The Arcane tower. The flagship of towers from the sages of cratania.",
-  "name"        : "Arcane",
+  "desc" : {
+    "name"  : "Arcane",
+    "info"  : "The Arcane tower. The flagship of towers from the sages of cratania.",
+  },
   "model"       : "towers/sages_arcane.dae",
   "hudtex"      : "tower_basic1.jpg",
   "price"       : 80,

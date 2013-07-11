@@ -34,8 +34,6 @@ InfoBox::~InfoBox()
 void
 InfoBox::set_bounding_box()
 {
-  /* FIXME: Set static location accordingly if not following mouse. */
-
   height = BOX_PADDING;
   width  = BOX_PADDING;
 

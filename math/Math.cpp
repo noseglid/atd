@@ -17,3 +17,9 @@ rad2deg(const float& rad)
 {
   return rad * (180.0f / M_PI);
 }
+
+float
+round(const float& number)
+{
+  return floorf(number * 100 + 0.5) / 100;
+}
