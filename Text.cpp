@@ -181,10 +181,17 @@ Text::scrolling(const std::string& text, const Vector3& pos)
 std::string
 Text::linebreak(std::string s, int col)
 {
-  int i = col;
-  while (i < s.length()) {
-    s.insert(i, 1, '\n');
-    i += col;
+  int i = 0;
+  std::string space = " ";
+  while ((i += col) < s.size()) {
+    auto it = std::find_end(s.begin(), s.begin() + i, space.begin(), space.end());
+    if (it == s.end()) {
+      /* No space found, can't line break */
+      return s;
+    }
+
+    s.replace(it, it + 1, 1, '\n');
   }
+
   return s;
 }
