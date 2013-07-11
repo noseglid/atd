@@ -4,6 +4,8 @@
 
 #include <sstream>
 
+float Player::sell_factor = 0.5f;
+
 Player::Player() : gold(0), lives(0)
 {
   stats_text();
@@ -55,7 +57,7 @@ Player::purchase(Purchasable *p)
 int
 Player::sell(Purchasable *p)
 {
-  int return_value = floor(p->price * 0.5f);
+  int return_value = floor(p->price * Player::sell_factor);
   alter_gold(return_value);
   stats_text();
   return return_value;

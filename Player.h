@@ -26,6 +26,8 @@ class Player
   void tick() const;
 
 public:
+  static float sell_factor;
+
   static Player& instance();
 
   void alter_gold(int delta);
