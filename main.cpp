@@ -12,6 +12,7 @@
 
 #include <SDL/SDL.h>
 #include <SDL_image.h>
+#include <Rocket/Core.h>
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 

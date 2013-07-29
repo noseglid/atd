@@ -7,6 +7,7 @@ CFLAGS += -DSFXVOL=32 -DMUSICVOL=16
 LDFLAGS  = $(shell deps/target/bin/sdl-config --libs)
 LDFLAGS += -Ldeps/target/lib -stdlib=libc++ -headerpad_max_install_names
 LDFLAGS += -Wl,-framework,OpenGL -lpjson -lassimp -lSDL_ttf -lSDL_mixer -lSDL_image
+LDFLAGS += -lRocketControls -lRocketDebugger -lRocketCore
 
 SRCS  = main.cpp
 SRCS += Player.cpp Game.cpp Map.cpp Path.cpp

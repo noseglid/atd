@@ -17,6 +17,7 @@ PJSONVER=0.2.1
 ASSIMPVER=3.0.1270
 DEVER=0.1.0
 DYLIBBUNDLERVER=0.4.3
+ROCKETVER=c95b8f4a1895340e1b847cba2d29a529601bb151
 
 build()
 {
@@ -195,14 +196,40 @@ build_dylibbundler()
   cd -
 }
 
-export CXX=clang++
-export CXXFLAGS=-stdlib=libc++
+build_rocket()
+{
+  NAME="$ROCKETVER.zip"
+  fetch "https://github.com/lloydw/libRocket/archive/$NAME"
+
+  unzip -q -o $NAME
+  ORIGDIR=$(pwd)
+  cd libRocket-*/Build
+  patch -N -p1 < $RUNDIR/deps/librocket.osx-build.patch
+  mkdir build
+  cd build
+  cmake \
+    -DCMAKE_INSTALL_PREFIX:PATH=$INSTALLDIR \
+    -DCMAKE_OSX_ARCHITECTURES:STRING="x86_64;" \
+    -DBUILD_PYTHON_BINDINGS=OFF \
+    -DBUILD_SAMPLES=OFF \
+    -DBUILD_SHARED_LIBS=OFF \
+    ..
+
+  make -j8
+  make install
+
+  cd $ORIGDIR
+}
+
+export CFLAGS="-arch x86_64"
+export CXX="clang++"
+export CXXFLAGS="-stdlib=libc++ -arch x86_64"
 export PKG_CONFIG_PATH=${INSTALLDIR}lib/pkgconfig
-export CPPFLAGS=-I${INSTALLDIR}include
-export LDFLAGS=-L${INSTALLDIR}lib
+export CPPFLAGS="-I${INSTALLDIR}include"
+export LDFLAGS="-L${INSTALLDIR}lib"
 export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/local/bin:/usr/local/bin:/opt/X11/bin
 
-PACKAGES="ogg vorbis pjson assimp de freetype sdl sdl_ttf sdl_mixer sdl_image dylibbundler"
+PACKAGES="ogg vorbis pjson assimp de freetype sdl sdl_ttf sdl_mixer sdl_image dylibbundler rocket"
 
 case "$1" in
   build)
