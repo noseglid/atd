@@ -1,4 +1,5 @@
 #include "CreepManager.h"
+#include "hud/InfoBox.h"
 #include "IO.h"
 #include "Player.h"
 #include "Text.h"
@@ -15,9 +16,12 @@ CreepManager::instance()
   return instance;
 }
 
-CreepManager::CreepManager() : last_spawn(-SPAWN_INTERVAL), spawned(0)
+CreepManager::CreepManager() : last_spawn(-SPAWN_INTERVAL), spawned(0), winbox(HUD::InfoBox::SNAP_CENTER)
 {
   Game::instance().on("tick", std::bind(&CreepManager::tick, this, std::placeholders::_1));
+
+  using HUD::InfoBox;
+  winbox << InfoBox::size(32.0f) << utils::colors::green << "Level complete!";
 }
 
 void
@@ -82,7 +86,17 @@ CreepManager::tick(const GameEvent& ev)
     c->tick(elapsed);
   }
 
+  if (level_complete()) {
+    winbox.draw();
+  }
+
   check_spawn(elapsed);
+}
+
+bool
+CreepManager::level_complete() const
+{
+  return spawns.empty() && creeps.empty();
 }
 
 void

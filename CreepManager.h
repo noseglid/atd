@@ -3,6 +3,7 @@
 
 #include "Creep.h"
 #include "Game.h"
+#include "hud/InfoBox.h"
 
 #include <pjson.hpp>
 #include <list>
@@ -20,6 +21,8 @@ class CreepManager
   unsigned int spawned;
   std::list<Creep*> creeps;
 
+  HUD::InfoBox winbox;
+
   CreepManager();
   void operator=(CreepManager const&);
   CreepManager(const CreepManager&);
@@ -28,6 +31,7 @@ class CreepManager
   void remove_creep(Creep *creep);
   void tick(const GameEvent& ev);
 
+  bool level_complete() const;
   void creep_death(Creep *creep);
   void creep_accomplished(Creep *creep);
 

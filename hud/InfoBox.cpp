@@ -66,6 +66,10 @@ InfoBox::set_bounding_box()
         left = lr;
         top = tb;
         break;
+      case SNAP_CENTER:
+        left = HUD::screen_width / 2 - width / 2;
+        top  = HUD::screen_height / 2 - height / 2;
+        break;
     }
   }
 }
@@ -93,6 +97,7 @@ InfoBox::draw()
       case SNAP_TOPLEFT:                                break;
       case SNAP_TOPRIGHT: left -= width;                break;
       case SNAP_BOTRIGHT: left -= width; top -= height; break;
+      case SNAP_CENTER: /* Que? Do nothing here. */     break;
     }
   }
 

@@ -22,7 +22,8 @@ public:
     SNAP_BOTLEFT,
     SNAP_TOPLEFT,
     SNAP_TOPRIGHT,
-    SNAP_BOTRIGHT
+    SNAP_BOTRIGHT,
+    SNAP_CENTER
   };
 
 private:
