@@ -118,7 +118,25 @@ build_sdl_image()
 
   tar -xzf $NAME
   cd SDL_image-*
-  build
+  build \
+    --enable-jpg=yes \
+    --enable-jpg-shared=yes \
+    --disable-bmp \
+    --disable-gif \
+    --disable-lbm \
+    --disable-pcx \
+    --disable-png \
+    --disable-png-shared \
+    --disable-pnm \
+    --disable-tga \
+    --disable-tif \
+    --disable-tif-shared \
+    --disable-xcf \
+    --disable-xpm \
+    --disable-xv \
+    --disable-webp \
+    --disable-webp-shared
+
   cd -
 }
 
