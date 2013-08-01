@@ -1,13 +1,13 @@
 #ifndef __KEYBOARDHANDLER_H__
 #define __KEYBOARDHANDLER_H__
 
-struct GameEvent;
+#include "engine/Engine.h"
 
 class KeyboardHandler
 {
 public:
   KeyboardHandler();
-  void keydown(const GameEvent& ev);
+  void keydown(const engine::Event& ev);
 };
 
 #endif

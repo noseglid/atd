@@ -6,7 +6,7 @@
 #include <vector>
 #include <string>
 
-BEGIN_NS_HUD
+B_NS_HUD
 
 class InfoBar : public Bar
 {
@@ -24,6 +24,6 @@ public:
   void set_info_text(std::string text);
 };
 
-END_NS_HUD
+E_NS_HUD
 
 #endif

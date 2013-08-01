@@ -1,7 +1,7 @@
 #include "hud/ButtonBar.h"
 #include "GLTransform.h"
 
-BEGIN_NS_HUD
+B_NS_HUD
 
 ButtonBar&
 ButtonBar::instance()
@@ -15,7 +15,7 @@ ButtonBar::ButtonBar()
   nbuttonsat[Button::LOCATION_LEFT]  = 0;
   nbuttonsat[Button::LOCATION_RIGHT] = 0;
 
-  Game::instance().on("tick_nodepth", std::bind(&ButtonBar::tick, this));
+  engine::Engine::instance().on("tick_nodepth", std::bind(&ButtonBar::tick, this));
 }
 
 void
@@ -62,4 +62,4 @@ ButtonBar::unmark_all()
   }
 }
 
-END_NS_HUD
+E_NS_HUD

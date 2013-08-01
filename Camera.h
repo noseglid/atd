@@ -2,10 +2,9 @@
 #define __CAMERA_H__
 
 #include "math/Math.h"
+#include "engine/Event.h"
 
 #include <OpenGL/gl.h>
-
-struct GameEvent;
 
 class Camera
 {
@@ -34,8 +33,8 @@ public:
   void look(GLdouble dx, GLdouble dy);
   void zoom(GLdouble delta);
 
-  void mousebutton(const GameEvent& ev);
-  void mousemotion(const GameEvent& ev);
+  void mousebutton(const engine::Event& ev);
+  void mousemotion(const engine::Event& ev);
 
   static Camera& instance();
 };

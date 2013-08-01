@@ -13,12 +13,15 @@ SRCS  = main.cpp
 SRCS += Player.cpp Game.cpp Map.cpp Path.cpp
 SRCS += KeyboardHandler.cpp MetaManager.cpp GLTransform.cpp GLShapes.cpp
 
+# Engine
+SRCS += engine/Engine.cpp
+
 # Core
 SRCS += Mobile.cpp Model.cpp Camera.cpp Text.cpp Audio.cpp
 
 # Hud
 SRCS += hud/HUD.cpp hud/Bar.cpp hud/ButtonBar.cpp hud/InfoBar.cpp hud/InfoBox.cpp
-SRCS += hud/Button.cpp
+SRCS += hud/Button.cpp hud/Menu.cpp
 
 # Creep
 SRCS += CreepManager.cpp Creep.cpp DummyCreep.cpp
@@ -30,11 +33,8 @@ SRCS += Projectile.cpp
 # Math
 SRCS += math/Math.cpp math/Vector2.cpp math/Vector3.cpp math/Matrix4.cpp
 
-# Image
-SRCS += ImageLoader.cpp
-
 # Utils
-SRCS += utils/Color.cpp
+SRCS += utils/Color.cpp ImageLoader.cpp
 
 OBJS := $(SRCS:.cpp=.o)
 DEPS := $(OBJS:.o=.d)

@@ -1,5 +1,4 @@
 #include "Camera.h"
-#include "Game.h"
 #include "hud/ButtonBar.h"
 
 #include <OpenGL/glu.h>
@@ -19,10 +18,10 @@ Camera::Camera() : mouse_buttons_active(0)
   up.z = 0;
 
   xzangle = asin(dir.x);
-  Game& g = Game::instance();
-  g.on("mousedown", std::bind(&Camera::mousebutton, this, std::placeholders::_1));
-  g.on("mouseup", std::bind(&Camera::mousebutton, this, std::placeholders::_1));
-  g.on("mousemotion", std::bind(&Camera::mousemotion, this, std::placeholders::_1));
+  engine::Engine& e = engine::Engine::instance();
+  e.on("mousedown",   std::bind(&Camera::mousebutton, this, std::placeholders::_1));
+  e.on("mouseup",     std::bind(&Camera::mousebutton, this, std::placeholders::_1));
+  e.on("mousemotion", std::bind(&Camera::mousemotion, this, std::placeholders::_1));
 }
 
 Camera::~Camera()
@@ -76,7 +75,7 @@ Camera::hover(GLdouble dx, GLdouble dz)
 }
 
 void
-Camera::mousebutton(const GameEvent& ev)
+Camera::mousebutton(const engine::Event& ev)
 {
   SDL_MouseButtonEvent event = ev.ev.button;
 
@@ -88,7 +87,7 @@ Camera::mousebutton(const GameEvent& ev)
 }
 
 void
-Camera::mousemotion(const GameEvent& ev)
+Camera::mousemotion(const engine::Event& ev)
 {
   if (HUD::ButtonBar::instance().in_turf(ev.ev.motion.x, ev.ev.motion.y)) {
     return;

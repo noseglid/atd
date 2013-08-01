@@ -1,5 +1,4 @@
 #include "Map.h"
-#include "Game.h"
 #include "GLTransform.h"
 #include "ImageLoader.h"
 #include "Exception.h"
@@ -22,10 +21,10 @@ Map::Map()
   highlighted.x = -1;
   highlighted.y = -1;
 
-  Game& g = Game::instance();
-  g.on("tick", std::bind(&Map::tick, this, std::placeholders::_1));
-  g.on("mousemotion", std::bind(&Map::mousemotion, this, std::placeholders::_1));
-  g.on("keydown", std::bind(&Map::keydown, this, std::placeholders::_1));
+  engine::Engine& e = engine::Engine::instance();
+  e.on("tick",        std::bind(&Map::tick,        this, std::placeholders::_1));
+  e.on("mousemotion", std::bind(&Map::mousemotion, this, std::placeholders::_1));
+  e.on("keydown",     std::bind(&Map::keydown,     this, std::placeholders::_1));
 
   cliff_texture = IL::GL::texture("cliff1.jpg");
 }
@@ -165,14 +164,14 @@ Map::generate_edge_normals()
 }
 
 void
-Map::tick(const GameEvent& ge)
+Map::tick(const engine::Event& ge)
 {
   this->draw(ge.elapsed);
   if (draw_meta) this->draw_normals();
 }
 
 void
-Map::keydown(const GameEvent& ge)
+Map::keydown(const engine::Event& ge)
 {
   SDL_KeyboardEvent event = ge.ev.key;
   switch (event.keysym.sym) {
@@ -182,7 +181,7 @@ Map::keydown(const GameEvent& ge)
 }
 
 void
-Map::mousemotion(const GameEvent& ge)
+Map::mousemotion(const engine::Event& ge)
 {
   static MapEvent me;
 

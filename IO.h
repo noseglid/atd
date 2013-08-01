@@ -1,6 +1,9 @@
 #ifndef __IO_H__
 #define __IO_H__
 
+#include <fstream>
+#include "Exception.h"
+
 class IO
 {
 public:

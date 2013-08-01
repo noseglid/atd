@@ -4,7 +4,6 @@
 #include "Player.h"
 #include "Text.h"
 #include "Debug.h"
-#include "Game.h"
 
 #define SPAWN_INTERVAL 1.0f
 #define COUNT 100
@@ -18,7 +17,7 @@ CreepManager::instance()
 
 CreepManager::CreepManager() : last_spawn(-SPAWN_INTERVAL), spawned(0), winbox(HUD::InfoBox::SNAP_CENTER)
 {
-  Game::instance().on("tick", std::bind(&CreepManager::tick, this, std::placeholders::_1));
+  engine::Engine::instance().on("tick", std::bind(&CreepManager::tick, this, std::placeholders::_1));
 
   using HUD::InfoBox;
   winbox << InfoBox::size(32.0f) << utils::colors::green << "Level complete!";
@@ -73,7 +72,7 @@ CreepManager::check_spawn(const float& elapsed)
 }
 
 void
-CreepManager::tick(const GameEvent& ev)
+CreepManager::tick(const engine::Event& ev)
 {
   float elapsed = ev.elapsed;
 

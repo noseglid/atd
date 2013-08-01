@@ -1,10 +1,10 @@
 #ifndef __HUD__HUD_H__
 #define __HUD__HUD_H__
 
-#define BEGIN_NS_HUD namespace HUD {
-#define END_NS_HUD }
+#define B_NS_HUD namespace HUD {
+#define E_NS_HUD }
 
-BEGIN_NS_HUD
+B_NS_HUD
 
 class HUD
 {
@@ -21,6 +21,6 @@ public:
 };
 
 
-END_NS_HUD
+E_NS_HUD
 
 #endif

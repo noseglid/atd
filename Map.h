@@ -1,6 +1,7 @@
 #ifndef __MAP_H__
 #define __MAP_H__
 
+#include "engine/Engine.h"
 #include "Path.h"
 #include "Model.h"
 #include "math/Math.h"
@@ -12,8 +13,6 @@
 
 #include <pjson.hpp>
 #include <de.h>
-
-struct GameEvent;
 
 struct MapEvent
 {
@@ -73,9 +72,9 @@ public:
   ~Map();
 
   void load(const Json::Value& levelspec);
-  void tick(const GameEvent& ge);
-  void mousemotion(const GameEvent& ge);
-  void keydown(const GameEvent& ge);
+  void tick(const engine::Event& ge);
+  void mousemotion(const engine::Event& ge);
+  void keydown(const engine::Event& ge);
 
   void draw(const float& elapsed) const;
   void draw_normals() const;

@@ -2,6 +2,7 @@
 #define __TOWERMANAGER_H__
 
 #include "Tower.h"
+#include "engine/Event.h"
 #include "Map.h"
 #include "Audio.h"
 #include "Faction.h"
@@ -9,8 +10,6 @@
 #include "hud/Button.h"
 
 #include <vector>
-
-struct GameEvent;
 
 class TowerManager
 {
@@ -57,11 +56,11 @@ class TowerManager
   void select_tower(tlist_t::iterator it);
   void reselect_tower();
 
-  void mouseup(const GameEvent& ev);
-  void mousedown(const GameEvent& ev);
-  void keydown(const GameEvent& ev);
-  void tick(const GameEvent& ev);
-  void tick_nodepth(const GameEvent& ev);
+  void mouseup(const engine::Event& ev);
+  void mousedown(const engine::Event& ev);
+  void keydown(const engine::Event& ev);
+  void tick(const engine::Event& ev);
+  void tick_nodepth(const engine::Event& ev);
 
 public:
   TowerManager();

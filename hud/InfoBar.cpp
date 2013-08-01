@@ -1,17 +1,19 @@
 #include "InfoBar.h"
-#include "Game.h"
+#include "engine/Engine.h"
 #include "Text.h"
 #include "Player.h"
 #include "GLTransform.h"
 
-BEGIN_NS_HUD
+#include <sstream>
+
+B_NS_HUD
 
 #define TITLE_PTSIZE 48.0f
 #define INFO_PTSIZE 24.0f
 
 InfoBar::InfoBar()
 {
-  Game::instance().on("tick_nodepth", std::bind(&InfoBar::tick, this));
+  engine::Engine::instance().on("tick_nodepth", std::bind(&InfoBar::tick, this));
 }
 
 InfoBar&
@@ -74,4 +76,4 @@ InfoBar::tick() const
   GLTransform::disable2D();
 }
 
-END_NS_HUD
+E_NS_HUD

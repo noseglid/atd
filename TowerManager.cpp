@@ -1,4 +1,5 @@
 #include "TowerManager.h"
+#include "Debug.h"
 #include "Common.h"
 #include "GLTransform.h"
 #include "GLShapes.h"
@@ -7,7 +8,7 @@
 #include "Text.h"
 #include "Player.h"
 #include "Creep.h"
-#include "Game.h"
+#include "engine/Engine.h"
 #include "HUD/InfoBox.h"
 #include "HUD/InfoBar.h"
 #include "HUD/ButtonBar.h"
@@ -16,12 +17,12 @@
 
 TowerManager::TowerManager() : selected_tower(towers.end()), btnupgr(NULL)
 {
-  Game& g = Game::instance();
-  g.on("tick",         std::bind(&TowerManager::tick,         this, std::placeholders::_1));
-  g.on("tick_nodepth", std::bind(&TowerManager::tick_nodepth, this, std::placeholders::_1));
-  g.on("mousedown",    std::bind(&TowerManager::mousedown,    this, std::placeholders::_1));
-  g.on("mouseup",      std::bind(&TowerManager::mouseup,      this, std::placeholders::_1));
-  g.on("keydown",      std::bind(&TowerManager::keydown,      this, std::placeholders::_1));
+  engine::Engine& e = engine::Engine::instance();
+  e.on("tick",         std::bind(&TowerManager::tick,         this, std::placeholders::_1));
+  e.on("tick_nodepth", std::bind(&TowerManager::tick_nodepth, this, std::placeholders::_1));
+  e.on("mousedown",    std::bind(&TowerManager::mousedown,    this, std::placeholders::_1));
+  e.on("mouseup",      std::bind(&TowerManager::mouseup,      this, std::placeholders::_1));
+  e.on("keydown",      std::bind(&TowerManager::keydown,      this, std::placeholders::_1));
 
   Map& m = Map::instance();
   m.on("hover", std::bind(&TowerManager::map_hover, this, std::placeholders::_1));
@@ -272,7 +273,7 @@ TowerManager::sell_tower()
 }
 
 void
-TowerManager::keydown(const GameEvent& ge)
+TowerManager::keydown(const engine::Event& ge)
 {
   switch (ge.ev.key.keysym.sym) {
   case SDLK_ESCAPE:
@@ -285,7 +286,7 @@ TowerManager::keydown(const GameEvent& ge)
 }
 
 void
-TowerManager::mousedown(const GameEvent& ev)
+TowerManager::mousedown(const engine::Event& ev)
 {
   SDL_MouseButtonEvent event = ev.ev.button;
 
@@ -460,7 +461,7 @@ TowerManager::tower_select_if(int clickx, int clicky)
 
 
 void
-TowerManager::mouseup(const GameEvent& ge)
+TowerManager::mouseup(const engine::Event& ge)
 {
   SDL_MouseButtonEvent event = ge.ev.button;
 
@@ -483,7 +484,7 @@ TowerManager::mouseup(const GameEvent& ge)
 }
 
 void
-TowerManager::tick_nodepth(const GameEvent& ev)
+TowerManager::tick_nodepth(const engine::Event& ev)
 {
   upgradeinfo->draw();
   sellinfo->draw();
@@ -495,7 +496,7 @@ TowerManager::tick_nodepth(const GameEvent& ev)
 }
 
 void
-TowerManager::tick(const GameEvent& ev)
+TowerManager::tick(const engine::Event& ev)
 {
   float elapsed = ev.elapsed;
 

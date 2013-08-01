@@ -1,18 +1,14 @@
-#include "Game.h"
-#include "IO.h"
+#include "Menu.h"
+#include "Audio.h"
+#include "Debug.h"
+#include "engine/Engine.h"
 #include "Text.h"
 #include "hud/InfoBar.h"
 #include "hud/ButtonBar.h"
 #include "Map.h"
-#include "Player.h"
-#include "MetaManager.h"
-#include "KeyboardHandler.h"
-#include "CreepManager.h"
-#include "TowerManager.h"
 
 #include <SDL/SDL.h>
 #include <SDL_image.h>
-#include <Rocket/Core.h>
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 
@@ -26,34 +22,6 @@
 
 static SDL_Surface *surface;
 static int screen_width = 1024, screen_height = 768;
-
-Map *map;
-MetaManager *meta_manager;
-KeyboardHandler *keyboard;
-CreepManager *creep_manager;
-TowerManager *tower_manager;
-
-void
-init_ATD()
-{
-  DBG("Initing ATD...");
-
-  Text::init(screen_width, screen_height);
-  HUD::HUD::init(screen_width, screen_height);
-
-  Json::Value levelspec = Json::deserialize(IO::file_get_contents("levels/test.map"));
-  Map::instance().load(levelspec);
-
-  TowerManager::instance().set_faction(Faction::Faction::SAGES);
-  CreepManager::instance().setup(levelspec);
-
-  keyboard      = new KeyboardHandler();
-  meta_manager  = new MetaManager();
-
-  Game::instance();
-  Player::instance().alter_gold(12000);
-  Player::instance().alter_lives(10);
-}
 
 void
 init_SDL()
@@ -143,9 +111,8 @@ int main(int argc, char *argv[])
   try {
     init_SDL();
     init_OpenGL();
-    init_ATD();
 
-    Game::instance().run();
+    engine::Engine::instance().run();
 
   } catch (Json::Exception& e) {
     DBGERR("json error: " << e.what());

@@ -1,13 +1,14 @@
 #ifndef __HUD__BOTTOMBAR_H__
 #define __HUD__BOTTOMBAR_H__
 
-#include "Game.h"
+#include "engine/Engine.h"
 #include "hud/Bar.h"
 #include "hud/Button.h"
 
+#include <vector>
 #include <de.h>
 
-BEGIN_NS_HUD
+B_NS_HUD
 
 class ButtonBar : public Bar, public de::Emitter<int>
 {
@@ -28,6 +29,6 @@ public:
 };
 
 
-END_NS_HUD
+E_NS_HUD
 
 #endif

@@ -1,5 +1,6 @@
 #include "Text.h"
-#include "Game.h"
+#include "engine/Engine.h"
+#include "Exception.h"
 #include "Debug.h"
 #include "GLTransform.h"
 
@@ -18,7 +19,7 @@ utils::Color font_color(1.0f, 1.0f, 1.0f);
 
 Text::Text()
 {
-  Game::instance().on("tick_nodepth", std::bind(&Text::tick, this));
+  engine::Engine::instance().on("tick_nodepth", std::bind(&Text::tick, this));
 }
 
 void
