@@ -18,7 +18,7 @@ GLTransform::billboard()
 }
 
 void
-GLTransform::enable2D()
+GLTransform::enable2D(bool origo_top)
 {
   int vport[4];
   glGetIntegerv(GL_VIEWPORT, vport);
@@ -27,7 +27,12 @@ GLTransform::enable2D()
   glPushMatrix();
   glLoadIdentity();
 
-  glOrtho(0, vport[2], 0, vport[3], -1, 1);
+  if (origo_top) {
+    glOrtho(0, vport[2], vport[3], 0, -1, 1);
+  } else {
+    glOrtho(0, vport[2], 0, vport[3], -1, 1);
+  }
+
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
 

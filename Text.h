@@ -35,7 +35,7 @@ class Text
 
 public:
 
-  static void init(const int& screen_width, const int& screen_height);
+  static void init();
   static void size(const std::string& text, int *width = NULL, int *height = NULL, const float& ptsize = 16.0f);
   static int overlay_line_skip(float ptsize);
 

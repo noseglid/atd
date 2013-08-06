@@ -4,7 +4,7 @@
   "cost"   : 1,
   "reward" : 20,
   "speed"  : 0.40,
-  "model"  : "vlod/vlod.dae",
+  "model"  : "vlod",
   "audio"  : {
     "death" : "sfx/creep_death.ogg"
    }

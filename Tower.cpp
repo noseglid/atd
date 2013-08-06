@@ -16,8 +16,10 @@ Tower::Tower(Json::Value spec, Vector3 pos) :
   range(spec["range"].asNumber()),
   damage(spec["damage"].asNumber()),
   last_shot(0.0f),
-  model(Model::load(spec["model"].asString()))
+  model(NULL)
 {
+  std::string modelfile = "resources/models/towers/" + spec["model"].asString() + ".dae";
+  model = Model::load(modelfile);
 }
 
 void

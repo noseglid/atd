@@ -5,12 +5,12 @@
 #include <algorithm>
 #include <climits>
 
-BEGIN_NS_HUD
+B_NS_HUD
 
 static int mousex, mousey;
 
 void
-static mousemotion(const GameEvent& ge)
+static mousemotion(const engine::Event& ge)
 {
   /* Connot set member variables here as it might be cancelled in TowerManager::button_mouse_event */
   mousex = (int)ge.ev.motion.x;
@@ -23,12 +23,12 @@ InfoBox::InfoBox(SNAP snap, bool followmouse) :
   input_indent(0.0f), clr(1.0f, 1.0f, 1.0f)
 {
   auto fn = std::bind(mousemotion, std::placeholders::_1);
-  mousemotion_emit = Game::instance().on("mousemotion", fn);
+  mousemotion_emit = engine::Engine::instance().on("mousemotion", fn);
 }
 
 InfoBox::~InfoBox()
 {
-  Game::instance().off(mousemotion_emit);
+  engine::Engine::instance().off(mousemotion_emit);
 }
 
 void
@@ -124,4 +124,4 @@ InfoBox::draw()
   GLTransform::disable2D();
 }
 
-END_NS_HUD
+E_NS_HUD

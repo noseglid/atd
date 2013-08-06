@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <OpenGL/gl.h>
 
-BEGIN_NS_HUD
+B_NS_HUD
 
 Bar::Bar()
 {
@@ -50,4 +50,4 @@ Bar::in_turf(int x, int y) const
 }
 
 
-END_NS_HUD
+E_NS_HUD

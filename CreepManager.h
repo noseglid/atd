@@ -2,7 +2,7 @@
 #define __CREEPMANAGER_H__
 
 #include "Creep.h"
-#include "Game.h"
+#include "engine/Engine.h"
 #include "hud/InfoBox.h"
 
 #include <pjson.hpp>
@@ -29,7 +29,7 @@ class CreepManager
 
   void check_spawn(const float& elapsed);
   void remove_creep(Creep *creep);
-  void tick(const GameEvent& ev);
+  void tick(const engine::Event& ev);
 
   bool level_complete() const;
   void creep_death(Creep *creep);

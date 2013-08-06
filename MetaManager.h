@@ -1,9 +1,9 @@
 #ifndef __METAMANAGER_H__
 #define __METAMANAGER_H__
 
-#include <SDL/SDL.h>
+#include "engine/Event.h"
 
-struct GameEvent;
+#include <SDL/SDL.h>
 
 class MetaManager
 {
@@ -13,8 +13,8 @@ class MetaManager
 
 public:
   MetaManager();
-  void tick(const GameEvent& ev);
-  void keydown(const GameEvent& ev);
+  void tick(const engine::Event& ev);
+  void keydown(const engine::Event& ev);
 };
 
 #endif

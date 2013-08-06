@@ -32,7 +32,7 @@ Audio::instance()
 Mix_Chunk *
 Audio::load_sfx(const std::string& file)
 {
-  std::string rfile = std::string("sound/") + file;
+  std::string rfile = std::string("resources/sound/") + file;
   auto it = sfx.find(rfile);
   if (it != sfx.end()) return it->second;
 
@@ -51,7 +51,7 @@ Audio::load_sfx(const std::string& file)
 Mix_Music *
 Audio::load_music(const std::string& file)
 {
-  std::string rfile = std::string("sound/") + file;
+  std::string rfile = std::string("resources/sound/") + file;
   auto it = music.find(rfile);
   if (it != music.end()) return it->second;
 

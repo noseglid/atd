@@ -3,14 +3,15 @@
 
 #include "hud/HUD.h"
 #include "utils/Color.h"
-#include "Game.h"
+#include "engine/Engine.h"
 #include "Text.h"
 
 #include <string>
+#include <sstream>
 #include <list>
 #include <de.h>
 
-BEGIN_NS_HUD
+B_NS_HUD
 
 #define BOX_PADDING 3.0f
 #define BOX_MARGIN 3.0f
@@ -34,7 +35,7 @@ private:
     std::string text;
   };
 
-  de::Emitter<GameEvent>::id_t mousemotion_emit;
+  de::Emitter<engine::Event>::id_t mousemotion_emit;
 
   int left, top, width, height;
   std::vector<boxcontent> content;
@@ -175,6 +176,6 @@ public:
   void draw();
 };
 
-END_NS_HUD
+E_NS_HUD
 
 #endif

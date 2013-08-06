@@ -4,6 +4,8 @@
 #define BEGIN_NAMESPACE_IL namespace IL {
 #define END_NAMESPACE_IL }
 
+#include "math/Math.h"
+
 #include <string>
 #include <map>
 #include <OpenGL/gl.h>
@@ -14,7 +16,8 @@ class GL
 {
 public:
 
-  static GLuint texture(std::string path);
+  static GLuint texture(std::string path, Vector2& dimensions, bool set_searchdir = true);
+  static GLuint texture(std::string path, bool set_searchdir = true);
 
 private:
   GL();

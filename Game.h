@@ -4,37 +4,30 @@
 #include "Camera.h"
 #include "Debug.h"
 #include "Map.h"
+#include "MetaManager.h"
+#include "KeyboardHandler.h"
+#include "CreepManager.h"
+#include "TowerManager.h"
 
 #include <de.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_Mixer.h>
 #include <map>
 
-struct GameEvent
+class Game
 {
-  float elapsed;
-  SDL_Event ev;
 
-  GameEvent(float elapsed = 0.0f, SDL_Event ev = SDL_Event()) :
-    elapsed(elapsed), ev(ev) {}
-};
-
-class Game : public de::Emitter<GameEvent>
-{
-  float elapsed;
-  bool running;
+  MetaManager *meta_manager;
+  KeyboardHandler *keyboard;
 
   Game();
   void operator=(Game const&);
   Game(const Game&);
 
-  void handle_event(const SDL_Event& ev);
-
 public:
-  void run();
-  void stop();
-
   static Game& instance();
+
+  void start();
 };
 
 #endif

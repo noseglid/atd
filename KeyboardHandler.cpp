@@ -1,20 +1,20 @@
 #include "KeyboardHandler.h"
-#include "Game.h"
+#include "engine/Engine.h"
 
 #include <OpenGL/gl.h>
 
 KeyboardHandler::KeyboardHandler()
 {
-  Game::instance().on("keydown", std::bind(&KeyboardHandler::keydown, this, std::placeholders::_1));
+  engine::Engine::instance().on("keydown", std::bind(&KeyboardHandler::keydown, this, std::placeholders::_1));
 }
 
 void
-KeyboardHandler::keydown(const GameEvent& ev)
+KeyboardHandler::keydown(const engine::Event& ev)
 {
   SDL_KeyboardEvent event = ev.ev.key;
   switch  (event.keysym.sym) {
     case SDLK_q:
-      Game::instance().stop();
+      engine::Engine::instance().stop();
       break;
 
     case SDLK_w:

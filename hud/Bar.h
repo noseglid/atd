@@ -3,7 +3,7 @@
 
 #include "HUD.h"
 
-BEGIN_NS_HUD
+B_NS_HUD
 
 #define HUD_BUTTON_WIDTH 80.0f
 #define HUD_BUTTON_HEIGHT 64.0f
@@ -26,6 +26,6 @@ public:
   static void calc_button_vertices(int index, float *left, float *right, float *top, float *bot);
 };
 
-END_NS_HUD
+E_NS_HUD
 
 #endif

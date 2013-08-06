@@ -2,12 +2,12 @@
 #define __HUD__BUTTON_H__
 
 #include "hud/HUD.h"
-#include "Game.h"
+#include "engine/Engine.h"
 
 #include <de.h>
 #include <OpenGL/gl.h>
 
-BEGIN_NS_HUD
+B_NS_HUD
 
 class Button;
 
@@ -21,7 +21,7 @@ public:
   };
 
 private:
-  de::Emitter<GameEvent>::id_t mousedown, mousemotion;
+  de::Emitter<engine::Event>::id_t mousedown, mousemotion;
   GLuint texture;
   bool marked;
   int index;
@@ -31,7 +31,7 @@ private:
   bool mouse_in_turf;
 
   void calc_button_vertices(int xindex, float *left, float *right, float *top, float *bot) const;
-  void signal(std::string signal, const GameEvent& ge);
+  void signal(std::string signal, const engine::Event& ge);
 
 public:
   Button(GLuint texture);
@@ -48,6 +48,6 @@ public:
   bool point_enclosed(int x, int y) const;
 };
 
-END_NS_HUD
+E_NS_HUD
 
 #endif

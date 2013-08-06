@@ -4,25 +4,25 @@
 
 #include <OpenGL/gl.h>
 
-BEGIN_NS_HUD
+B_NS_HUD
 
 Button::Button(GLuint texture) : texture(texture), marked(false), mouse_in_turf(false)
 {
-  Game& g = Game::instance();
+  engine::Engine& e = engine::Engine::instance();
 
-  mousedown   = g.on("mousedown", std::bind(&Button::signal, this, "click", std::placeholders::_1));
-  mousemotion = g.on("mousemotion", std::bind(&Button::signal, this, "hover", std::placeholders::_1));
+  mousedown   = e.on("mousedown", std::bind(&Button::signal, this, "click", std::placeholders::_1));
+  mousemotion = e.on("mousemotion", std::bind(&Button::signal, this, "hover", std::placeholders::_1));
 }
 
 Button::~Button()
 {
-  Game& g = Game::instance();
-  g.off(mousedown);
-  g.off(mousemotion);
+  engine::Engine& e = engine::Engine::instance();
+  e.off(mousedown);
+  e.off(mousemotion);
 }
 
 void
-Button::signal(std::string signal, const GameEvent& ge)
+Button::signal(std::string signal, const engine::Event& ge)
 {
   int x = ge.ev.button.x;
   int y = HUD::screen_height - ge.ev.button.y;
@@ -124,4 +124,4 @@ Button::draw() const
   }
 }
 
-END_NS_HUD
+E_NS_HUD

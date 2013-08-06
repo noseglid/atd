@@ -4,7 +4,7 @@
   "cost"   : 1,
   "reward" : 20,
   "speed"  : 2.4,
-  "model"  : "spherecreep/spherecreep.dae",
+  "model"  : "spherecreep",
   "audio"  : {
     "death" : "sfx/creep_death.ogg"
    }

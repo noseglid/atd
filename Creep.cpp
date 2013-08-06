@@ -12,18 +12,20 @@ Creep::Creep(Json::Value spec, float animinc) :
   Mobile(spec["speed"].asNumber()),
   distance_moved(0),
   audio_death(Audio::instance().load_sfx(spec["audio"]["death"].asString())),
-  model(Model::load(spec["model"].asString())),
+  model(NULL),
   animinc(animinc),
   total_health(spec["health"].asInt()),
   current_health(spec["health"].asInt()),
   reward(spec["reward"].asInt()),
   life_cost(spec["cost"].asInt())
 {
-  this->path = Map::instance().get_path();
+  std::string modelfile = "resources/models/" + spec["model"].asString() +
+    "/" + spec["model"].asString() + ".dae";
+  model = Model::load(modelfile);
 
+  this->path = Map::instance().get_path();
   PathCoord start = path->get_start();
   pos = Map::instance().get_center_of(start.x, start.y);
-
   travel_to(path->next_coord(start));
 }
 

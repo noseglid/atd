@@ -14,9 +14,11 @@ BEGIN_NAMESPACE_IL
 static std::map<std::string, GLuint> loaded_textures;
 
 GLuint
-GL::texture(std::string path)
+GL::texture(std::string path, Vector2& dimensions, bool set_searchdir)
 {
-  path = "textures/" + path;
+  if (set_searchdir) {
+    path = "textures/" + path;
+  }
 
   auto it = loaded_textures.find(path);
   if (it != loaded_textures.end()) {
@@ -65,8 +67,17 @@ GL::texture(std::string path)
     image->pixels
   );
 
+  dimensions.x = image->w;
+  dimensions.y = image->h;
   loaded_textures.insert(std::make_pair(path, texid));
   return texid;
+}
+
+GLuint
+GL::texture(std::string path, bool set_searchdir)
+{
+  Vector2 v;
+  return GL::texture(path, v, set_searchdir);
 }
 
 END_NAMESPACE_IL

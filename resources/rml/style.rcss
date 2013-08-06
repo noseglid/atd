@@ -1,0 +1,95 @@
+/*
+* Default styles for all the basic elements.
+*/
+
+body {
+background: #fff;
+  font-family: Riky;
+  color: #fff;
+
+  font-style: normal;
+  font-weight: bold;
+  font-size: 22px;
+
+  header-font-effect: shadow;
+  header-color: #000;
+  header-offset: 2px 2px;
+}
+
+h1 {
+  font-size: 56px;
+  color: #f80;
+	display: block;
+  z-index: 1;
+}
+
+div
+{
+	display: block;
+}
+
+p
+{
+	display: block;
+  z-index: 1;
+}
+
+
+em
+{
+	font-style: italic;
+}
+
+strong
+{
+	font-weight: bold;
+}
+
+select, dataselect, datacombo
+{
+	text-align: left;
+}
+
+div#content {
+  padding: 20px;
+  margin: 0px auto;
+  width: 450px;
+  position: absolute;
+  top: 170px;
+  text-align: center;
+
+  bg-decorator: tiled-box;
+  bg-top-left-image-src:     images/topleft_008080.png;
+  bg-top-image-src:          images/solid_008080.png;
+  bg-top-right-image-src:    images/topright_008080.png;
+  bg-left-image-src:         images/solid_008080.png;
+  bg-center-image-src:       images/solid_008080.png;
+  bg-right-image-src:        images/solid_008080.png;
+  bg-bottom-left-image-src:  images/bottomleft_008080.png;
+  bg-bottom-image-src:       images/solid_008080.png;
+  bg-bottom-right-image-src: images/bottomright_008080.png;
+}
+
+div#version {
+display: inline-block;
+  position: absolute;
+  bottom: 50px;
+}
+
+div.menu
+{
+}
+
+p.menu
+{
+}
+
+p.menu:hover
+{
+  color: #aa0;
+}
+
+p.menu:active
+{
+  color: #800;
+}

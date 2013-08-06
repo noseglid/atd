@@ -1,7 +1,7 @@
 #include "MetaManager.h"
 #include "Text.h"
 #include "Debug.h"
-#include "Game.h"
+#include "engine/Engine.h"
 #include "utils/Color.h"
 
 #include <sstream>
@@ -10,13 +10,13 @@
 
 MetaManager::MetaManager() : last_measure(0), draw_meta(false)
 {
-  Game& g = Game::instance();
-  g.on("tick", std::bind(&MetaManager::tick, this, std::placeholders::_1));
-  g.on("keydown", std::bind(&MetaManager::keydown, this, std::placeholders::_1));
+  engine::Engine& e = engine::Engine::instance();
+  e.on("tick",    std::bind(&MetaManager::tick,    this, std::placeholders::_1));
+  e.on("keydown", std::bind(&MetaManager::keydown, this, std::placeholders::_1));
 }
 
 void
-MetaManager::tick(const GameEvent& ev)
+MetaManager::tick(const engine::Event& ev)
 {
   static int frames = 0;
   frames++;
@@ -37,7 +37,7 @@ MetaManager::tick(const GameEvent& ev)
 }
 
 void
-MetaManager::keydown(const GameEvent& ev)
+MetaManager::keydown(const engine::Event& ev)
 {
   SDL_KeyboardEvent event = ev.ev.key;
   switch (event.keysym.sym) {
