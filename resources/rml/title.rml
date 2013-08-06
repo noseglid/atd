@@ -1,0 +1,18 @@
+<rml>
+	<head>
+		<title>Demo</title>
+	  <link type="text/rcss" href="style.rcss" />
+	</head>
+	<body class="window">
+    <div id="version">
+      Version: 0.1
+    </div>
+    <div id="content">
+      <h1>Craters</h1>
+      <div id="menu">
+        <p class="menu" id="newgame">New Game</p>
+        <p class="menu" id="exit">Quit</p>
+      </div>
+    </div>
+	</body>
+</rml>

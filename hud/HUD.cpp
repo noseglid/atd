@@ -1,6 +1,7 @@
 #include "HUD.h"
 #include "InfoBar.h"
 #include "ButtonBar.h"
+#include "engine/Video.h"
 
 B_NS_HUD
 
@@ -8,10 +9,11 @@ int HUD::screen_width  = 0;
 int HUD::screen_height = 0;
 
 void
-HUD::init(int screen_width, int screen_height)
+HUD::init()
 {
-  HUD::screen_width  = screen_width;
-  HUD::screen_height = screen_height;
+  engine::resolution res = engine::Video::instance().get_resolution();
+  HUD::screen_width  = res.width;
+  HUD::screen_height = res.height;
 
   InfoBar::instance();
   ButtonBar::instance();

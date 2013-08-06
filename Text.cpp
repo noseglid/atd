@@ -1,5 +1,6 @@
 #include "Text.h"
 #include "engine/Engine.h"
+#include "engine/Video.h"
 #include "Exception.h"
 #include "Debug.h"
 #include "GLTransform.h"
@@ -23,22 +24,23 @@ Text::Text()
 }
 
 void
-Text::init(const int& screen_width, const int& screen_height)
+Text::init()
 {
-  if (!(Text::font_world = TTF_OpenFont("fonts/Riky-Vampdator.ttf",
+  if (!(Text::font_world = TTF_OpenFont("resources/fonts/Riky-Vampdator.ttf",
                                         TEXT_SCROLLING_PTSIZE))) {
     throw Exception("Could not load font file.");
   }
 
-  if (!(Text::font_overlay = TTF_OpenFont("fonts/Riky-Vampdator.ttf",
+  if (!(Text::font_overlay = TTF_OpenFont("resources/fonts/Riky-Vampdator.ttf",
                                           TEXT_OVERLAY_PTSIZE))) {
     throw Exception("Could not load font file.");
   }
 
   TTF_SetFontKerning(Text::font_overlay, 1);
 
-  Text::screen_width  = screen_width;
-  Text::screen_height = screen_height;
+  engine::resolution res = engine::Video::instance().get_resolution();
+  Text::screen_width  = res.width;
+  Text::screen_height = res.height;
 }
 
 void

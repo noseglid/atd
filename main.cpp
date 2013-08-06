@@ -1,14 +1,15 @@
 #include "Menu.h"
-#include "Audio.h"
 #include "Debug.h"
+#include "Exception.h"
 #include "engine/Engine.h"
-#include "Text.h"
-#include "hud/InfoBar.h"
-#include "hud/ButtonBar.h"
-#include "Map.h"
+#include "engine/Video.h"
+#include "ui/UI.h"
+#include "ui/TitleMenu.h"
 
 #include <SDL/SDL.h>
-#include <SDL_image.h>
+#include <SDL/SDL_image.h>
+#include <SDL/SDL_mixer.h>
+#include <SDL/SDL_ttf.h>
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 
@@ -21,19 +22,20 @@
 #include <vector>
 
 static SDL_Surface *surface;
-static int screen_width = 1024, screen_height = 768;
 
 void
 init_SDL()
 {
   DBG("Initing SDL...");
   if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
-    throw std::exception();
+    throw Exception("Unable to initiate SDL");
   }
 
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-  surface = SDL_SetVideoMode(screen_width, screen_height, 16,
+
+  engine::resolution res = engine::Video::instance().get_resolution();
+  surface = SDL_SetVideoMode(res.width, res.height, 16,
     SDL_OPENGL | SDL_SWSURFACE | SDL_NOFRAME);
   if (NULL == surface) {
     throw Exception("Could not set video modes.");
@@ -84,10 +86,11 @@ init_OpenGL()
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  glViewport(0, 0, (GLsizei)screen_width, (GLsizei)screen_height);
+  engine::resolution res = engine::Video::instance().get_resolution();
+  glViewport(0, 0, (GLsizei)res.width, (GLsizei)res.height);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective(45, (double)screen_width / (double)screen_height, 0.1, 100.0);
+  gluPerspective(45, (double)res.width / (double)res.height, 0.1, 100.0);
   glMatrixMode(GL_MODELVIEW);
 
   glEnable(GL_LIGHTING);
@@ -112,6 +115,7 @@ int main(int argc, char *argv[])
     init_SDL();
     init_OpenGL();
 
+    ui::TitleMenu::instance();
     engine::Engine::instance().run();
 
   } catch (Json::Exception& e) {
@@ -125,6 +129,7 @@ int main(int argc, char *argv[])
     exit(EXIT_FAILURE);
   }
 
+  SDL_FreeSurface(surface);
   SDL_Quit();
 
   return EXIT_SUCCESS;

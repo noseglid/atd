@@ -63,7 +63,8 @@ Map::load(const Json::Value& levelspec)
   if (levelspec.objectHasKey("scenery")) {
     for (Json::Value entry : levelspec["scenery"].asArray()) {
       scenery_t s;
-      s.model = Model::load(entry["model"].asString());
+      std::string modelpath = "resources/models/" + entry["model"].asString() + ".dae";
+      s.model = Model::load(modelpath);
       s.tx    = entry["position"]["x"].asNumber();
       s.ty    = entry["position"]["y"].asNumber();
       s.tz    = entry["position"]["z"].asNumber();
@@ -166,6 +167,9 @@ Map::generate_edge_normals()
 void
 Map::tick(const engine::Event& ge)
 {
+  glDisableClientState(GL_VERTEX_ARRAY);
+  glDisableClientState(GL_COLOR_ARRAY);
+
   this->draw(ge.elapsed);
   if (draw_meta) this->draw_normals();
 }

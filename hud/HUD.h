@@ -17,7 +17,7 @@ class HUD
   static int screen_width, screen_height;
 
 public:
-  static void init(int screen_width, int screen_height);
+  static void init();
 };
 
 

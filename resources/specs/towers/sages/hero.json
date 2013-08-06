@@ -6,7 +6,7 @@
     "limit" : "Only one may be built"
   },
   "name"        : "Poran",
-  "model"       : "towers/sages_hero.dae",
+  "model"       : "sages/hero",
   "hudtex"      : "tower_hero.jpg",
   "price"       : 135,
   "reload"      : 0.6,

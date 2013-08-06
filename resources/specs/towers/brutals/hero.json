@@ -5,7 +5,7 @@
     "info"  : "The Badunkadonk itself. Strong, versatile and deadly.",
     "limit" : "Only one may be built"
   },
-  "model"    : "towers/brutals_hero.dae",
+  "model"    : "brutals/hero",
   "hudtex"   : "tower_hero.jpg",
   "price"    : 135,
   "reload"   : 0.2,

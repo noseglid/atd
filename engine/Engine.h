@@ -26,6 +26,7 @@ class Engine : public de::Emitter<engine::Event>
 public:
   void run();
   void stop();
+  float get_elapsed();
 
   static Engine& instance();
 };

@@ -5,9 +5,6 @@
 #include "Text.h"
 #include "Debug.h"
 
-#define SPAWN_INTERVAL 1.0f
-#define COUNT 100
-
 CreepManager&
 CreepManager::instance()
 {
@@ -15,7 +12,7 @@ CreepManager::instance()
   return instance;
 }
 
-CreepManager::CreepManager() : last_spawn(-SPAWN_INTERVAL), spawned(0), winbox(HUD::InfoBox::SNAP_CENTER)
+CreepManager::CreepManager() : last_spawn(0), spawned(0), winbox(HUD::InfoBox::SNAP_CENTER)
 {
   engine::Engine::instance().on("tick", std::bind(&CreepManager::tick, this, std::placeholders::_1));
 
@@ -26,14 +23,16 @@ CreepManager::CreepManager() : last_spawn(-SPAWN_INTERVAL), spawned(0), winbox(H
 void
 CreepManager::setup(const Json::Value& levelspec)
 {
+  spawns.clear();
   Json::Value waves = levelspec["waves"];
 
-  float spawntime = 0;
+  float spawntime = SDL_GetTicks() / 1000.0f;
 
   for (Json::Value wave : levelspec["waves"].asArray()) {
     wave_t w;
     for (Json::Value creep : wave["creeps"].asArray()) {
-      Json::Value spec = Json::deserialize(IO::file_get_contents(creep["spec"].asString()));
+      std::string specfile = "resources/specs/creeps/" + creep["spec"].asString() + ".json";
+      Json::Value spec = Json::deserialize(IO::file_get_contents(specfile));
       for (int i = 0; i < creep["count"].asNumber(); ++i) {
         spawn_t s;
         s.spec = spec;

@@ -20,11 +20,12 @@ Game::instance()
 void
 Game::start()
 {
-  int screen_width = 1024, screen_height = 768;
-  Text::init(screen_width, screen_height);
-  HUD::HUD::init(screen_width, screen_height);
+  DBG("Starting a new game");
 
-  Json::Value levelspec = Json::deserialize(IO::file_get_contents("levels/test.map"));
+  Text::init();
+  HUD::HUD::init();
+
+  Json::Value levelspec = Json::deserialize(IO::file_get_contents("resources/levels/test.map"));
   Map::instance().load(levelspec);
 
   TowerManager::instance().set_faction(Faction::Faction::SAGES);

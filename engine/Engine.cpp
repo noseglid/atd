@@ -5,7 +5,7 @@
 
 B_NS_ENGINE
 
-Engine::Engine() : running(false), elapsed(0.0f)
+Engine::Engine() : running(false)
 {
 }
 
@@ -22,17 +22,14 @@ Engine::handle_event(const SDL_Event& ev)
     case SDL_MOUSEMOTION:     signal = "mousemotion"; break;
   }
 
-  emit(signal, Event(elapsed, ev));
+  emit(signal, Event(get_elapsed(), ev));
 }
 
 void
 Engine::run()
 {
   SDL_Event ev;
-  struct timeval start_time, now;
   running = true;
-
-  gettimeofday(&start_time, NULL);
 
   /***********************************
    * Should not responsible for this */
@@ -59,22 +56,25 @@ Engine::run()
     GLfloat pos[] = { 0.5, 0.5, 0.5, 0.0 };
     glLightfv(GL_LIGHT0, GL_POSITION, pos);
 
-    gettimeofday(&now, NULL);
-    elapsed = now.tv_sec - start_time.tv_sec;
-    if (now.tv_usec < start_time.tv_usec) {
-      elapsed += (now.tv_usec - start_time.tv_usec) / 1000000.0f;
-    } else {
-      elapsed -= (start_time.tv_usec - now.tv_usec) / 1000000.0f;
-    }
-
+    glPushMatrix();
     glEnable(GL_DEPTH_TEST);
-    emit("tick", engine::Event(elapsed));
+    emit("tick", engine::Event(get_elapsed()));
+    glPopMatrix();
 
+    glPushMatrix();
     glDisable(GL_DEPTH_TEST);
-    emit("tick_nodepth", engine::Event(elapsed));
+    emit("tick_nodepth", engine::Event(get_elapsed()));
+    glPopMatrix();
+
 
     SDL_GL_SwapBuffers();
   }
+}
+
+float
+Engine::get_elapsed()
+{
+  return SDL_GetTicks() / 1000.0f;
 }
 
 void

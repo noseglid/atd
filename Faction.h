@@ -16,13 +16,13 @@ namespace Faction {
       switch (faction) {
         case Faction::SAGES:
           return {
-            "specs/towers/sages_hero.twr",
-            "specs/towers/sages_arcane.twr"
+            "resources/specs/towers/sages/hero.json",
+            "resources/specs/towers/sages/arcane.json"
           };
         case Faction::BRUTALS:
           return {
-            "specs/towers/brutals_hero.twr",
-            "specs/towers/brutals_axe.twr"
+            "resources/specs/towers/brutals_hero.json",
+            "resources/specs/towers/brutals_axe.json"
           };
       }
     }
