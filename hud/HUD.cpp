@@ -19,4 +19,18 @@ HUD::init()
   ButtonBar::instance();
 }
 
+void
+HUD::show()
+{
+  InfoBar::instance().show();
+  ButtonBar::instance().show();
+}
+
+void
+HUD::hide()
+{
+  InfoBar::instance().hide();
+  ButtonBar::instance().hide();
+}
+
 E_NS_HUD

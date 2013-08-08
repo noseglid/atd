@@ -27,6 +27,7 @@ class NewGameListener  : public Rocket::Core::EventListener
     processed = true;
     TitleMenu::instance().hide();
     Game::instance().start();
+    HUD::HUD::show();
 
   }
 } new_game_listener;

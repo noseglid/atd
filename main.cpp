@@ -34,13 +34,6 @@ init_SDL()
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-  engine::resolution res = engine::Video::instance().get_resolution();
-  surface = SDL_SetVideoMode(res.width, res.height, 16,
-    SDL_OPENGL | SDL_SWSURFACE | SDL_NOFRAME);
-  if (NULL == surface) {
-    throw Exception("Could not set video modes.");
-  }
-
   if (Mix_Init(MIX_INIT_OGG) < 0) {
     throw Exception("Could not initiate SDL mixer file formats.");
   }
@@ -53,6 +46,8 @@ init_SDL()
   if (IMG_Init(IMG_INIT_JPG) < 0) {
     throw Exception("Could not initiate SDL Image library.");
   }
+
+  engine::Video::instance().set_resolution(1024, 768);
 
   const SDL_version *v;
   v = SDL_Linked_Version();

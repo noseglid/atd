@@ -6,7 +6,7 @@
 
 B_NS_HUD
 
-Bar::Bar()
+Bar::Bar() : visible(false)
 {
 }
 
@@ -33,6 +33,8 @@ Bar::calc_button_vertices(int index, float *left, float *right, float *top, floa
 void
 Bar::draw_banner(float yoffset) const
 {
+  if (!visible) return;
+
   glBegin(GL_TRIANGLE_STRIP);
   glVertex2f(BAR_OFFSET,                     yoffset + BAR_HEIGHT);
   glVertex2f(BAR_OFFSET,                     yoffset             );
@@ -49,5 +51,16 @@ Bar::in_turf(int x, int y) const
     y < (HUD::screen_height - BAR_OFFSET);
 }
 
+void
+Bar::show()
+{
+  visible = true;
+}
+
+void
+Bar::hide()
+{
+  visible = false;
+}
 
 E_NS_HUD

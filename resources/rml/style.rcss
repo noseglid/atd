@@ -1,9 +1,4 @@
-/*
-* Default styles for all the basic elements.
-*/
-
 body {
-background: #fff;
   font-family: Riky;
   color: #fff;
 
@@ -33,7 +28,6 @@ p
 	display: block;
   z-index: 1;
 }
-
 
 em
 {
@@ -71,17 +65,9 @@ div#content {
 }
 
 div#version {
-display: inline-block;
   position: absolute;
-  bottom: 50px;
-}
-
-div.menu
-{
-}
-
-p.menu
-{
+  right: 10px;
+  text-align: right;
 }
 
 p.menu:hover

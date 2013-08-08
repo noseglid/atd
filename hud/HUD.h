@@ -18,6 +18,8 @@ class HUD
 
 public:
   static void init();
+  static void show();
+  static void hide();
 };
 
 

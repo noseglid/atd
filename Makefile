@@ -1,6 +1,6 @@
 CXX     = clang++
 CFLAGS  = -O0 -g3 -c -Wall -pedantic $(shell deps/target/bin/sdl-config --cflags)
-CFLAGS += -DDEBUG=1 -DROCKETDEBUG=1 -std=c++11 -stdlib=libc++
+CFLAGS += -DDEBUG=1 -DROCKETDEBUG=0 -std=c++11 -stdlib=libc++
 CFLAGS += -Ideps/target/include -I.
 CFLAGS += -DSFXVOL=32 -DMUSICVOL=16
 

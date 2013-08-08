@@ -16,12 +16,16 @@ B_NS_HUD
 
 class Bar
 {
+  bool visible;
+
 protected:
   Bar();
   void draw_banner(float yoffset) const;
 
 public:
   bool in_turf(int x, int y) const;
+  void show();
+  void hide();
 
   static void calc_button_vertices(int index, float *left, float *right, float *top, float *bot);
 };
