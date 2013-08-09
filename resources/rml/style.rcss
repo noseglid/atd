@@ -70,6 +70,19 @@ div#version {
   text-align: right;
 }
 
+div.container {
+  bg-decorator: tiled-box;
+  bg-top-left-image:     images/container_008080.png 0px  0px  64px  64px ;
+  bg-top-right-image:    images/container_008080.png 64px 0px  128px 64px ;
+  bg-bottom-left-image:  images/container_008080.png 0px  64px 64px  128px;
+  bg-bottom-right-image: images/container_008080.png 64px 64px 128px 128px;
+  bg-top-image:          images/container_008080.png 32px 32px 96px  96px ;
+  bg-right-image:        images/container_008080.png 32px 32px 96px  96px ;
+  bg-bottom-image:       images/container_008080.png 32px 32px 96px  96px ;
+  bg-left-image:         images/container_008080.png 32px 32px 96px  96px ;
+  bg-center-image:       images/container_008080.png 32px 32px 96px  96px ;
+}
+
 p.menu:hover
 {
   color: #aa0;
