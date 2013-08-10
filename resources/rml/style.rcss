@@ -7,61 +7,78 @@ body {
   font-size: 22px;
 
   header-font-effect: shadow;
-  header-color: #000;
+  header-color: #444;
   header-offset: 2px 2px;
 }
 
 h1 {
   font-size: 56px;
   color: #f80;
-	display: block;
+  display: block;
   z-index: 1;
+}
+
+h2 {
+  font-size: 38px;
+  color: #f80;
+  display: block;
+  z-index: 1;
+  text-align: left;
 }
 
 div
 {
-	display: block;
+  display: block;
+  padding: 0px 20px 20px 20px;
 }
 
 p
 {
-	display: block;
+  display: block;
   z-index: 1;
 }
 
 em
 {
-	font-style: italic;
+  font-style: italic;
 }
 
 strong
 {
-	font-weight: bold;
+  font-weight: bold;
+}
+
+datagrid
+{
+  display: block;
+  text-align: left;
+}
+
+input.range slidertrack {
+  margin-top: 5px;
+  height: 6px;
+  background-decorator: image;
+  background-image: images/slider.png 50px 7px 60px 12px;
+}
+
+input.range sliderbar {
+  width:  8px;
+  height: 16px;
+  background-decorator: image;
+  background-image: images/slider.png 38px 3px 43px 17px;
 }
 
 select, dataselect, datacombo
 {
-	text-align: left;
+  text-align: left;
 }
 
-div#content {
-  padding: 20px;
-  margin: 0px auto;
-  width: 450px;
-  position: absolute;
-  top: 170px;
-  text-align: center;
+div#title {
+  width: 50%;
+}
 
-  bg-decorator: tiled-box;
-  bg-top-left-image-src:     images/topleft_008080.png;
-  bg-top-image-src:          images/solid_008080.png;
-  bg-top-right-image-src:    images/topright_008080.png;
-  bg-left-image-src:         images/solid_008080.png;
-  bg-center-image-src:       images/solid_008080.png;
-  bg-right-image-src:        images/solid_008080.png;
-  bg-bottom-left-image-src:  images/bottomleft_008080.png;
-  bg-bottom-image-src:       images/solid_008080.png;
-  bg-bottom-right-image-src: images/bottomright_008080.png;
+div#levelselect {
+  width: 75%;
 }
 
 div#version {
@@ -71,24 +88,43 @@ div#version {
 }
 
 div.container {
+  width: 50%;
+  position: absolute;
+  margin: 0px auto;
+  top: 170px;
+  text-align: center;
+
   bg-decorator: tiled-box;
-  bg-top-left-image:     images/container_008080.png 0px  0px  64px  64px ;
-  bg-top-right-image:    images/container_008080.png 64px 0px  128px 64px ;
+  bg-top-left-image:     images/header.png 0px  0px 39px  60px ;
+  bg-top-image:          images/header.png 39px 0px 78px  60px ;
+  bg-top-right-image:    images/header.png 79px 0px 120px 60px ;
   bg-bottom-left-image:  images/container_008080.png 0px  64px 64px  128px;
   bg-bottom-right-image: images/container_008080.png 64px 64px 128px 128px;
-  bg-top-image:          images/container_008080.png 32px 32px 96px  96px ;
   bg-right-image:        images/container_008080.png 32px 32px 96px  96px ;
   bg-bottom-image:       images/container_008080.png 32px 32px 96px  96px ;
   bg-left-image:         images/container_008080.png 32px 32px 96px  96px ;
   bg-center-image:       images/container_008080.png 32px 32px 96px  96px ;
 }
 
-p.menu:hover
-{
-  color: #aa0;
+div.container div.header {
+  position: relative;
+  top: 0px;
+  left: 0px;
+  font-size: 36px;
+  padding: 0px;
+  margin: 6px 0px 20px 0px;
+  text-align: left;
 }
 
-p.menu:active
+datagrid.selectable datagridrow:hover,
+.link:hover
 {
-  color: #800;
+  color: #eab03b;
 }
+
+datagrid.selectable datagridrow:active,
+.link:active
+{
+  color: #8b5c00;
+}
+

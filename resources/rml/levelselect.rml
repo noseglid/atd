@@ -1,0 +1,16 @@
+<rml>
+  <head>
+    <link type="text/rcss" href="style.rcss" />
+  </head>
+  <body class="window">
+    <div id="levelselect" class="container">
+      <div class="header">Battleground</div>
+      <datagrid source="levels.list" id="levellist" class="selectable">
+        <col fields="name" width="30%">Crater</col>
+        <col fields="waves" width="20%">Waves</col>
+      </datagrid>
+
+      <p class="link" id="back">Back to title</p>
+    </div>
+  </body>
+</rml>

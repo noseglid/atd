@@ -27,7 +27,7 @@ class Game
 public:
   static Game& instance();
 
-  void start();
+  void start(const std::string& levelname);
 };
 
 #endif

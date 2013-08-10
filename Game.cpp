@@ -18,14 +18,19 @@ Game::instance()
 }
 
 void
-Game::start()
+Game::start(const std::string& levelname)
 {
   DBG("Starting a new game");
 
+  Mix_Music *bgmusic = Audio::instance().load_music("meadow.ogg");
+  Audio::instance().play(bgmusic);
+
   Text::init();
   HUD::HUD::init();
+  HUD::HUD::show();
 
-  Json::Value levelspec = Json::deserialize(IO::file_get_contents("resources/levels/test.map"));
+  std::string levelfile = "resources/levels/" + levelname + ".map";
+  Json::Value levelspec = Json::deserialize(IO::file_get_contents(levelfile));
   Map::instance().load(levelspec);
 
   TowerManager::instance().set_faction(Faction::Faction::SAGES);

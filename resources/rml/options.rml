@@ -1,0 +1,29 @@
+<rml>
+  <head>
+    <link type="text/rcss" href="style.rcss" />
+  </head>
+  <body class="window">
+    <div id="options" class="container">
+      <div class="header">Options</div>
+      <p>SFX Volume:
+        <input type="range"
+               id="vol-sfx"
+               min="0"
+               max="100"
+               step="2"
+               value="32"
+               orientation="horizontal" />
+      </p>
+      <p>Music Volume:
+        <input type="range"
+               id="vol-music"
+               min="0"
+               max="100"
+               step="2"
+               value="16"
+               orientation="horizontal" />
+      </p>
+      <p class="link" id="back">Back to title</p>
+    </div>
+  </body>
+</rml>

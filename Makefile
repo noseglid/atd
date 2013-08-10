@@ -20,7 +20,8 @@ SRCS += engine/Engine.cpp engine/Video.cpp
 SRCS += Mobile.cpp Model.cpp Camera.cpp Text.cpp Audio.cpp
 
 # UI
-SRCS += ui/UI.cpp ui/System.cpp ui/Renderer.cpp ui/TitleMenu.cpp
+SRCS += ui/UI.cpp ui/System.cpp ui/Renderer.cpp ui/LevelDatabase.cpp
+SRCS += ui/Menu.cpp ui/TitleMenu.cpp ui/LevelSelectMenu.cpp ui/OptionsMenu.cpp
 
 # Hud
 SRCS += hud/HUD.cpp hud/Bar.cpp hud/ButtonBar.cpp hud/InfoBar.cpp hud/InfoBox.cpp

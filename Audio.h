@@ -5,16 +5,10 @@
 #include <map>
 #include <string>
 
-#ifndef MUSICVOL
-#define MUSICVOL 16
-#endif
-
-#ifndef SFXVOL
-#define SFXVOL 32
-#endif
-
 class Audio
 {
+  int sfxvol;
+
   std::map<std::string, Mix_Chunk *> sfx;
   std::map<std::string, Mix_Music *> music;
 
@@ -26,6 +20,9 @@ public:
 
   Mix_Chunk *load_sfx(const std::string& file);
   Mix_Music *load_music(const std::string& file);
+
+  void set_sfx_volume(int volume);
+  void set_music_volume(int volume);
 
   void play(Mix_Chunk *audio, int loops = 0) const;
   void play(Mix_Music *audio) const;

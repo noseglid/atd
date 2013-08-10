@@ -2,9 +2,9 @@
 #include "Debug.h"
 #include "Exception.h"
 
-Audio::Audio()
+Audio::Audio() : sfxvol(32)
 {
-  Mix_VolumeMusic(MUSICVOL);
+  Mix_VolumeMusic(4);
 }
 
 Audio::~Audio()
@@ -32,7 +32,7 @@ Audio::instance()
 Mix_Chunk *
 Audio::load_sfx(const std::string& file)
 {
-  std::string rfile = std::string("resources/sound/") + file;
+  std::string rfile = std::string("resources/sound/sfx/") + file;
   auto it = sfx.find(rfile);
   if (it != sfx.end()) return it->second;
 
@@ -42,8 +42,6 @@ Audio::load_sfx(const std::string& file)
     throw Exception(std::string("Could not load audio: ") + rfile);
   }
 
-  Mix_VolumeChunk(audio, SFXVOL);
-
   sfx.insert(std::make_pair(rfile, audio));
   return audio;
 }
@@ -51,7 +49,7 @@ Audio::load_sfx(const std::string& file)
 Mix_Music *
 Audio::load_music(const std::string& file)
 {
-  std::string rfile = std::string("resources/sound/") + file;
+  std::string rfile = std::string("resources/sound/music/") + file;
   auto it = music.find(rfile);
   if (it != music.end()) return it->second;
 
@@ -66,8 +64,22 @@ Audio::load_music(const std::string& file)
 }
 
 void
+Audio::set_sfx_volume(int volume)
+{
+  sfxvol = volume;
+}
+
+void
+Audio::set_music_volume(int volume)
+{
+  Mix_VolumeMusic(volume);
+}
+
+void
 Audio::play(Mix_Chunk *audio, int loops) const
 {
+  Mix_VolumeChunk(audio, sfxvol);
+
   if (-1 == Mix_PlayChannel(-1, audio, loops)) {
     DBGERR(Mix_GetError());
     throw Exception("Could not play audio.");
@@ -77,10 +89,8 @@ Audio::play(Mix_Chunk *audio, int loops) const
 void
 Audio::play(Mix_Music *audio) const
 {
-  if (-1 == Mix_FadeInMusic(audio, -1, 5000)) {
+  if (-1 == Mix_PlayMusic(audio, -1)) {
     DBGERR(Mix_GetError());
     throw Exception("Could not start music.");
   }
-
-  Mix_VolumeMusic(MUSICVOL);
 }

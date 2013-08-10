@@ -1,57 +1,42 @@
 #include "ui/TitleMenu.h"
+#include "ui/LevelSelectMenu.h"
+#include "ui/OptionsMenu.h"
 #include "Exception.h"
 #include "Debug.h"
-#include "Text.h"
-#include "hud/HUD.h"
-#include "engine/Video.h"
-#include "TowerManager.h"
-#include "Faction.h"
-#include "CreepManager.h"
-#include "IO.h"
-#include "Player.h"
-#include "Game.h"
 
 #include <pjson.hpp>
 
 B_NS_UI
 
-class NewGameListener  : public Rocket::Core::EventListener
-{
-  bool processed;
-  public:
-  NewGameListener() : processed(false) {}
-
-  void ProcessEvent(Rocket::Core::Event& event)
-  {
-    if (processed) return;
-    processed = true;
-    TitleMenu::instance().hide();
-    Game::instance().start();
-    HUD::HUD::show();
-
-  }
-} new_game_listener;
-
-class ExitListener : public Rocket::Core::EventListener
+class TitleListener : public Rocket::Core::EventListener
 {
   void ProcessEvent(Rocket::Core::Event& event)
   {
-    throw Exception("User clicked exit in title menu");
+    Menu *next = NULL;
+    auto el = event.GetCurrentElement();
+
+    if (el->GetId() == "newgame") {
+      next = &LevelSelectMenu::instance();
+    }
+    if (el->GetId() == "options") {
+      next = &OptionsMenu::instance();
+    }
+    if (el->GetId() == "exit") {
+      throw Exception("Clicked 'exit' in title menu.");
+    }
+
+    TitleMenu::instance().hide(200, [next]() {
+      next->show(200, []() {}, Menu::ANIM_LEFT);
+    }, Menu::ANIM_LEFT);
   }
-} exit_listener;
+} title_listener;
 
-TitleMenu::TitleMenu()
-{
-  document = UI::instance().load("resources/rml/title.rml");
-  document->GetElementById("newgame")->AddEventListener("click", &new_game_listener);
-  document->GetElementById("exit")->AddEventListener("click", &exit_listener);
-  document->Show();
-}
 
-void
-TitleMenu::hide()
+TitleMenu::TitleMenu() : Menu("resources/rml/title.rml")
 {
-  document->Hide();
+  document->GetElementById("newgame")->AddEventListener("click", &title_listener);
+  document->GetElementById("options")->AddEventListener("click", &title_listener);
+  document->GetElementById("exit")   ->AddEventListener("click", &title_listener);
 }
 
 TitleMenu&

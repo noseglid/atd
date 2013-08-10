@@ -27,7 +27,7 @@ TowerManager::TowerManager() : selected_tower(towers.end()), btnupgr(NULL)
   Map& m = Map::instance();
   m.on("hover", std::bind(&TowerManager::map_hover, this, std::placeholders::_1));
 
-  audio_build = Audio::instance().load_sfx("sfx/build1.ogg");
+  audio_build = Audio::instance().load_sfx("build1.ogg");
 
   towerinfo   = new HUD::InfoBox(HUD::InfoBox::SNAP_TOPRIGHT);
   upgradeinfo = new HUD::InfoBox(HUD::InfoBox::SNAP_BOTRIGHT, true);

@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
     init_SDL();
     init_OpenGL();
 
-    ui::TitleMenu::instance();
+    ui::TitleMenu::instance().show();
     engine::Engine::instance().run();
 
   } catch (Json::Exception& e) {

@@ -1,0 +1,41 @@
+{
+  "name"   : "Morayth'e",
+  "width"  : 32,
+  "height" : 32,
+
+  "textures" : [
+    "grass.jpg",
+    "stone.jpg"
+  ],
+
+  "paths" : [
+    {
+      "texture" : 1,
+      "path" : "M1,1 L10,1 L10,10 L13,10"
+    }
+  ],
+
+  "scenery" : [
+  ],
+
+  "waves" : [
+    {
+      "creeps" : [
+        {
+          "spec" : "spherecreep",
+          "spawninterval" : 1.0,
+          "count" : 10
+        }
+      ]
+    },
+    {
+      "creeps" : [
+        {
+          "spec" : "vlod",
+          "spawninterval" : 1.0,
+          "count" : 10
+        }
+      ]
+    },
+  ]
+}

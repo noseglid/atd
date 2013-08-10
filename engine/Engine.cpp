@@ -38,8 +38,6 @@ Engine::run()
     4.0f, 12.0f,
     1.0f, 16 - 1.0f
   );
-  Mix_Music *bgmusic = Audio::instance().load_music("music/meadow.ogg");
-  Audio::instance().play(bgmusic);
   /***********************************/
 
   while (running) {

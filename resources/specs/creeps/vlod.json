@@ -6,6 +6,6 @@
   "speed"  : 0.40,
   "model"  : "vlod",
   "audio"  : {
-    "death" : "sfx/creep_death.ogg"
+    "death" : "creep_death.ogg"
    }
 }

@@ -5,6 +5,7 @@
 #include "GLTransform.h"
 #include "Exception.h"
 #include "Debug.h"
+#include "ui/LevelSelectMenu.h"
 
 #include <Rocket/Controls.h>
 #include <Rocket/Debugger.h>
@@ -56,7 +57,6 @@ void
 UI::tick(const engine::Event& ev)
 {
   glPushMatrix();
-    glLoadIdentity();
     GLTransform::enable2D(true);
     context->Update();
     context->Render();
@@ -90,11 +90,11 @@ UI::instance()
 }
 
 Rocket::Core::ElementDocument *
-UI::load(const std::string& resouce)
+UI::load(const std::string& resource)
 {
   Rocket::Core::ElementDocument *d;
-  if (NULL == (d = context->LoadDocument("resources/rml/title.rml"))) {
-    throw Exception("Could not load title menu rml.");
+  if (NULL == (d = context->LoadDocument(resource.c_str()))) {
+    throw Exception("Could not load rml from: " + resource);
   }
 
   return d;
