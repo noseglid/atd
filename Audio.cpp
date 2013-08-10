@@ -2,9 +2,9 @@
 #include "Debug.h"
 #include "Exception.h"
 
-Audio::Audio() : sfxvol(32)
+Audio::Audio() : sfxvol(128)
 {
-  Mix_VolumeMusic(4);
+  Mix_VolumeMusic(32);
 }
 
 Audio::~Audio()

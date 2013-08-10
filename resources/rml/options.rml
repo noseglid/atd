@@ -11,7 +11,7 @@
                min="0"
                max="100"
                step="2"
-               value="32"
+               value="128"
                orientation="horizontal" />
       </p>
       <p>Music Volume:
@@ -20,7 +20,7 @@
                min="0"
                max="100"
                step="2"
-               value="16"
+               value="32"
                orientation="horizontal" />
       </p>
       <p class="link" id="back">Back to title</p>
