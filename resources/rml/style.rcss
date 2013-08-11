@@ -56,16 +56,16 @@ datagrid
 
 input.range slidertrack {
   margin-top: 5px;
-  height: 6px;
+  height: 5px;
   background-decorator: image;
-  background-image: images/slider.png 50px 7px 60px 12px;
+  background-image: images/slider.png 8px 0px 11px 5px;
 }
 
 input.range sliderbar {
-  width:  8px;
-  height: 16px;
+  width:  6px;
+  height: 14px;
   background-decorator: image;
-  background-image: images/slider.png 38px 3px 43px 17px;
+  background-image: images/slider.png 0px 0px 5px 14px;
 }
 
 select, dataselect, datacombo
