@@ -54,6 +54,30 @@ datagrid
   text-align: left;
 }
 
+scrollbarvertical {
+  width: 12px;
+}
+
+scrollbarvertical slidertrack {
+  background-decorator: tiled-vertical;
+  background-top-image:    images/slider.png         18px 7px 30px 12px;
+  background-center-image: images/slider.png stretch 18px 9px 30px 12px;
+  background-bottom-image: images/slider.png         18px 9px 30px 14px;
+}
+
+scrollbarvertical sliderbar {
+  background-decorator: tiled-vertical;
+  background-top-image:    images/slider.png         18px 0px 30px 4px;
+  background-center-image: images/slider.png stretch 18px 2px 30px 4px;
+  background-bottom-image: images/slider.png         18px 2px 30px 6px;
+}
+
+scrollbarvertical sliderbar:hover {
+  background-top-image-t:    15px 19px;
+  background-center-image-t: 17px 19px;
+  background-bottom-image-t: 17px 21px;
+}
+
 input.range slidertrack {
   margin-top: 5px;
   height: 5px;
@@ -78,7 +102,14 @@ div#title {
 }
 
 div#levelselect {
+  top: 100px;
   width: 75%;
+  height: 500px;
+}
+
+div#levels-container {
+  overflow: hidden scroll;
+  height: 370px;
 }
 
 div#version {
