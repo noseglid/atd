@@ -79,7 +79,7 @@ release_osx: $(BIN)
 	cp osx/launch.sh $(BIN).app/Contents/MacOS
 	cp $(BIN) $(BIN).app/Contents/MacOS
 	DYLD_LIBRARY_PATH=deps/target/lib ./deps/target/bin/dylibbundler -od -b -x $(BIN).app/Contents/MacOS/atd -d $(BIN).app/Contents/libs/
-	$(foreach var, $(RESOURCES), cp -r $(var) $(BIN).app/Contents/Resources/;)
+	cp -r resources $(BIN).app/Contents/Resources/
 
 release_clean_osx:
 	rm -rf $(BIN).app
