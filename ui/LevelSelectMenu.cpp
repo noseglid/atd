@@ -23,6 +23,9 @@ class SelectListener : public Rocket::Core::EventListener
 {
   void ProcessEvent(Rocket::Core::Event& event)
   {
+    static bool processing = false;
+    if (processing) return;
+    processing = true;
     Rocket::Controls::ElementDataGrid *el =
       dynamic_cast<Rocket::Controls::ElementDataGrid*>(event.GetCurrentElement());
     int click_index = 0;
