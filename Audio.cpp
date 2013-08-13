@@ -2,9 +2,13 @@
 #include "Debug.h"
 #include "Exception.h"
 
-Audio::Audio() : sfxvol(128)
+/* Change the RML file aswell if changing these */
+#define VOL_INITIAL_SFX 128
+#define VOL_INITIAL_MUSIC 32
+
+Audio::Audio() : sfxvol(VOL_INITIAL_SFX)
 {
-  Mix_VolumeMusic(32);
+  Mix_VolumeMusic(VOL_INITIAL_MUSIC);
 }
 
 Audio::~Audio()
