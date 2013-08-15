@@ -50,5 +50,5 @@ Game::stop()
   Text::clear();
   HUD::HUD::hide();
 
-  ui::TitleMenu::instance().show();
+  ui::TitleMenu::instance().show(200, ui::Menu::ANIM_LEFT);
 }

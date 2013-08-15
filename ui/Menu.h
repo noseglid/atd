@@ -29,6 +29,7 @@ protected:
 
 public:
   void show();
+  void show(int ms, ANIMDIR dir);
   void show(int ms, std::function<void()> ondone, ANIMDIR dir);
   void hide();
   void hide(int ms, std::function<void()> ondone, ANIMDIR dir);

@@ -22,7 +22,9 @@ class TitleListener : public Rocket::Core::EventListener
       next = &OptionsMenu::instance();
     }
     if (el->GetId() == "exit") {
-      throw Exception("Clicked 'exit' in title menu.");
+      TitleMenu::instance().hide(200, []() {
+        throw Exception("Clicked 'exit' in title menu.");
+      }, Menu::ANIM_RIGHT);
     }
 
     TitleMenu::instance().hide(200, [next]() {

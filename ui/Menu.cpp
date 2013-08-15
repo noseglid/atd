@@ -19,6 +19,12 @@ Menu::show()
 }
 
 void
+Menu::show(int ms, ANIMDIR dir)
+{
+  show(ms, [](){}, dir);
+}
+
+void
 Menu::show(int ms, std::function<void()> ondone, ANIMDIR dir)
 {
   if (anim_pending) {
