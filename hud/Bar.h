@@ -16,9 +16,9 @@ B_NS_HUD
 
 class Bar
 {
+protected:
   bool visible;
 
-protected:
   Bar();
   void draw_banner(float yoffset) const;
 

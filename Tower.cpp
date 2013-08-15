@@ -1,5 +1,6 @@
 #include "Tower.h"
 #include "GLShapes.h"
+#include "Game.h"
 #include "Text.h"
 #include "CreepManager.h"
 #include "DummyCreep.h"
@@ -93,7 +94,7 @@ Tower::get_level() const
 Creep *
 Tower::get_target()
 {
-  std::vector<Creep*> creeps = CreepManager::instance().creeps_inside_circle(pos, range);
+  std::vector<Creep*> creeps = Game::instance().creep_manager->creeps_inside_circle(pos, range);
   if (creeps.empty()) return NULL;
 
   return creeps.front();

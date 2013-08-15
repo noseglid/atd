@@ -33,12 +33,9 @@ class SelectListener : public Rocket::Core::EventListener
       Rocket::Controls::ElementDataGridRow *row = el->GetRow(click_index);
       if (row->IsPseudoClassSet("active")) break;
     }
-    Rocket::Core::StringList request(1, "name");
-    Rocket::Core::StringList row;
-    LevelDatabase::instance().GetRow(row, "levels", click_index, request);
 
     LevelSelectMenu::instance().hide();
-    Game::instance().start(row[0].CString());
+    Game::instance().start(LevelDatabase::instance().get_level(click_index));
   }
 } select_listener;
 

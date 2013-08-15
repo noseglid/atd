@@ -3,6 +3,8 @@
   "width"  : 16,
   "height" : 16,
 
+  "bgmusic" : "meadow.ogg",
+
   "textures" : [
     "grass.jpg",
     "stone.jpg"

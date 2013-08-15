@@ -11,13 +11,6 @@ Player::Player() : gold(0), lives(0)
   stats_text();
 }
 
-Player&
-Player::instance()
-{
-  static Player instance;
-  return instance;
-}
-
 void
 Player::stats_text()
 {
@@ -27,20 +20,23 @@ Player::stats_text()
   HUD::InfoBar::instance().set_info_text(ss.str());
 }
 
-void
+Player *
 Player::alter_gold(int delta)
 {
   gold += delta;
   stats_text();
+
+  return this;
 }
 
-void Player::alter_lives(int delta)
+Player *
+Player::alter_lives(int delta)
 {
   lives +=delta;
   if (lives <= 0)
     throw PlayerDeath();
 
-  stats_text();
+  return this;
 }
 
 bool

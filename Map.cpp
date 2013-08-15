@@ -1,4 +1,6 @@
 #include "Map.h"
+#include "Debug.h"
+#include "Audio.h"
 #include "GLTransform.h"
 #include "ImageLoader.h"
 #include "Exception.h"
@@ -15,18 +17,27 @@
 
 #define EDGE_STEPS 8
 
-Map::Map()
+Map::Map(const Json::Value& levelspec)
 {
   draw_meta = false;
   highlighted.x = -1;
   highlighted.y = -1;
 
+  DBG("Registering events for Map");
   engine::Engine& e = engine::Engine::instance();
-  e.on("tick",        std::bind(&Map::tick,        this, std::placeholders::_1));
-  e.on("mousemotion", std::bind(&Map::mousemotion, this, std::placeholders::_1));
-  e.on("keydown",     std::bind(&Map::keydown,     this, std::placeholders::_1));
+  events.push_back(
+    e.on("tick",        std::bind(&Map::tick,        this, std::placeholders::_1))
+  );
+  events.push_back(
+    e.on("mousemotion", std::bind(&Map::mousemotion, this, std::placeholders::_1))
+  );
+  events.push_back(
+    e.on("keydown",     std::bind(&Map::keydown,     this, std::placeholders::_1))
+  );
 
   cliff_texture = IL::GL::texture("cliff1.jpg");
+
+  load_level(levelspec);
 }
 
 Map::~Map()
@@ -37,10 +48,18 @@ Map::~Map()
   delete[] normals;
 
   delete path;
+
+  DBG("Deregistering Map from events");
+  using engine::Engine;
+  for (Engine::id_t ev : events) {
+    Engine::instance().off(ev);
+  }
+
+  Audio::instance().stop_music();
 }
 
 void
-Map::load(const Json::Value& levelspec)
+Map::load_level(const Json::Value& levelspec)
 {
   /* Load metadata */
   width  = levelspec["width"].asInt();
@@ -83,6 +102,9 @@ Map::load(const Json::Value& levelspec)
   create_edge_heightmap();
   generate_map_normals();
   generate_edge_normals();
+
+  Mix_Music *bgmusic = Audio::instance().load_music(levelspec["bgmusic"].asString());
+  Audio::instance().play(bgmusic);
 
   HUD::InfoBar::instance().set_title(levelspec["name"].asString());
 }
@@ -408,11 +430,4 @@ Vector2
 Map::get_highlight() const
 {
   return highlighted;
-}
-
-Map&
-Map::instance()
-{
-  static Map instance;
-  return instance;
 }

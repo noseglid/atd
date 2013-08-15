@@ -18,20 +18,18 @@ class Player
   int gold;
   int lives;
 
-  Player();
-  void operator=(Player const&);
   Player(const Player&);
+  void operator=(Player const&);
+
   void stats_text();
 
-  void tick() const;
-
 public:
+  Player();
+
   static float sell_factor;
 
-  static Player& instance();
-
-  void alter_gold(int delta);
-  void alter_lives(int delta);
+  Player *alter_gold(int delta);
+  Player *alter_lives(int delta);
 
   bool purchase(Purchasable *p);
   int sell(Purchasable *p);

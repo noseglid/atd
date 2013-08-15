@@ -44,6 +44,12 @@ Text::init()
 }
 
 void
+Text::clear()
+{
+  scrollings.clear();
+}
+
+void
 Text::size(const std::string& text, int *width, int *height, const float& ptsize)
 {
   TTF_SizeText(font_overlay, text.c_str(), width, height);

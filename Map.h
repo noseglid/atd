@@ -32,6 +32,8 @@ class Map : public de::Emitter<MapEvent>
     float sx, sy, sz;
   } scenery_t;
 
+  std::vector<engine::Engine::id_t> events;
+
   size_t width, height;
   Vector2 highlighted;
   bool draw_meta;
@@ -48,6 +50,11 @@ class Map : public de::Emitter<MapEvent>
   normals_t normals_edge;
 
   std::vector<scenery_t> scenery;
+
+  Map(const Map& rhs);
+  void operator=(const Map& rhs);
+
+  void load_level(const Json::Value& levelspec);
 
   void load_textures(const Json::Value& v);
 
@@ -68,10 +75,9 @@ class Map : public de::Emitter<MapEvent>
   void draw_square(const int&x, const int& y) const;
 
 public:
-  Map();
+  Map(const Json::Value& levelspec);
   ~Map();
 
-  void load(const Json::Value& levelspec);
   void tick(const engine::Event& ge);
   void mousemotion(const engine::Event& ge);
   void keydown(const engine::Event& ge);
@@ -85,8 +91,6 @@ public:
 
   void set_highlight(const int& x, const int& y);
   Vector2 get_highlight() const;
-
-  static Map& instance();
 };
 
 #endif

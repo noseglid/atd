@@ -44,6 +44,8 @@ InfoBar::set_info_text(std::string text)
 void
 InfoBar::tick() const
 {
+  if (!visible) return;
+
   GLTransform::enable2D();
 
   glColor4f(BAR_COLOR);

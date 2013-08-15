@@ -1,11 +1,21 @@
 #include "KeyboardHandler.h"
+#include "Debug.h"
 #include "engine/Engine.h"
 
 #include <OpenGL/gl.h>
 
 KeyboardHandler::KeyboardHandler()
 {
-  engine::Engine::instance().on("keydown", std::bind(&KeyboardHandler::keydown, this, std::placeholders::_1));
+  DBG("Registering events for KeyboardHandler");
+  keydownev = engine::Engine::instance().on(
+    "keydown", std::bind(&KeyboardHandler::keydown, this, std::placeholders::_1)
+  );
+}
+
+KeyboardHandler::~KeyboardHandler()
+{
+  DBG("Deregistering KeyboardHandler from events");
+  engine::Engine::instance().off(keydownev);
 }
 
 void

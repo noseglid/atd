@@ -21,6 +21,8 @@ ButtonBar::ButtonBar()
 void
 ButtonBar::tick() const
 {
+  if (!visible) return;
+
   GLTransform::enable2D();
 
   glColor4f(BAR_COLOR);
@@ -52,6 +54,19 @@ ButtonBar::remove_button(Button *button)
 {
   nbuttonsat[button->get_location()]--;
   buttons.erase(std::remove(buttons.begin(), buttons.end(), button), buttons.end());
+  delete button;
+}
+
+void
+ButtonBar::clear_buttons()
+{
+  for (auto it = buttons.begin(); it != buttons.end();) {
+    delete *(it++);
+  }
+  buttons.clear();
+
+  nbuttonsat[Button::LOCATION_LEFT] = 0;
+  nbuttonsat[Button::LOCATION_RIGHT] = 0;
 }
 
 void

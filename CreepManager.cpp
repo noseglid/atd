@@ -1,32 +1,37 @@
 #include "CreepManager.h"
 #include "hud/InfoBox.h"
 #include "IO.h"
+#include "Game.h"
 #include "Player.h"
 #include "Text.h"
 #include "Debug.h"
 
-CreepManager&
-CreepManager::instance()
+CreepManager::CreepManager(const Json::Value& levelspec) :
+  last_spawn(0), spawned(0), winbox(HUD::InfoBox::SNAP_CENTER)
 {
-  static CreepManager instance;
-  return instance;
-}
-
-CreepManager::CreepManager() : last_spawn(0), spawned(0), winbox(HUD::InfoBox::SNAP_CENTER)
-{
-  engine::Engine::instance().on("tick", std::bind(&CreepManager::tick, this, std::placeholders::_1));
+  DBG("Registering events for CreepManager");
+  tickev = engine::Engine::instance().on(
+    "tick", std::bind(&CreepManager::tick, this, std::placeholders::_1)
+  );
 
   using HUD::InfoBox;
   winbox << InfoBox::size(32.0f) << utils::colors::green << "Level complete!";
+
+  setup(levelspec);
+}
+
+CreepManager::~CreepManager()
+{
+  DBG("Deregistering CreepManager from events");
+  engine::Engine::instance().off(tickev);
 }
 
 void
 CreepManager::setup(const Json::Value& levelspec)
 {
-  spawns.clear();
   Json::Value waves = levelspec["waves"];
 
-  float spawntime = SDL_GetTicks() / 1000.0f;
+  float spawntime = engine::Engine::instance().get_elapsed();
 
   for (Json::Value wave : levelspec["waves"].asArray()) {
     wave_t w;
@@ -73,22 +78,20 @@ CreepManager::check_spawn(const float& elapsed)
 void
 CreepManager::tick(const engine::Event& ev)
 {
-  float elapsed = ev.elapsed;
-
-  std::list<Creep *> tmp = creeps;
-  for (Creep *c : tmp) {
-    glPushMatrix();
-    c->draw(elapsed);
-    glPopMatrix();
-
-    c->tick(elapsed);
-  }
-
   if (level_complete()) {
     winbox.draw();
   }
 
-  check_spawn(elapsed);
+  std::list<Creep *> tmp = creeps;
+  for (Creep *c : tmp) {
+    glPushMatrix();
+    c->draw(ev.elapsed);
+    glPopMatrix();
+
+    c->tick(ev.elapsed);
+  }
+
+  check_spawn(ev.elapsed);
 }
 
 bool
@@ -100,7 +103,7 @@ CreepManager::level_complete() const
 void
 CreepManager::creep_death(Creep *creep)
 {
-  Player::instance().alter_gold(creep->reward);
+  Game::instance().player->alter_gold(creep->reward);
 
   std::stringstream ss;
   ss << "+" << creep->reward << "g";
@@ -113,7 +116,7 @@ CreepManager::creep_death(Creep *creep)
 void
 CreepManager::creep_accomplished(Creep *creep)
 {
-  Player::instance().alter_lives(-(creep->life_cost));
+  Game::instance().player->alter_lives(-(creep->life_cost));
 
   std::stringstream ss;
   ss << "-" << creep->life_cost;
@@ -128,6 +131,12 @@ CreepManager::remove_creep(Creep *creep)
 {
   creeps.remove(creep);
   delete creep;
+
+  if (level_complete()) {
+    engine::Engine::instance().queue_event(7.0f, []() {
+      Game::instance().stop();
+    });
+  }
 }
 
 std::vector<Creep*>

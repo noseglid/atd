@@ -21,6 +21,7 @@ public:
     int row_index,
     const Rocket::Core::StringList& columns
   );
+  Json::Value get_level(int row_index) const;
 
   int GetNumRows(const Rocket::Core::String& table);
 

@@ -26,6 +26,7 @@ public:
 
   void play(Mix_Chunk *audio, int loops = 0) const;
   void play(Mix_Music *audio) const;
+  void stop_music();
 };
 
 #endif

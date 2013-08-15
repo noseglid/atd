@@ -10,9 +10,23 @@
 
 MetaManager::MetaManager() : last_measure(0), draw_meta(false)
 {
+  DBG("Registering events for MetaManager");
   engine::Engine& e = engine::Engine::instance();
-  e.on("tick",    std::bind(&MetaManager::tick,    this, std::placeholders::_1));
-  e.on("keydown", std::bind(&MetaManager::keydown, this, std::placeholders::_1));
+  events.push_back(
+    e.on("tick",    std::bind(&MetaManager::tick,    this, std::placeholders::_1))
+  );
+  events.push_back(
+    e.on("keydown", std::bind(&MetaManager::keydown, this, std::placeholders::_1))
+  );
+}
+
+MetaManager::~MetaManager()
+{
+  DBG("Deregistering MetaManager from events");
+  using engine::Engine;
+  for (Engine::id_t ev : events) {
+    Engine::instance().off(ev);
+  }
 }
 
 void

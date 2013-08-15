@@ -15,6 +15,8 @@ class TowerManager
 {
   typedef std::map<Vector3, Tower*, Vector3cmp> tlist_t;
 
+  std::vector<engine::Engine::id_t> events;
+
   Vector3 dummy_tower_pos;
   std::string build_tower;
   std::map<std::string, Tower*> dummy_towers;
@@ -24,7 +26,7 @@ class TowerManager
   tlist_t towers;
   Vector3 click;
 
-  HUD::Button *btnupgr;
+  HUD::Button *btnupgr, *btnsell;
 
   std::map<HUD::Button*, HUD::InfoBox*> browseboxes;
   HUD::InfoBox *towerinfo, *upgradeinfo, *sellinfo;
@@ -32,6 +34,9 @@ class TowerManager
   MapEvent last_map_event;
 
   Mix_Chunk *audio_build;
+
+  TowerManager(const TowerManager& rhs);
+  void operator=(const TowerManager& rhs);
 
   Tower *create_tower(std::string tower, Vector3 pos);
   void dummy_tower(int x, int y);
@@ -64,9 +69,8 @@ class TowerManager
 
 public:
   TowerManager();
+  ~TowerManager();
   void set_faction(Faction::Faction faction);
-
-  static TowerManager& instance();
 };
 
 #endif

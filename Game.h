@@ -3,6 +3,7 @@
 
 #include "Camera.h"
 #include "Debug.h"
+#include "Player.h"
 #include "Map.h"
 #include "MetaManager.h"
 #include "KeyboardHandler.h"
@@ -16,18 +17,22 @@
 
 class Game
 {
-
-  MetaManager *meta_manager;
-  KeyboardHandler *keyboard;
-
   Game();
   void operator=(Game const&);
   Game(const Game&);
 
 public:
+  MetaManager *meta_manager;
+  KeyboardHandler *keyboard;
+  Player *player;
+  Map *map;
+  TowerManager *tower_manager;
+  CreepManager *creep_manager;
+
   static Game& instance();
 
-  void start(const std::string& levelname);
+  void start(const Json::Value& levelspec);
+  void stop();
 };
 
 #endif

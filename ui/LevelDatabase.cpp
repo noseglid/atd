@@ -45,6 +45,12 @@ LevelDatabase::GetRow(
   }
 }
 
+Json::Value
+LevelDatabase::get_level(int row_index) const
+{
+  return levels[row_index];
+}
+
 int
 LevelDatabase::GetNumRows(const Rocket::Core::String& table)
 {

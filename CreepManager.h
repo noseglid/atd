@@ -16,6 +16,7 @@ class CreepManager
   } spawn_t;
   typedef std::list<spawn_t> wave_t;
   std::list<wave_t> spawns;
+  engine::Engine::id_t tickev;
 
   float last_spawn;
   unsigned int spawned;
@@ -23,9 +24,10 @@ class CreepManager
 
   HUD::InfoBox winbox;
 
-  CreepManager();
-  void operator=(CreepManager const&);
   CreepManager(const CreepManager&);
+  void operator=(CreepManager const&);
+
+  void setup(const Json::Value& levelspec);
 
   void check_spawn(const float& elapsed);
   void remove_creep(Creep *creep);
@@ -36,11 +38,10 @@ class CreepManager
   void creep_accomplished(Creep *creep);
 
 public:
-  void setup(const Json::Value& levelspec);
+  CreepManager(const Json::Value& levelspec);
+  ~CreepManager();
 
   std::vector<Creep*> creeps_inside_circle(Vector3 center, float radius);
-
-  static CreepManager& instance();
 };
 
 #endif

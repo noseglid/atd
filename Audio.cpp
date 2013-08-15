@@ -98,3 +98,9 @@ Audio::play(Mix_Music *audio) const
     throw Exception("Could not start music.");
   }
 }
+
+void
+Audio::stop_music()
+{
+  Mix_HaltMusic();
+}

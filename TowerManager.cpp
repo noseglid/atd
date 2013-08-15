@@ -1,9 +1,9 @@
 #include "TowerManager.h"
 #include "Debug.h"
-#include "Common.h"
 #include "GLTransform.h"
 #include "GLShapes.h"
 #include "IO.h"
+#include "Game.h"
 #include "ImageLoader.h"
 #include "Text.h"
 #include "Player.h"
@@ -15,23 +15,51 @@
 #include "HUD/Button.h"
 #include "Faction.h"
 
-TowerManager::TowerManager() : selected_tower(towers.end()), btnupgr(NULL)
+TowerManager::TowerManager() : selected_tower(towers.end()), btnupgr(NULL), btnsell(NULL)
 {
+  DBG("Registering events for TowerManager");
   engine::Engine& e = engine::Engine::instance();
-  e.on("tick",         std::bind(&TowerManager::tick,         this, std::placeholders::_1));
-  e.on("tick_nodepth", std::bind(&TowerManager::tick_nodepth, this, std::placeholders::_1));
-  e.on("mousedown",    std::bind(&TowerManager::mousedown,    this, std::placeholders::_1));
-  e.on("mouseup",      std::bind(&TowerManager::mouseup,      this, std::placeholders::_1));
-  e.on("keydown",      std::bind(&TowerManager::keydown,      this, std::placeholders::_1));
+  events.push_back(
+    e.on("tick",         std::bind(&TowerManager::tick,         this, std::placeholders::_1))
+  );
+  events.push_back(
+    e.on("tick_nodepth", std::bind(&TowerManager::tick_nodepth, this, std::placeholders::_1))
+  );
+  events.push_back(
+    e.on("mousedown",    std::bind(&TowerManager::mousedown,    this, std::placeholders::_1))
+  );
+  events.push_back(
+    e.on("mouseup",      std::bind(&TowerManager::mouseup,      this, std::placeholders::_1))
+  );
+  events.push_back(
+    e.on("keydown",      std::bind(&TowerManager::keydown,      this, std::placeholders::_1))
+  );
 
-  Map& m = Map::instance();
-  m.on("hover", std::bind(&TowerManager::map_hover, this, std::placeholders::_1));
+  Map *m = Game::instance().map;
+  m->on("hover", std::bind(&TowerManager::map_hover, this, std::placeholders::_1));
 
   audio_build = Audio::instance().load_sfx("build1.ogg");
 
   towerinfo   = new HUD::InfoBox(HUD::InfoBox::SNAP_TOPRIGHT);
   upgradeinfo = new HUD::InfoBox(HUD::InfoBox::SNAP_BOTRIGHT, true);
   sellinfo    = new HUD::InfoBox(HUD::InfoBox::SNAP_BOTRIGHT, true);
+}
+
+TowerManager::~TowerManager()
+{
+  DBG("Deregistering TowerManager from events");
+  using engine::Engine;
+  for (Engine::id_t ev : events) {
+    Engine::instance().off(ev);
+  }
+
+  delete towerinfo;
+  delete upgradeinfo;
+  delete sellinfo;
+
+  HUD::ButtonBar::instance().clear_buttons();
+  btnupgr = NULL;
+  btnsell = NULL;
 }
 
 void
@@ -69,15 +97,15 @@ TowerManager::create_tower(std::string tower, Vector3 pos)
 void
 TowerManager::dummy_tower(int x, int y)
 {
-  Map& map = Map::instance();
-  Vector3 pos = map.get_center_of(x, y);
+  Map *map = Game::instance().map;
+  Vector3 pos = map->get_center_of(x, y);
   pos.y = 0.0f;
   int hlx = x, hly = y;
 
-  if (map.get_path()->has_coord(x, y) ||
+  if (map->get_path()->has_coord(x, y) ||
       towers.end() != towers.find(pos) ||
-      x == 0 || x == map.get_width() - 1 ||
-      y == 0 || y == map.get_height() - 1) {
+      x == 0 || x == map->get_width() - 1 ||
+      y == 0 || y == map->get_height() - 1) {
     /* This is not a valid coord for a dummy tower, reset all params */
     pos = Vector3(0.0f, 0.0f, 0.0f);
     hlx = -1;
@@ -85,7 +113,7 @@ TowerManager::dummy_tower(int x, int y)
   }
 
   dummy_tower_pos = pos;
-  map.set_highlight(hlx, hly);
+  map->set_highlight(hlx, hly);
 }
 
 void
@@ -103,7 +131,7 @@ TowerManager::build_tower_unset()
 {
   build_tower.erase();
   HUD::ButtonBar::instance().unmark_all();
-  Map::instance().set_highlight(-1, -1);
+  Game::instance().map->set_highlight(-1, -1);
 }
 
 /**
@@ -118,7 +146,7 @@ TowerManager::prepare_tower(std::string tower, HUD::Button *button)
 
   build_tower = tower;
   button->mark();
-  Map::instance().set_highlight(-1, -1);
+  Game::instance().map->set_highlight(-1, -1);
   dummy_tower(last_map_event.hovered.x, last_map_event.hovered.y);
 }
 
@@ -170,7 +198,7 @@ TowerManager::purchase_tower(Vector3 pos)
     return false;
   };
 
-  if (!Player::instance().purchase(t)) {
+  if (!Game::instance().player->purchase(t)) {
     return purchase_fail("Not enough gold");
   }
 
@@ -187,7 +215,7 @@ TowerManager::purchase_tower(Vector3 pos)
 
   towers.insert(std::make_pair(pos, t));
   dummy_tower_pos = Vector3();
-  Map::instance().set_highlight(-1, -1);
+  Game::instance().map->set_highlight(-1, -1);
 
   std::stringstream ss;
   ss << "-" << t->price << "g";
@@ -227,7 +255,7 @@ TowerManager::upgrade_tower()
   textpos.y += 1.0f;
 
   Purchasable dummy(upgrade["price"].asInt());
-  if (!Player::instance().purchase(&dummy)) {
+  if (!Game::instance().player->purchase(&dummy)) {
     Text::scrolling("No moneys for upgrade.", textpos);
     return;
   }
@@ -257,7 +285,7 @@ TowerManager::upgrade_tower()
 void
 TowerManager::sell_tower()
 {
-  int return_value = Player::instance().sell(selected_tower->second);
+  int return_value = Game::instance().player->sell(selected_tower->second);
   sellinfo->clear();
 
   Vector3 textpos = selected_tower->second->get_position();
@@ -302,10 +330,11 @@ TowerManager::mousedown(const engine::Event& ev)
 bool
 TowerManager::tower_purchase_if()
 {
-  Vector2 hl = Map::instance().get_highlight();
+  Map *map = Game::instance().map;
+  Vector2 hl = map->get_highlight();
   if (0.0f >= hl.x || 0.0f >= hl.y) return false;
 
-  Vector3 pos = Map::instance().get_center_of(hl.x, hl.y);
+  Vector3 pos = map->get_center_of(hl.x, hl.y);
   pos.y = 0.0f;
   bool purchased = purchase_tower(pos);
   if (purchased) {
@@ -380,19 +409,18 @@ TowerManager::set_upgrade_infobox()
 void
 TowerManager::update_hud()
 {
-  static HUD::Button *btnsell = NULL;
-  static HUD::ButtonBar& bar = HUD::ButtonBar::instance();
+  HUD::ButtonBar& bar = HUD::ButtonBar::instance();
 
   if (NULL != btnupgr) {
     btnupgr->disable("leftclick");
     bar.remove_button(btnupgr);
-    PTRDEL(btnupgr);
+    btnupgr = NULL;
   }
 
   if (NULL != btnsell) {
     btnsell->disable("leftclick");
     bar.remove_button(btnsell);
-    PTRDEL(btnsell);
+    btnsell = NULL;
   }
 
   if (towers.end() == selected_tower) {
@@ -446,7 +474,7 @@ TowerManager::tower_select_if(int clickx, int clicky)
 {
   try {
     Vector3 pos3d = GLTransform::unproject(clickx, clicky);
-    Vector3 search = Map::instance().get_center_of(pos3d.x, pos3d.z);
+    Vector3 search = Game::instance().map->get_center_of(pos3d.x, pos3d.z);
     search.y = 0.0f;
 
     select_tower(towers.find(search));
@@ -537,11 +565,4 @@ TowerManager::tick(const engine::Event& ev)
 
     glDisable(GL_COLOR_MATERIAL);
   }
-}
-
-TowerManager&
-TowerManager::instance()
-{
-  static TowerManager instance;
-  return instance;
 }

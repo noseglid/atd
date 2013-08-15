@@ -1,5 +1,6 @@
 #include "Engine.h"
 #include "Audio.h"
+#include "Debug.h"
 
 #include <sys/time.h>
 
@@ -10,7 +11,7 @@ Engine::Engine() : running(false)
 }
 
 void
-Engine::handle_event(const SDL_Event& ev)
+Engine::handle_sdl_event(const SDL_Event& ev)
 {
   std::string signal;
   switch (ev.type) {
@@ -23,6 +24,18 @@ Engine::handle_event(const SDL_Event& ev)
   }
 
   emit(signal, Event(get_elapsed(), ev));
+}
+
+void
+Engine::handle_queued_events()
+{
+  auto it = queued_events.begin();
+  while (it != queued_events.end()) {
+    if (it->first > get_elapsed()) break;
+
+    (it->second)();
+    queued_events.erase(it++);
+  }
 }
 
 void
@@ -42,7 +55,7 @@ Engine::run()
 
   while (running) {
     while (SDL_PollEvent(&ev)) {
-      handle_event(ev);
+      handle_sdl_event(ev);
     }
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -64,6 +77,7 @@ Engine::run()
     emit("tick_nodepth", engine::Event(get_elapsed()));
     glPopMatrix();
 
+    handle_queued_events();
 
     SDL_GL_SwapBuffers();
   }
@@ -79,6 +93,12 @@ void
 Engine::stop()
 {
   running = false;
+}
+
+void
+Engine::queue_event(float seconds, std::function<void()> cb)
+{
+  queued_events.insert(std::make_pair(get_elapsed() + seconds, cb));
 }
 
 Engine&

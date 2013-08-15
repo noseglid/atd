@@ -5,8 +5,11 @@
 
 class KeyboardHandler
 {
+  engine::Engine::id_t keydownev;
+
 public:
   KeyboardHandler();
+  ~KeyboardHandler();
   void keydown(const engine::Event& ev);
 };
 
