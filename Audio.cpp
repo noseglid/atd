@@ -26,6 +26,12 @@ Audio::~Audio()
   }
 }
 
+void
+Audio::play_current_music()
+{
+  play(current_music);
+}
+
 Audio&
 Audio::instance()
 {
@@ -90,12 +96,32 @@ Audio::play(Mix_Chunk *audio, int loops) const
   }
 }
 
-void
-Audio::play(Mix_Music *audio) const
+/**
+ * Helper function to work with Mix_HookMusicFinished
+ */
+static void
+__start()
 {
-  if (-1 == Mix_PlayMusic(audio, -1)) {
-    DBGERR(Mix_GetError());
-    throw Exception("Could not start music.");
+  Audio::instance().play_current_music();
+}
+
+void
+Audio::play(Mix_Music *audio)
+{
+  current_music = audio;
+
+  auto start = [audio]() {
+    if (-1 == Mix_FadeInMusic(audio, -1, 2000)) {
+      DBGERR(Mix_GetError());
+      throw Exception("Could not start music.");
+    }
+  };
+
+  if (Mix_PlayingMusic()) {
+    Mix_FadeOutMusic(2000);
+    Mix_HookMusicFinished(__start);
+  } else {
+    start();
   }
 }
 

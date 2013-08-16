@@ -39,6 +39,8 @@ TitleMenu::TitleMenu() : Menu("resources/rml/title.rml")
   document->GetElementById("newgame")->AddEventListener("click", &title_listener);
   document->GetElementById("options")->AddEventListener("click", &title_listener);
   document->GetElementById("exit")   ->AddEventListener("click", &title_listener);
+  Mix_Music *mus = Audio::instance().load_music("menu.ogg");
+  Audio::instance().play(mus);
 }
 
 TitleMenu&

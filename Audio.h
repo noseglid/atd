@@ -9,6 +9,7 @@ class Audio
 {
   int sfxvol;
 
+  Mix_Music *current_music;
   std::map<std::string, Mix_Chunk *> sfx;
   std::map<std::string, Mix_Music *> music;
 
@@ -25,7 +26,8 @@ public:
   void set_music_volume(int volume);
 
   void play(Mix_Chunk *audio, int loops = 0) const;
-  void play(Mix_Music *audio) const;
+  void play(Mix_Music *audio);
+  void play_current_music();
   void stop_music();
 };
 
