@@ -37,6 +37,8 @@ public:
   void hide(int ms, ANIMDIR dir);
   void hide(int ms, std::function<void()> ondone, ANIMDIR dir);
 
+  bool is_visible() const;
+
   void display(bool visible = true);
   void tick(const engine::Event& ev);
 };

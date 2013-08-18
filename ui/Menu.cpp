@@ -76,6 +76,14 @@ Menu::hide(int ms, std::function<void()> ondone, ANIMDIR dir)
   anim_done       = [this, ondone]() { ondone(); };
 }
 
+bool
+Menu::is_visible() const
+{
+  int width = engine::Video::instance().get_resolution().width;
+  float left = animate->GetAbsoluteLeft();
+  return !(left < 0 || left > width);
+}
+
 void
 Menu::display(bool visible)
 {
