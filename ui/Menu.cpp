@@ -10,12 +10,15 @@ Menu::Menu(std::string docpath) :
   document(UI::instance().load(docpath))
 {
   engine::Engine::instance().on("tick", std::bind(&Menu::tick, this, std::placeholders::_1));
+  animate = document->GetElementById("main");
+  animate->SetProperty("left", Rocket::Core::Property(999999, Rocket::Core::Property::NUMBER));
+  display();
 }
 
 void
 Menu::show()
 {
-  document->Show();
+  show(0, ANIM_LEFT);
 }
 
 void
@@ -33,9 +36,8 @@ Menu::show(int ms, std::function<void()> ondone, ANIMDIR dir)
   }
 
   /* Make sure it's far away so it wont show before we animate it */
-  document->SetProperty("left", Rocket::Core::Property(999999, Rocket::Core::Property::NUMBER));
+  animate->SetProperty("left", Rocket::Core::Property(999999, Rocket::Core::Property::NUMBER));
 
-  this->show();
   anim_pending    = true;
   anim_duration   = ms / 1000.0f;
   anim_time_start = SDL_GetTicks() / 1000.0f;
@@ -47,7 +49,13 @@ Menu::show(int ms, std::function<void()> ondone, ANIMDIR dir)
 void
 Menu::hide()
 {
-  document->Hide();
+  hide(0, ANIM_LEFT);
+}
+
+void
+Menu::hide(int ms, ANIMDIR dir)
+{
+  hide(ms, [](){}, dir);
 }
 
 void
@@ -58,7 +66,7 @@ Menu::hide(int ms, std::function<void()> ondone, ANIMDIR dir)
     return;
   }
 
-  document->SetProperty("left", Rocket::Core::Property(0, Rocket::Core::Property::NUMBER));
+  animate->SetProperty("left", Rocket::Core::Property(0, Rocket::Core::Property::NUMBER));
   Audio::instance().play(sfx_change_menu);
   anim_pending    = true;
   anim_duration   = ms / 1000.0f;
@@ -66,6 +74,13 @@ Menu::hide(int ms, std::function<void()> ondone, ANIMDIR dir)
   anim_pos_start  = 0;
   anim_pos_end    = engine::Video::instance().get_resolution().width * (dir == ANIM_LEFT ? -1 : 1);
   anim_done       = [this, ondone]() { ondone(); };
+}
+
+void
+Menu::display(bool visible)
+{
+  if (visible) document->Show();
+  else         document->Hide();
 }
 
 void
@@ -78,7 +93,7 @@ Menu::tick(const engine::Event& ev)
   float factor  = std::min(elapsed / anim_duration, 1.0f);
   int left      = anim_pos_start - factor * (anim_pos_start - anim_pos_end);
 
-  document->SetProperty("left", Rocket::Core::Property(left, Rocket::Core::Property::NUMBER));
+  animate->SetProperty("left", Rocket::Core::Property(left, Rocket::Core::Property::NUMBER));
   if (elapsed >= anim_duration) {
     anim_pending = false;
     anim_done();

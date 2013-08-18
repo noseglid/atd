@@ -34,6 +34,7 @@ class SelectListener : public Rocket::Core::EventListener
       if (row->IsPseudoClassSet("active")) break;
     }
 
+    TitleMenu::instance().display(false);
     LevelSelectMenu::instance().hide();
     Game::instance().start(LevelDatabase::instance().get_level(click_index));
   }

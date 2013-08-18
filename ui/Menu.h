@@ -20,6 +20,8 @@ private:
   float anim_time_start, anim_duration;
   std::function<void()> anim_done;
 
+  Rocket::Core::Element *animate;
+
   Mix_Chunk *sfx_change_menu;
 
 protected:
@@ -32,7 +34,10 @@ public:
   void show(int ms, ANIMDIR dir);
   void show(int ms, std::function<void()> ondone, ANIMDIR dir);
   void hide();
+  void hide(int ms, ANIMDIR dir);
   void hide(int ms, std::function<void()> ondone, ANIMDIR dir);
+
+  void display(bool visible = true);
   void tick(const engine::Event& ev);
 };
 

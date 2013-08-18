@@ -3,7 +3,15 @@
     <link type="text/rcss" href="style.rcss" />
   </head>
   <body class="window">
-    <div id="title" class="container">
+    <div class="logo">
+      <img src="images/logo.png" />
+    </div>
+
+    <div id="version">
+      Version: 0.1.0
+    </div>
+
+    <div id="main" class="container title">
       <div class="header">Title menu</div>
       <div id="menu">
         <p class="link" id="newgame">New Game</p>

@@ -25,6 +25,7 @@ class TitleListener : public Rocket::Core::EventListener
       TitleMenu::instance().hide(200, []() {
         throw Exception("Clicked 'exit' in title menu.");
       }, Menu::ANIM_RIGHT);
+      return;
     }
 
     TitleMenu::instance().hide(200, [next]() {

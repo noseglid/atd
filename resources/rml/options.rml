@@ -3,7 +3,7 @@
     <link type="text/rcss" href="style.rcss" />
   </head>
   <body class="window">
-    <div id="options" class="container">
+    <div id="main" class="container options">
       <div class="header">Options</div>
       <p>SFX Volume:
         <input type="range"
