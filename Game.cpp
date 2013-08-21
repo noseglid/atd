@@ -35,6 +35,8 @@ Game::start(const Json::Value& levelspec)
 
   tower_manager->set_faction(Faction::Faction::SAGES);
   player->alter_gold(12000)->alter_lives(10);
+
+  emit("start");
 }
 
 void
@@ -52,4 +54,6 @@ Game::stop()
 
   ui::TitleMenu::instance().display();
   ui::TitleMenu::instance().show(200, ui::Menu::ANIM_LEFT);
+
+  emit("stop");
 }

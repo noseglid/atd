@@ -15,7 +15,7 @@
 #include <SDL/SDL_Mixer.h>
 #include <map>
 
-class Game
+class Game : public de::Emitter<>
 {
   Game();
   void operator=(Game const&);
