@@ -22,6 +22,7 @@ SRCS += Mobile.cpp Model.cpp Camera.cpp Text.cpp Audio.cpp
 # UI
 SRCS += ui/UI.cpp ui/System.cpp ui/Renderer.cpp ui/LevelDatabase.cpp
 SRCS += ui/Menu.cpp ui/TitleMenu.cpp ui/LevelSelectMenu.cpp ui/OptionsMenu.cpp
+SRCS += ui/PauseMenu.cpp
 
 # Hud
 SRCS += hud/HUD.cpp hud/Bar.cpp hud/ButtonBar.cpp hud/InfoBar.cpp hud/InfoBox.cpp

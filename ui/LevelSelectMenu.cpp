@@ -17,7 +17,7 @@ class BackListener : public Rocket::Core::EventListener
       TitleMenu::instance().show(200, []() {}, Menu::ANIM_RIGHT);
     }, Menu::ANIM_RIGHT);
   }
-} back_listener;
+} level_select_back_listener;
 
 class SelectListener : public Rocket::Core::EventListener
 {
@@ -47,7 +47,7 @@ class SelectListener : public Rocket::Core::EventListener
 LevelSelectMenu::LevelSelectMenu() : Menu("resources/rml/levelselect.rml")
 {
   LevelDatabase::instance();
-  document->GetElementById("back")->AddEventListener("click", &back_listener);
+  document->GetElementById("back")->AddEventListener("click", &level_select_back_listener);
   document->GetElementById("levellist")->AddEventListener("click", &select_listener);
 }
 

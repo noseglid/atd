@@ -36,6 +36,7 @@ public:
   void hide();
   void hide(int ms, ANIMDIR dir);
   void hide(int ms, std::function<void()> ondone, ANIMDIR dir);
+  void toggle();
 
   bool is_visible() const;
 

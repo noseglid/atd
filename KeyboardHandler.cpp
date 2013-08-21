@@ -1,6 +1,8 @@
 #include "KeyboardHandler.h"
 #include "Debug.h"
+#include "Game.h"
 #include "engine/Engine.h"
+#include "ui/PauseMenu.h"
 
 #include <OpenGL/gl.h>
 
@@ -24,7 +26,12 @@ KeyboardHandler::keydown(const engine::Event& ev)
   SDL_KeyboardEvent event = ev.ev.key;
   switch  (event.keysym.sym) {
     case SDLK_q:
-      engine::Engine::instance().stop();
+      Game::instance().stop();
+      break;
+
+    case SDLK_p:
+    case SDLK_ESCAPE:
+      ui::PauseMenu::instance().toggle();
       break;
 
     case SDLK_w:

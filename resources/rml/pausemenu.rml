@@ -1,0 +1,14 @@
+<rml>
+  <head>
+    <link type="text/rcss" href="style.rcss" />
+  </head>
+  <body class="window">
+    <div id="main" class="container title">
+      <div class="header">Paused</div>
+      <div id="menu">
+        <p class="link" id="options">Options</p>
+        <p class="link" id="exit">Exit to title</p>
+      </div>
+    </div>
+  </body>
+</rml>

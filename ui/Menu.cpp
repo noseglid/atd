@@ -2,6 +2,8 @@
 #include "Debug.h"
 #include "engine/Video.h"
 
+#include <math.h>
+
 B_NS_UI
 
 Menu::Menu(std::string docpath) :
@@ -35,9 +37,6 @@ Menu::show(int ms, std::function<void()> ondone, ANIMDIR dir)
     return;
   }
 
-  /* Make sure it's far away so it wont show before we animate it */
-  animate->SetProperty("left", Rocket::Core::Property(999999, Rocket::Core::Property::NUMBER));
-
   anim_pending    = true;
   anim_duration   = ms / 1000.0f;
   anim_time_start = SDL_GetTicks() / 1000.0f;
@@ -66,14 +65,19 @@ Menu::hide(int ms, std::function<void()> ondone, ANIMDIR dir)
     return;
   }
 
-  animate->SetProperty("left", Rocket::Core::Property(0, Rocket::Core::Property::NUMBER));
   Audio::instance().play(sfx_change_menu);
   anim_pending    = true;
   anim_duration   = ms / 1000.0f;
   anim_time_start = SDL_GetTicks() / 1000.0f;
   anim_pos_start  = 0;
   anim_pos_end    = engine::Video::instance().get_resolution().width * (dir == ANIM_LEFT ? -1 : 1);
-  anim_done       = [this, ondone]() { ondone(); };
+  anim_done       = ondone;
+}
+
+void
+Menu::toggle()
+{
+  is_visible() ? hide() : show();
 }
 
 bool
@@ -87,8 +91,7 @@ Menu::is_visible() const
 void
 Menu::display(bool visible)
 {
-  if (visible) document->Show();
-  else         document->Hide();
+  visible ? document->Show() : document->Hide();
 }
 
 void
@@ -98,7 +101,11 @@ Menu::tick(const engine::Event& ev)
 
   float time    = SDL_GetTicks() / 1000.0f;
   float elapsed = time - anim_time_start;
+
   float factor  = std::min(elapsed / anim_duration, 1.0f);
+  /* if anim_duration is close to 0.0, factor might be nan (division by ~zero) */
+  if (isnan(factor)) factor = 1.0f;
+
   int left      = anim_pos_start - factor * (anim_pos_start - anim_pos_end);
 
   animate->SetProperty("left", Rocket::Core::Property(left, Rocket::Core::Property::NUMBER));
