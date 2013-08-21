@@ -8,6 +8,8 @@
 
 Game::Game()
 {
+  Text::init();
+  HUD::HUD::init();
 }
 
 Game&
@@ -22,8 +24,6 @@ Game::start(const Json::Value& levelspec)
 {
   DBG("Starting a new game");
 
-  Text::init();
-  HUD::HUD::init();
   HUD::HUD::show();
 
   keyboard      = new KeyboardHandler();
