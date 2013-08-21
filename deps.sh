@@ -16,7 +16,7 @@ SDLMIXERVER=1.2.12
 SDLIMGVER=1.2.12
 PJSONVER=0.2.1
 ASSIMPVER=3.0.1270
-DEVER=0.1.0
+DEVER=staging
 DYLIBBUNDLERVER=0.4.3
 ROCKETVER=c95b8f4a1895340e1b847cba2d29a529601bb151
 
@@ -186,11 +186,12 @@ build_assimp()
 
 build_de()
 {
-  NAME="libde-v$DEVER.tar.gz"
-  fetch "https://github.com/noseglid/libde/releases/v0.1.0/2153/$NAME"
+  NAME="libde-$DEVER.tar.gz"
+  fetch "https://github.com/noseglid/libde/archive/staging.tar.gz" $NAME
 
   tar -xzf $NAME
   cd libde-*
+  ./autogen.sh
   build
   cd -
 }
