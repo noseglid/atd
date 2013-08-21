@@ -6,6 +6,7 @@ RUNDIR=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 BUILDDIR=$RUNDIR/deps/build/
 INSTALLDIR=$RUNDIR/deps/target/
 
+BZIP2VER=1.0.6
 OGGVER=1.3.1
 VORBISVER=1.3.3
 SDLVER=1.2.15
@@ -38,6 +39,18 @@ fetch()
 
   info "Retrieving '$1'"
   curl -L $1 $FLAGS
+}
+
+build_bzip2()
+{
+  NAME="bzip2-$BZIP2VER.tar.gz"
+  fetch "http://www.bzip.org/$BZIP2VER/$NAME"
+
+  tar -xzf $NAME
+  cd bzip2-*
+  make
+  make install PREFIX=$INSTALLDIR
+  cd -
 }
 
 build_ogg()
@@ -229,7 +242,7 @@ export CPPFLAGS="-I${INSTALLDIR}include"
 export LDFLAGS="-L${INSTALLDIR}lib"
 export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/local/bin:/usr/local/bin:/opt/X11/bin
 
-PACKAGES="ogg vorbis pjson assimp de freetype sdl sdl_ttf sdl_mixer sdl_image dylibbundler rocket"
+PACKAGES="bzip2 ogg vorbis pjson assimp de freetype sdl sdl_ttf sdl_mixer sdl_image dylibbundler rocket"
 
 case "$1" in
   build)
