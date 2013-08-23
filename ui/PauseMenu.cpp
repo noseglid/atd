@@ -19,6 +19,7 @@ class PauseMenuListener : public Rocket::Core::EventListener
 
     if (el->GetId() == "exit") {
       PauseMenu::instance().hide(200, []() {
+        PauseMenu::instance().toggle();
         Game::instance().stop();
       }, Menu::ANIM_RIGHT);
       return;
@@ -35,10 +36,23 @@ class PauseMenuListener : public Rocket::Core::EventListener
   }
 } pausemenu_listener;
 
-PauseMenu::PauseMenu() : Menu("resources/rml/pausemenu.rml")
+PauseMenu::PauseMenu() : Menu("resources/rml/pausemenu.rml"), open(false)
 {
   document->GetElementById("options")->AddEventListener("click", &pausemenu_listener);
   document->GetElementById("exit")->AddEventListener("click", &pausemenu_listener);
+}
+
+void
+PauseMenu::toggle()
+{
+  if (open) {
+    Menu::hide();
+    OptionsMenu::instance().hide();
+  } else {
+    Menu::show();
+  }
+
+  open = !open;
 }
 
 PauseMenu&

@@ -7,11 +7,15 @@ B_NS_UI
 
 class PauseMenu : public Menu
 {
+  bool open;
+
   PauseMenu();
   PauseMenu(const PauseMenu& rhs);
   void operator=(const PauseMenu& rhs);
 
 public:
+  void toggle();
+
   static PauseMenu& instance();
 };
 

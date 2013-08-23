@@ -24,24 +24,25 @@ private:
 
   Mix_Chunk *sfx_change_menu;
 
+  void tick(const engine::Event& ev);
+
 protected:
   Rocket::Core::ElementDocument *document;
 
   Menu(std::string docpath);
 
 public:
-  void show();
-  void show(int ms, ANIMDIR dir);
-  void show(int ms, std::function<void()> ondone, ANIMDIR dir);
-  void hide();
-  void hide(int ms, ANIMDIR dir);
-  void hide(int ms, std::function<void()> ondone, ANIMDIR dir);
-  void toggle();
+  virtual void show();
+  virtual void show(int ms, ANIMDIR dir);
+  virtual void show(int ms, std::function<void()> ondone, ANIMDIR dir);
+  virtual void hide();
+  virtual void hide(int ms, ANIMDIR dir);
+  virtual void hide(int ms, std::function<void()> ondone, ANIMDIR dir);
+  virtual void toggle();
 
-  bool is_visible() const;
+  virtual bool is_visible() const;
 
   void display(bool visible = true);
-  void tick(const engine::Event& ev);
 };
 
 E_NS_UI

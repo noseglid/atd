@@ -34,13 +34,15 @@ class VolumeListener : public Rocket::Core::EventListener
 
 OptionsMenu::OptionsMenu() : Menu("resources/rml/options.rml")
 {
-  back = &TitleMenu::instance();
   document->GetElementById("back")->AddEventListener("click", &back_listener);
   document->GetElementById("vol-sfx")->AddEventListener("change", &vol_listener);
   document->GetElementById("vol-music")->AddEventListener("change", &vol_listener);
 
   Game::instance().on("start", [this]() { this->back = &PauseMenu::instance(); });
   Game::instance().on("stop",  [this]() { this->back = &TitleMenu::instance(); });
+  back = Game::instance().is_running() ?
+    static_cast<Menu*>(&PauseMenu::instance()) :
+    static_cast<Menu*>(&TitleMenu::instance());
 }
 
 Menu *
