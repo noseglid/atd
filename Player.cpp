@@ -35,6 +35,7 @@ Player::alter_lives(int delta)
   lives +=delta;
   if (lives <= 0)
     throw PlayerDeath();
+  stats_text();
 
   return this;
 }
