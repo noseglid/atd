@@ -24,8 +24,15 @@ Camera::Camera() : mouse_buttons_active(0)
   e.on("mousemotion", std::bind(&Camera::mousemotion, this, std::placeholders::_1));
 }
 
-Camera::~Camera()
+void
+Camera::center()
 {
+  pos.x = (limits.xmin + limits.xmax) / 2;
+  pos.y = 8.0f;
+  pos.z = (limits.zmin + limits.zmax) / 2;
+  dir.x = 0.00;
+  dir.y = -1.00;
+  dir.z = -0.70;
 }
 
 void
@@ -37,6 +44,8 @@ Camera::set_limits(float xmin, float xmax, float ymin, float ymax, float zmin, f
   limits.ymax = ymax;
   limits.zmin = zmin;
   limits.zmax = zmax;
+
+  center();
 }
 
 void

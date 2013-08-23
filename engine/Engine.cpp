@@ -44,15 +44,6 @@ Engine::run()
   SDL_Event ev;
   running = true;
 
-  /***********************************
-   * Should not responsible for this */
-  Camera::instance().set_limits(
-    1.0f, 16 - 1.0f,
-    4.0f, 12.0f,
-    1.0f, 16 - 1.0f
-  );
-  /***********************************/
-
   while (running) {
     while (SDL_PollEvent(&ev)) {
       handle_sdl_event(ev);

@@ -19,12 +19,11 @@ class Camera
   } limits;
 
   Camera();
+  void center();
 
   void impose_limits();
 
 public:
-
-  ~Camera();
 
   void set_limits(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax);
 

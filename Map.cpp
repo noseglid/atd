@@ -65,6 +65,13 @@ Map::load_level(const Json::Value& levelspec)
   width  = levelspec["width"].asInt();
   height = levelspec["height"].asInt();
 
+  /* Set camera limits */
+  Camera::instance().set_limits(
+    1.0f, width - 1.0f,
+    4.0f, 12.0f,
+    1.0f, height - 1.0f
+  );
+
   /* Load the textures */
   for (Json::Value entry : levelspec["textures"].asArray()) {
     textures.push_back(IL::GL::texture(entry.asString()));
