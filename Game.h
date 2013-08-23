@@ -17,6 +17,8 @@
 
 class Game : public de::Emitter<>
 {
+  bool running;
+
   Game();
   void operator=(Game const&);
   Game(const Game&);
@@ -33,6 +35,7 @@ public:
 
   void start(const Json::Value& levelspec);
   void stop();
+  bool is_running();
 };
 
 #endif

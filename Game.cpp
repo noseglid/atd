@@ -1,12 +1,9 @@
 #include "Game.h"
 #include "ui/TitleMenu.h"
+#include "ui/OptionsMenu.h"
 #include "Debug.h"
-#include "Model.h"
-#include "Text.h"
-#include "Player.h"
-#include "IO.h"
 
-Game::Game()
+Game::Game() : running(false)
 {
   Text::init();
   HUD::HUD::init();
@@ -36,6 +33,7 @@ Game::start(const Json::Value& levelspec)
   tower_manager->set_faction(Faction::Faction::SAGES);
   player->alter_gold(12000)->alter_lives(10);
 
+  running = true;
   emit("start");
 }
 
@@ -55,5 +53,12 @@ Game::stop()
   ui::TitleMenu::instance().display();
   ui::TitleMenu::instance().show(200, ui::Menu::ANIM_LEFT);
 
+  running = false;
   emit("stop");
+}
+
+bool
+Game::is_running()
+{
+  return running;
 }
