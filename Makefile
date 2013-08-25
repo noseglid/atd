@@ -68,7 +68,6 @@ $(BIN): $(OBJS)
 	$(CXX) $^ $(LDFLAGS) -o $@
 	install_name_tool -change libassimp.3.dylib $(shell pwd)/deps/target/lib/libassimp.3.dylib $(BIN)
 
-RESOURCES=levels fonts models sound specs textures
 release_osx: $(BIN)
 	mkdir -p $(BIN).app
 	mkdir -p $(BIN).app/Contents

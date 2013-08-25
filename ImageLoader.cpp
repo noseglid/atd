@@ -17,7 +17,7 @@ GLuint
 GL::texture(std::string path, Vector2& dimensions, bool set_searchdir)
 {
   if (set_searchdir) {
-    path = "textures/" + path;
+    path = "resources/textures/" + path;
   }
 
   auto it = loaded_textures.find(path);
