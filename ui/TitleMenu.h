@@ -16,6 +16,8 @@ class TitleMenu : public Menu
   void tick(const engine::Event& ev);
 
 public:
+  void display(bool visible = true);
+
   static TitleMenu& instance();
 };
 
