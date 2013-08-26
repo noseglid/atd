@@ -1,6 +1,7 @@
 #include "Menu.h"
 #include "Debug.h"
 #include "Exception.h"
+#include "Shutdown.h"
 #include "engine/Engine.h"
 #include "engine/Video.h"
 #include "ui/UI.h"
@@ -102,9 +103,11 @@ init_OpenGL()
   glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
 }
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
   srand(time(NULL));
+  int exitcode = EXIT_SUCCESS;
 
   try {
     init_SDL();
@@ -116,17 +119,19 @@ int main(int argc, char *argv[])
 
   } catch (Json::Exception& e) {
     DBGERR("json error: " << e.what());
-    exit(EXIT_FAILURE);
+    exitcode = EXIT_FAILURE;
+  } catch (Shutdown& e) {
+    DBG("Game shutdown gracefully: " << e.what());
   } catch (Exception& e) {
     DBGERR("Game ended: " << e.what());
-    exit(EXIT_FAILURE);
+    exitcode = EXIT_FAILURE;
   } catch (...) {
     DBGERR("unknown error.");
-    exit(EXIT_FAILURE);
+    exitcode = EXIT_FAILURE;
   }
 
   SDL_FreeSurface(surface);
   SDL_Quit();
 
-  return EXIT_SUCCESS;
+  return exitcode;
 }

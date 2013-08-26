@@ -1,7 +1,7 @@
 #include "ui/TitleMenu.h"
 #include "ui/LevelSelectMenu.h"
 #include "ui/OptionsMenu.h"
-#include "Exception.h"
+#include "Shutdown.h"
 #include "Debug.h"
 
 #include <pjson.hpp>
@@ -23,7 +23,7 @@ class TitleListener : public Rocket::Core::EventListener
     }
     if (el->GetId() == "exit") {
       TitleMenu::instance().hide(200, []() {
-        throw Exception("Clicked 'exit' in title menu.");
+        throw Shutdown("Clicked 'exit' in title menu.");
       }, Menu::ANIM_RIGHT);
       return;
     }
