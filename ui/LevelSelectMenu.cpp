@@ -27,18 +27,19 @@ class SelectListener : public Rocket::Core::EventListener
 
     Rocket::Controls::ElementDataGrid *el =
       dynamic_cast<Rocket::Controls::ElementDataGrid*>(event.GetCurrentElement());
-    el->RemoveEventListener("click", this);
-
-    TitleMenu::instance().display(false);
-    LevelSelectMenu::instance().hide(0, [el, this](){
-      el->AddEventListener("click", this);
-    }, Menu::ANIM_LEFT);
 
     int click_index = 0;
     for (; click_index < el->GetNumRows(); ++click_index) {
       Rocket::Controls::ElementDataGridRow *row = el->GetRow(click_index);
       if (row->IsPseudoClassSet("active")) break;
     }
+
+    if (click_index >= el->GetNumRows()) {
+      return;
+    }
+
+    TitleMenu::instance().display(false);
+    LevelSelectMenu::instance().hide(0, Menu::ANIM_LEFT);
 
     Game::instance().start(LevelDatabase::instance().get_level(click_index));
   }
