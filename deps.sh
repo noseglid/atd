@@ -7,6 +7,7 @@ BUILDDIR=$RUNDIR/deps/build/
 INSTALLDIR=$RUNDIR/deps/target/
 
 BZIP2VER=1.0.6
+SQLITE3VER=3080000
 OGGVER=1.3.1
 VORBISVER=1.3.3
 SDLVER=1.2.15
@@ -50,6 +51,17 @@ build_bzip2()
   cd bzip2-*
   make
   make install PREFIX=$INSTALLDIR
+  cd -
+}
+
+build_sqlite3()
+{
+  NAME="sqlite-autoconf-$SQLITE3VER.tar.gz"
+  fetch "http://www.sqlite.org/2013/$NAME"
+
+  tar -xzf $NAME
+  cd sqlite-*
+  build
   cd -
 }
 
@@ -243,7 +255,7 @@ export CPPFLAGS="-I${INSTALLDIR}include"
 export LDFLAGS="-L${INSTALLDIR}lib"
 export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/local/bin:/usr/local/bin:/opt/X11/bin
 
-PACKAGES="bzip2 ogg vorbis pjson assimp de freetype sdl sdl_ttf sdl_mixer sdl_image dylibbundler rocket"
+PACKAGES="bzip2 sqlite3 ogg vorbis pjson assimp de freetype sdl sdl_ttf sdl_mixer sdl_image dylibbundler rocket"
 
 case "$1" in
   build)
