@@ -9,8 +9,6 @@ B_NS_ENGINE
 
 Video::Video()
 {
-  res.width  = 1200;
-  res.height = 900;
 }
 
 resolution
