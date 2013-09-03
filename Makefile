@@ -1,3 +1,5 @@
+SUBDIRS = resources/levels/
+
 CXX     = clang++
 CFLAGS  = -O0 -g3 -c -Wall -pedantic $(shell deps/target/bin/sdl-config --cflags)
 CFLAGS += -DDEBUG=1 -DROCKETDEBUG=0 -std=c++11 -stdlib=libc++
@@ -10,6 +12,8 @@ LDFLAGS += -Wl,-framework,OpenGL -lfreetype -lpjson -lassimp -lsqlite3
 LDFLAGS += -lSDL_ttf -lSDL_mixer -lSDL_image
 LDFLAGS += -lRocketControls -lRocketDebugger -lRocketCore
 
+DB = $(shell pwd)/resources/offline.db
+
 SRCS  = main.cpp
 SRCS += Player.cpp Game.cpp Map.cpp Path.cpp
 SRCS += KeyboardHandler.cpp MetaManager.cpp GLTransform.cpp GLShapes.cpp
@@ -17,13 +21,16 @@ SRCS += KeyboardHandler.cpp MetaManager.cpp GLTransform.cpp GLShapes.cpp
 # Engine
 SRCS += engine/Engine.cpp engine/Video.cpp
 
+# Data access layer
+SRCS += dal/Dal.cpp dal/Offline.cpp
+
 # Core
 SRCS += Mobile.cpp Model.cpp Camera.cpp Text.cpp Audio.cpp
 
 # UI
 SRCS += ui/UI.cpp ui/System.cpp ui/Renderer.cpp ui/LevelDatabase.cpp
 SRCS += ui/Menu.cpp ui/TitleMenu.cpp ui/LevelSelectMenu.cpp ui/OptionsMenu.cpp
-SRCS += ui/PauseMenu.cpp
+SRCS += ui/PauseMenu.cpp ui/SetUserMenu.cpp
 
 # Hud
 SRCS += hud/HUD.cpp hud/Bar.cpp hud/ButtonBar.cpp hud/InfoBar.cpp hud/InfoBox.cpp
@@ -45,11 +52,14 @@ SRCS += utils/Color.cpp ImageLoader.cpp
 OBJS := $(SRCS:.cpp=.o)
 DEPS := $(OBJS:.o=.d)
 
-.PHONY: all clean
+.PHONY: all clean $(SUBDIRS)
 
 BIN = atd
 
-all: $(BIN)
+all: $(DB) $(BIN) $(SUBDIRS)
+
+$(SUBDIRS): $(DB)
+	$(MAKE) DB=$(DB) -C $@
 
 # The actual build target.
 # Dependency files are generated for each object file built.
@@ -69,6 +79,9 @@ $(BIN): $(OBJS)
 	$(CXX) $^ $(LDFLAGS) -o $@
 	install_name_tool -change libassimp.3.dylib $(shell pwd)/deps/target/lib/libassimp.3.dylib $(BIN)
 
+$(DB): resources/create_db.sh
+	   ./resources/create_db.sh $(DB)
+
 release_osx: $(BIN)
 	mkdir -p $(BIN).app
 	mkdir -p $(BIN).app/Contents
@@ -86,6 +99,6 @@ release_clean_osx:
 	rm -rf $(BIN).app
 
 clean: release_clean_osx
-	rm -f $(OBJS) $(DEPS) $(BIN)
+	rm -f $(OBJS) $(DEPS) $(BIN) # $(DB) purposfully left out
 
 -include $(DEPS)

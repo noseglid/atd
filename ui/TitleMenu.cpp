@@ -1,5 +1,6 @@
 #include "ui/TitleMenu.h"
 #include "ui/LevelSelectMenu.h"
+#include "ui/SetUserMenu.h"
 #include "ui/OptionsMenu.h"
 #include "Shutdown.h"
 #include "Debug.h"
@@ -17,6 +18,9 @@ class TitleListener : public Rocket::Core::EventListener
 
     if (el->GetId() == "newgame") {
       next = &LevelSelectMenu::instance();
+    }
+    if (el->GetId() == "setuser") {
+      next = &SetUserMenu::instance();
     }
     if (el->GetId() == "options") {
       next = &OptionsMenu::instance();
@@ -38,6 +42,7 @@ class TitleListener : public Rocket::Core::EventListener
 TitleMenu::TitleMenu() : Menu("resources/rml/title.rml")
 {
   document->GetElementById("newgame")->AddEventListener("click", &title_listener);
+  document->GetElementById("setuser")->AddEventListener("click", &title_listener);
   document->GetElementById("options")->AddEventListener("click", &title_listener);
   document->GetElementById("exit")   ->AddEventListener("click", &title_listener);
   display(true);

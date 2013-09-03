@@ -15,6 +15,7 @@
       <div class="header">Title menu</div>
       <div id="menu">
         <p class="link" id="newgame">New Game</p>
+        <p class="link" id="setuser">Set user</p>
         <p class="link" id="options">Options</p>
         <p class="link" id="exit">Quit</p>
       </div>

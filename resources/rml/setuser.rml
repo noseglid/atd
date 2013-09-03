@@ -1,0 +1,15 @@
+<rml>
+  <head>
+    <link type="text/rcss" href="style.rcss" />
+  </head>
+  <body class="window">
+    <div id="main" class="container title">
+      <div class="header">Set user</div>
+      <div id="menu">
+        <p class="link" id="offline">Play offline</p>
+        <p class="link" id="online">Online comming soon</p>
+        <p class="link" id="back">Back</p>
+      </div>
+    </div>
+  </body>
+</rml>

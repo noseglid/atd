@@ -1,4 +1,5 @@
 #include "ui/LevelDatabase.h"
+#include "dal/Dal.h"
 #include "Debug.h"
 #include "Exception.h"
 #include "IO.h"
@@ -9,20 +10,9 @@ B_NS_UI
 
 LevelDatabase::LevelDatabase() : Rocket::Controls::DataSource("levels")
 {
-  DIR *dir;
-  struct dirent *ent;
-  if (NULL == (dir = opendir("resources/levels/"))) {
-    throw Exception("Could not list levels-folder.");
-  }
-
-  while (NULL != (ent = readdir(dir))) {
-    if (0 == strncmp(".", ent->d_name, 1) || 0 == strcmp("..", ent->d_name)) continue;
-    std::string file = "resources/levels/" + std::string(ent->d_name);
-    Json::Value spec = Json::deserialize(IO::file_get_contents(file));
-    levels.push_back(spec);
-  }
-
-  closedir(dir);
+  dal::get()->get_levels([this](struct dal::levels levels) {
+    this->levels = levels.specs;
+  });
 }
 
 void
