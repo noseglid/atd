@@ -5,3 +5,4 @@ atd
 tags
 .DS_Store
 deps
+*.db
