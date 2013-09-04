@@ -23,7 +23,7 @@
                value="32"
                orientation="horizontal" />
       </p>
-      <p class="link" id="back">Back to title</p>
+      <p class="link" id="back">Back</p>
     </div>
   </body>
 </rml>
