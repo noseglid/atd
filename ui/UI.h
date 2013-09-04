@@ -25,6 +25,7 @@ class UI
   void load_fonts();
 
   void tick(const engine::Event& ev);
+  void key(bool down, const engine::Event& ev);
   void mousemotion(const engine::Event& ev);
   void mousedown(const engine::Event& ev);
   void mouseup(const engine::Event& ev);
