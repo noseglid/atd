@@ -34,6 +34,7 @@ div
 
 p
 {
+  vertical-align: middle;
   display: block;
   z-index: 1;
 }
@@ -76,6 +77,29 @@ scrollbarvertical sliderbar:hover {
   background-top-image-t:    15px 19px;
   background-center-image-t: 17px 19px;
   background-bottom-image-t: 17px 21px;
+}
+
+form p {
+  display: inline-block;
+  margin: 5px 0px 0px 0px;
+  padding: 0px;
+}
+
+input.text, input.password {
+  height: 38px;
+  padding: 6px 4px 0px 6px;
+  margin: 0px 0px 5px 0px;
+  vertical-align: middle;
+
+  font-size: 18px;
+  t-font-effect: shadow;
+  t-offset: 2px 2px;
+  t-color: #333;
+
+  background-decorator: tiled-horizontal;
+  background-left-image:   images/textinput.png          0px  0px 20px 26px;
+  background-center-image: images/textinput.png stretch  20px 0px 60px 26px;
+  background-right-image:  images/textinput.png          60px 0px 86px 26px;
 }
 
 input.range slidertrack {

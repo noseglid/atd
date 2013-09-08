@@ -6,8 +6,11 @@
     <div id="main" class="container title">
       <div class="header">Set user</div>
       <div id="menu">
-        <p class="link" id="offline">Play offline</p>
-        <p class="link" id="online">Online comming soon</p>
+        <form>
+          <p>Username</p> <input type="text" size="14" maxlength="18" id="username" />
+          <p>Password</p> <input type="password" size="14" maxlength="18" id="password" />
+        </form>
+        <p class="link" id="login">Login</p>
         <p class="link" id="back">Back</p>
       </div>
     </div>

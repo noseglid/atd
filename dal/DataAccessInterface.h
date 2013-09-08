@@ -10,7 +10,7 @@ namespace dal {
 
 struct user
 {
-  std::string user;
+  std::string username;
 };
 
 struct levels
@@ -29,7 +29,7 @@ public:
   virtual ~DataAccessInterface() {}
 
   virtual void get_user(
-    std::string user,
+    std::string username,
     std::function<void(struct user)> cb
   ) = 0;
 

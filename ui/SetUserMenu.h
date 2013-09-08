@@ -17,6 +17,8 @@ class SetUserMenu : public Menu
 
 public:
   static SetUserMenu& instance();
+
+  std::string get_form_value(const char *id) const;
 };
 
 E_NS_UI
