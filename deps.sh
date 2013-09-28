@@ -20,6 +20,7 @@ ASSIMPVER=3.0.1270
 DEVER=staging
 DYLIBBUNDLERVER=0.4.3
 ROCKETVER=c95b8f4a1895340e1b847cba2d29a529601bb151
+BOOSTVER=1.54.0
 
 build()
 {
@@ -245,6 +246,18 @@ build_rocket()
   make install
 
   cd $ORIGDIR
+}
+
+build_boost()
+{
+  VUS="$(echo $BOOSTVER | tr '.' '_')"
+  fetch "http://downloads.sourceforge.net/project/boost/boost/$BOOSTVER/boost_$VUS.tar.bz2?use_mirror=optimate" "boost_$VUS.tar.bz2"
+
+  tar -xjf "boost_$VUS.tar.bz2"
+  cd boost_$VUS
+  ./bootstrap.sh --prefix=$INSTALLDIR
+  ./b2 -j8 install
+  cd -
 }
 
 export CFLAGS="-arch x86_64"
