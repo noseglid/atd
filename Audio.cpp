@@ -130,3 +130,9 @@ Audio::stop_music()
 {
   Mix_HaltMusic();
 }
+
+bool
+Audio::music_is_playing() const
+{
+  return (Mix_PlayingMusic() == 1);
+}

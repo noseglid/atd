@@ -51,8 +51,10 @@ TitleMenu::TitleMenu() : Menu("resources/rml/title.rml")
 void
 TitleMenu::display(bool visible)
 {
-  if (visible) {
-    Mix_Music *mus = Audio::instance().load_music("menu.ogg");
+  static Audio& audio = Audio::instance();
+  static Mix_Music *mus = audio.load_music("menu.ogg");
+
+  if (visible && !audio.music_is_playing()) {
     Audio::instance().play(mus);
   }
 

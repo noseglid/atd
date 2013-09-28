@@ -29,6 +29,8 @@ public:
   void play(Mix_Music *audio);
   void play_current_music();
   void stop_music();
+
+  bool music_is_playing() const;
 };
 
 #endif

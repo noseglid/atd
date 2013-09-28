@@ -30,6 +30,9 @@ SetUserMenu::SetUserMenu() : Menu("resources/rml/setuser.rml")
 {
   document->GetElementById("back")->AddEventListener("click", &set_user_listener);
   document->GetElementById("login")->AddEventListener("click", &set_user_listener);
+
+  Mix_Music *mus = Audio::instance().load_music("menu.ogg");
+  Audio::instance().play(mus);
 }
 
 std::string
