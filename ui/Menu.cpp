@@ -115,4 +115,19 @@ Menu::tick(const engine::Event& ev)
   }
 }
 
+void
+Menu::feedback(std::string msg, bool error)
+{
+  Rocket::Core::Element *el = document->GetElementById("feedback");
+  if (msg.empty()) {
+    el->SetProperty("display", "none");
+    return;
+  }
+
+  el->SetProperty("display", "block");
+  el->SetInnerRML(msg.c_str());
+  el->SetClass("error",    error);
+  el->SetClass("success", !error);
+}
+
 E_NS_UI

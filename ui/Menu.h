@@ -43,6 +43,7 @@ public:
   virtual bool is_visible() const;
 
   void display(bool visible = true);
+  void feedback(std::string msg = "", bool error = true);
 };
 
 E_NS_UI
