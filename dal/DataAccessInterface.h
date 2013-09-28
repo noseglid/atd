@@ -30,7 +30,8 @@ public:
 
   virtual void get_user(
     std::string username,
-    std::function<void(struct user)> cb
+    std::string password,
+    std::function<void(bool success, struct user)> cb
   ) = 0;
 
   virtual void get_levels(

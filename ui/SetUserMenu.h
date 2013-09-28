@@ -19,6 +19,7 @@ public:
   static SetUserMenu& instance();
 
   std::string get_form_value(const char *id) const;
+  void evolve();
 };
 
 E_NS_UI

@@ -15,7 +15,7 @@ LDFLAGS += -lRocketControls -lRocketDebugger -lRocketCore
 DB = $(shell pwd)/resources/offline.db
 
 SRCS  = main.cpp
-SRCS += Player.cpp Game.cpp Map.cpp Path.cpp
+SRCS += Player.cpp User.cpp Game.cpp Map.cpp Path.cpp
 SRCS += KeyboardHandler.cpp MetaManager.cpp GLTransform.cpp GLShapes.cpp
 
 # Engine

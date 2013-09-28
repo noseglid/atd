@@ -10,12 +10,15 @@ if [ -z $DB ]; then
   exit 1
 fi
 
+$SQLCMD "DROP TABLE IF EXISTS users"
 $SQLCMD "$(cat << 'EOF'
 CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT
+  username TEXT,
+  password TEXT
 )
 EOF)"
+$SQLCMD "INSERT INTO users(username, password) VALUES ('u', '516b9783fca517eecbd1d064da2d165310b19759')" #SHA1 of 'p'
 
 $SQLCMD "DROP TABLE IF EXISTS levels"
 $SQLCMD "$(cat << 'EOF'

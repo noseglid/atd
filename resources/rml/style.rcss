@@ -8,7 +8,7 @@ body {
 
   header-font-effect: shadow;
   header-color: #444;
-  header-offset: 2px 2px;
+  header-offset: 1px 1px;
 }
 
 h1 {
@@ -121,9 +121,37 @@ select, dataselect, datacombo
   text-align: left;
 }
 
+div#feedback {
+  display: none;
+}
+
 div#levels-container {
   overflow: hidden scroll;
   height: 300px;
+}
+
+div#user
+{
+  header-font-effect: shadow;
+  header-color: #444;
+  header-offset: 1px 1px;
+
+  font-size: 22px;
+  color: #ea3b3b;
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  margin: 0px;
+  margin-bottom: 10px;
+  width: 180px;
+}
+
+div#user div.header
+{
+  text-align: center;
+  color: #fff;
+  margin-top: 13px;
+  font-size: 24px;
 }
 
 div#version {
@@ -131,6 +159,11 @@ div#version {
   position: absolute;
   right: 10px;
   text-align: right;
+}
+
+div.setuser p#back
+{
+  display: none;
 }
 
 div.container {
@@ -193,3 +226,10 @@ datagrid.selectable datagridrow:active,
   color: #8b5c00;
 }
 
+.error {
+  color: #ea3b3b;
+}
+
+.success {
+  color: #0f0;
+}

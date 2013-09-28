@@ -4,6 +4,7 @@
 #include "ui/OptionsMenu.h"
 #include "Shutdown.h"
 #include "Debug.h"
+#include "User.h"
 
 #include <pjson.hpp>
 
@@ -45,7 +46,14 @@ TitleMenu::TitleMenu() : Menu("resources/rml/title.rml")
   document->GetElementById("setuser")->AddEventListener("click", &title_listener);
   document->GetElementById("options")->AddEventListener("click", &title_listener);
   document->GetElementById("exit")   ->AddEventListener("click", &title_listener);
-  display(true);
+
+  auto changedcb = [this]() {
+    document->GetElementById("placeholder-hero")
+            ->SetInnerRML(User::instance().get_username().c_str());
+  };
+  changedcb();
+
+  User::instance().on("changed", changedcb);
 }
 
 void

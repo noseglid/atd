@@ -1,6 +1,7 @@
 #include "ui/SetUserMenu.h"
 #include "ui/TitleMenu.h"
 #include "dal/Dal.h"
+#include "User.h"
 #include "Debug.h"
 
 #include <Rocket/Controls.h>
@@ -11,18 +12,31 @@ class SetUserListener : public Rocket::Core::EventListener
 {
   void ProcessEvent(Rocket::Core::Event& event)
   {
+    auto goback_fn = []() {
+      SetUserMenu::instance().hide(200, []() {
+        TitleMenu::instance().show(200, Menu::ANIM_RIGHT);
+        SetUserMenu::instance().evolve();
+      }, Menu::ANIM_RIGHT);
+    };
+
     auto el = event.GetCurrentElement();
     if (el->GetId() == "back") {
-      /* Nothing to see here */
+      goback_fn();
     }
 
     if (el->GetId() == "login") {
-      /* Allrigth, do the actual login */
+      el->SetInnerRML("Authenticating...");
+      el->SetClass("link", false);
+      std::string user = SetUserMenu::instance().get_form_value("username");
+      std::string pass = SetUserMenu::instance().get_form_value("password");
+      User::instance().login(user, pass, [el, goback_fn](bool success) {
+        el->SetInnerRML("Login");
+        el->SetClass("link", true);
+        if (success) goback_fn();
+        else SetUserMenu::instance().feedback("Invalid username or password.");
+      });
     }
 
-    SetUserMenu::instance().hide(200, []() {
-      TitleMenu::instance().show(200, Menu::ANIM_RIGHT);
-    }, Menu::ANIM_RIGHT);
   }
 } set_user_listener;
 
@@ -42,6 +56,20 @@ SetUserMenu::get_form_value(const char* id) const
   ElementFormControl *el = dynamic_cast<ElementFormControl*>(document->GetElementById(id));
 
   return std::string(el->GetValue().CString());
+}
+
+void
+SetUserMenu::evolve()
+{
+  feedback();
+
+  document->GetElementById("back")->SetProperty("display", "block");
+  document->GetElementById("setuser-title")->SetInnerRML("Change user");
+
+  static_cast<Rocket::Controls::ElementFormControl*>
+    (document->GetElementById("username")) ->SetValue("");
+  static_cast<Rocket::Controls::ElementFormControl*>
+    (document->GetElementById("password")) ->SetValue("");
 }
 
 SetUserMenu&

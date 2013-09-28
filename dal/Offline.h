@@ -15,9 +15,12 @@ public:
   Offline();
   ~Offline();
 
+  std::string get_default_user();
+
   void get_user(
-    std::string user,
-    std::function<void(struct user)> cb
+    std::string username,
+    std::string password,
+    std::function<void(bool success, struct user)> cb
   );
 
   void get_levels(

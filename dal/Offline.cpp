@@ -1,5 +1,6 @@
 #include "dal/Offline.h"
 #include "Exception.h"
+#include "Hash.h"
 #include "IO.h"
 #include "Debug.h"
 
@@ -22,9 +23,34 @@ Offline::~Offline()
 }
 
 void
-Offline::get_user(std::string suser, std::function<void(struct user)> cb)
+Offline::get_user(
+  std::string username,
+  std::string password,
+  std::function<void(bool success, struct user)> cb)
 {
-  DBG("Getting offline user");
+  bool success = false;
+  user u;
+  sqlite3_stmt *stmt;
+  const char *query = "SELECT * FROM users WHERE username = ?";
+
+  if (SQLITE_OK != sqlite3_prepare_v2(db, query, -1, &stmt, NULL)) {
+    throw Exception("Could not prepare statement.");
+  }
+
+  if (SQLITE_OK != sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_STATIC)) {
+    throw Exception("Could not bind data to statement.");
+  }
+
+  if (SQLITE_ROW == sqlite3_step(stmt)) {
+    u.username =
+      std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1)));
+    std::string dbpw =
+      std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2)));
+
+    success = (dbpw == Hash::sha1(password));
+  }
+
+  cb(success, u);
 }
 
 int

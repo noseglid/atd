@@ -5,7 +5,7 @@
 #include "engine/Engine.h"
 #include "engine/Video.h"
 #include "ui/UI.h"
-#include "ui/TitleMenu.h"
+#include "ui/SetUserMenu.h"
 
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
@@ -116,7 +116,7 @@ main(int argc, char *argv[])
     init_SDL();
     init_OpenGL();
 
-    ui::TitleMenu::instance().show(200, ui::Menu::ANIM_LEFT);
+    ui::SetUserMenu::instance().show(200, ui::Menu::ANIM_LEFT);
 
     engine::Engine::instance().run();
 

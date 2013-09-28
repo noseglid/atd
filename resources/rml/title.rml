@@ -7,6 +7,11 @@
       <img src="images/logo.png" />
     </div>
 
+    <div id="user" class="container">
+      <div class="header">Cratanian Hero</div>
+      <p id="placeholder-hero"></p>
+    </div>
+
     <div id="version">
       Version: 0.1.0
     </div>
@@ -15,7 +20,7 @@
       <div class="header">Title menu</div>
       <div id="menu">
         <p class="link" id="newgame">New Game</p>
-        <p class="link" id="setuser">Set user</p>
+        <p class="link" id="setuser">Change user</p>
         <p class="link" id="options">Options</p>
         <p class="link" id="exit">Quit</p>
       </div>
