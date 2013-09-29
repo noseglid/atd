@@ -1,11 +1,12 @@
 #ifndef __DAL__OFFLINE_H__
 #define __DAL__OFFLINE_H__
 
+#include "dal/Dal.h"
 #include "dal/DataAccessInterface.h"
 
 #include <sqlite3.h>
 
-namespace dal {
+B_NS_DAL
 
 class Offline : public DataAccessInterface
 {
@@ -33,6 +34,6 @@ public:
   );
 };
 
-}
+E_NS_DAL
 
 #endif

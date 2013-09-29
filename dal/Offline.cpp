@@ -4,7 +4,7 @@
 #include "IO.h"
 #include "Debug.h"
 
-namespace dal {
+B_NS_DAL
 
 Offline::Offline()
 {
@@ -85,3 +85,5 @@ Offline::get_completed_levels(std::string user, std::function<void(struct comple
 }
 
 }
+
+E_NS_DAL

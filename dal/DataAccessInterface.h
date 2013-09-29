@@ -6,7 +6,7 @@
 #include <functional>
 #include <pjson.hpp>
 
-namespace dal {
+B_NS_DAL
 
 struct user
 {
@@ -44,6 +44,6 @@ public:
   ) = 0;
 };
 
-}
+E_NS_DAL
 
 #endif
