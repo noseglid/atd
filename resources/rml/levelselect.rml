@@ -10,6 +10,7 @@
         <datagrid source="levels.list" id="levellist" class="selectable">
           <col fields="name" width="30%">Crater</col>
           <col fields="waves" width="20%">Waves</col>
+          <col fields="completed" width="10%">Completed</col>
         </datagrid>
       </div>
 

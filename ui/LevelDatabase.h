@@ -2,6 +2,7 @@
 #define __UI__LEVELDATABASE_H__
 
 #include "ui/UI.h"
+#include "dal/Dal.h"
 
 #include <pjson.hpp>
 #include <Rocket/Controls/DataSource.h>
@@ -10,7 +11,13 @@ B_NS_UI
 
 class LevelDatabase : public Rocket::Controls::DataSource
 {
-  std::vector<Json::Value> levels;
+  struct level_entry {
+    int id;
+    Json::Value spec;
+    bool completed;
+  };
+
+  std::vector<level_entry> levels;
 
   LevelDatabase();
 

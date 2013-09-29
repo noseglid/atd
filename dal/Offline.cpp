@@ -1,6 +1,7 @@
 #include "dal/Offline.h"
 #include "Exception.h"
 #include "Hash.h"
+#include "User.h"
 #include "IO.h"
 #include "Debug.h"
 
@@ -54,15 +55,13 @@ Offline::get_user(
 }
 
 int
-level_db_row(void *cl, int ncols, char **values, char **colnames)
+level_db_row(void *ctx, int ncols, char **values, char **colnames)
 {
-  if (1 != ncols) {
-    DBGERR("Got more than one row in query");
-    return SQLITE_ABORT;
-  }
+  dal::level level;
+  level.id   = atoi(values[0]);
+  level.spec = Json::deserialize(values[1]);
 
-  std::vector<Json::Value> *ctx = static_cast<std::vector<Json::Value>*>(cl);
-  ctx->push_back(Json::deserialize(values[0]));
+  static_cast<std::vector<dal::level>*>(ctx)->push_back(level);
 
   return SQLITE_OK;
 }
@@ -71,7 +70,7 @@ void
 Offline::get_levels(std::function<void(struct levels)> cb)
 {
   levels ret;
-  if (SQLITE_OK != sqlite3_exec(db, "SELECT spec FROM levels", level_db_row, &ret.specs, NULL)) {
+  if (SQLITE_OK != sqlite3_exec(db, "SELECT id, spec FROM levels", level_db_row, &ret.list, NULL)) {
     throw Exception("Could not fetch level specs from database.");
   }
 
@@ -79,11 +78,29 @@ Offline::get_levels(std::function<void(struct levels)> cb)
 }
 
 void
-Offline::get_completed_levels(std::string user, std::function<void(struct completed_levels)> cb)
+Offline::get_completed_levels(std::function<void(struct completed_levels)> cb)
 {
-  DBG("Getting offline completed levels");
-}
+  completed_levels ret;
 
+  const char *query = "SELECT levelid FROM completed_levels WHERE username = ?";
+
+  sqlite3_stmt *stmt;
+  if (SQLITE_OK != sqlite3_prepare_v2(db, query, -1, &stmt, NULL)) {
+    throw Exception("Could not prepare statement.");
+  }
+
+  if (SQLITE_OK != sqlite3_bind_text(stmt, 1,
+        ::User::instance().get_username().c_str(), -1, SQLITE_STATIC)) {
+    throw Exception("Could not bind data to statement.");
+  }
+
+  while (SQLITE_ROW == sqlite3_step(stmt)) {
+    level l;
+    l.id = sqlite3_column_int(stmt, 0);
+    ret.list.push_back(l);
+  }
+
+  cb(ret);
 }
 
 E_NS_DAL

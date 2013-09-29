@@ -29,7 +29,6 @@ public:
   );
 
   void get_completed_levels(
-    std::string user,
     std::function<void(struct completed_levels)> cb
   );
 };

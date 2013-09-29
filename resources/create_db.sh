@@ -28,14 +28,15 @@ CREATE TABLE levels (
 )
 EOF)"
 
-$SQLCMD "DROP TABLE IF EXISTS levels_completed"
+$SQLCMD "DROP TABLE IF EXISTS completed_levels"
 $SQLCMD "$(cat << 'EOF'
-CREATE TABLE levels_completed (
+CREATE TABLE completed_levels (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  userid INTEGER,
-  levelis INTEGER
+  username TEXT,
+  levelid INTEGER
 )
 EOF)"
+$SQLCMD "INSERT INTO completed_levels (username, levelid) VALUES('u', 2)"
 
 # Set database to old modify time so it's updated
 touch -m -t 199001010001 $DB

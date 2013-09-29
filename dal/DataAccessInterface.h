@@ -8,19 +8,41 @@
 
 B_NS_DAL
 
+struct level
+{
+  /**
+   *  Server-side id of this level.
+   */
+  int id;
+
+  /**
+   *  The JSON spec of this level, may not be set.
+   */
+  Json::Value spec;
+};
+
 struct user
 {
+  /**
+   *  User's username
+   */
   std::string username;
 };
 
 struct levels
 {
-  std::vector<Json::Value> specs;
+  /**
+   *  List of all levels
+   */
+  std::vector<level> list;
 };
 
 struct completed_levels
 {
-  std::vector<std::string> level_names;
+  /**
+   *  List of completed levels
+   */
+  std::vector<level> list;
 };
 
 class DataAccessInterface
@@ -39,7 +61,6 @@ public:
   ) = 0;
 
   virtual void get_completed_levels(
-    std::string user,
     std::function<void(struct completed_levels)> cb
   ) = 0;
 };
