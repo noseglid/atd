@@ -22,6 +22,8 @@ class LevelDatabase : public Rocket::Controls::DataSource
   LevelDatabase();
 
 public:
+  void set_completed_levels();
+
   void GetRow(
     Rocket::Core::StringList& row,
     const Rocket::Core::String& table,
@@ -29,7 +31,6 @@ public:
     const Rocket::Core::StringList& columns
   );
   Json::Value get_level(int row_index) const;
-
   int GetNumRows(const Rocket::Core::String& table);
 
   static LevelDatabase& instance();

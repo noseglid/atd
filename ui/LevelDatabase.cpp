@@ -14,20 +14,29 @@ LevelDatabase::LevelDatabase() : Rocket::Controls::DataSource("levels")
     for (dal::level l : levels.list) {
       this->levels.push_back({ l.id, l.spec });
     }
-
-    dal::get()->
-      get_completed_levels([this](bool success,
-                                  struct dal::completed_levels completed) {
-      for (dal::level cl : completed.list) {
-        for (level_entry& l : this->levels) {
-          if (cl.id == l.id) {
-            l.completed = true;
-            break;
-          }
-        }
-      }
-    });
   });
+
+  this->set_completed_levels();
+
+  User::instance().on("changed", std::bind(&LevelDatabase::set_completed_levels, this));
+}
+
+void
+LevelDatabase::set_completed_levels()
+{
+  auto cb = [this](bool success, struct dal::completed_levels completed) {
+    for (level_entry& l : this->levels) {
+      l.completed = false;
+      for (dal::level cl : completed.list) {
+        if ((cl.id == l.id) && (l.completed = true)) break;
+      }
+    }
+
+    /* Notify rocket so the view is updated */
+    this->NotifyRowChange("list");
+  };
+
+  dal::get()->get_completed_levels(cb);
 }
 
 void
