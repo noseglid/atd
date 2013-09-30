@@ -57,11 +57,11 @@ public:
   ) = 0;
 
   virtual void get_levels(
-    std::function<void(struct levels)> cb
+    std::function<void(bool success, struct levels)> cb
   ) = 0;
 
   virtual void get_completed_levels(
-    std::function<void(struct completed_levels)> cb
+    std::function<void(bool success, struct completed_levels)> cb
   ) = 0;
 };
 

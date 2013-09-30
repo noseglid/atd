@@ -10,12 +10,14 @@ B_NS_UI
 
 LevelDatabase::LevelDatabase() : Rocket::Controls::DataSource("levels")
 {
-  dal::get()->get_levels([this](struct dal::levels levels) {
+  dal::get()->get_levels([this](bool success, struct dal::levels levels) {
     for (dal::level l : levels.list) {
       this->levels.push_back({ l.id, l.spec });
     }
 
-    dal::get()->get_completed_levels([this](struct dal::completed_levels completed) {
+    dal::get()->
+      get_completed_levels([this](bool success,
+                                  struct dal::completed_levels completed) {
       for (dal::level cl : completed.list) {
         for (level_entry& l : this->levels) {
           if (cl.id == l.id) {
