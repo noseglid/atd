@@ -21,6 +21,7 @@ DEVER=staging
 DYLIBBUNDLERVER=0.4.3
 ROCKETVER=c95b8f4a1895340e1b847cba2d29a529601bb151
 BOOSTVER=1.54.0
+SOCIVER=3.2.2
 
 build()
 {
@@ -260,6 +261,31 @@ build_boost()
   cd -
 }
 
+build_soci()
+{
+  fetch "https://github.com/SOCI/soci/archive/$SOCIVER.tar.gz" "soci-$SOCIVER.tar.gz"
+
+  tar -xzf soci-$SOCIVER.tar.gz
+  cd soci-$SOCIVER/build
+  cmake -G "Unix Makefiles" \
+    -DCMAKE_INSTALL_PREFIX:PATH=$INSTALLDIR \
+    -DSOCI_TESTS=OFF \
+    -DWITH_BOOST=OFF \
+    -DWITH_DB2=OFF \
+    -DWITH_FIREBIRD=OFF \
+    -DWITH_MYSQL=OFF \
+    -DWITH_ODBC=OFF \
+    -DWITH_ORACLE=OFF \
+    -DWITH_POSTGRESQL=OFF \
+    -DWITH_SQLITE3=ON \
+    -DSQLITE3_INCLUDE_DIR=$INSTALLDIR/include \
+    -DSQLITE3_LIBRARIES=$INSTALLDIR/lib/libsqlite3.dylib \
+    ../src
+  make -j8
+  make install
+  cd -
+}
+
 export CFLAGS="-arch x86_64"
 export CXX="clang++"
 export CXXFLAGS="-stdlib=libc++ -arch x86_64"
@@ -268,7 +294,7 @@ export CPPFLAGS="-I${INSTALLDIR}include"
 export LDFLAGS="-L${INSTALLDIR}lib"
 export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/local/bin:/usr/local/bin:/opt/X11/bin
 
-PACKAGES="bzip2 sqlite3 ogg vorbis pjson assimp de freetype sdl sdl_ttf sdl_mixer sdl_image dylibbundler rocket"
+PACKAGES="bzip2 sqlite3 ogg vorbis pjson assimp de freetype sdl sdl_ttf sdl_mixer sdl_image dylibbundler rocket soci"
 
 case "$1" in
   build)
