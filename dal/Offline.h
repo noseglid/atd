@@ -4,19 +4,19 @@
 #include "dal/Dal.h"
 #include "dal/DataAccessInterface.h"
 
-#include <sqlite3.h>
+#include <soci.h>
+#include <sqlite3/soci-sqlite3.h>
 
 B_NS_DAL
 
 class Offline : public DataAccessInterface
 {
-  sqlite3 *db;
+  bool authenticated;
+  std::string active_user;
+  soci::session sql;
 
 public:
   Offline();
-  ~Offline();
-
-  std::string get_default_user();
 
   void get_user(
     std::string username,
@@ -25,11 +25,11 @@ public:
   );
 
   void get_levels(
-    std::function<void(struct levels)> cb
+    std::function<void(bool success, struct levels)> cb
   );
 
   void get_completed_levels(
-    std::function<void(struct completed_levels)> cb
+    std::function<void(bool success, struct completed_levels)> cb
   );
 };
 
