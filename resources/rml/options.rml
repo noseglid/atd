@@ -1,6 +1,7 @@
 <rml>
   <head>
-    <link type="text/rcss" href="style.rcss" />
+    <link type="text/rcss" href="style-generic.rcss"  />
+    <link type="text/rcss" href="style-specific.rcss" />
   </head>
   <body class="window">
     <div id="main" class="container options">

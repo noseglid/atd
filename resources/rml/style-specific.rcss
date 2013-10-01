@@ -1,0 +1,53 @@
+div#levels-container {
+  overflow: hidden scroll;
+  height: 300px;
+}
+
+div.setuser button#back {
+  margin-top: 5px;
+  display: none;
+}
+
+div.setuser td.label {
+  width: 100px;
+}
+
+div.options td.label {
+  width: 160px;
+}
+
+div#user
+{
+  font-size: 22px;
+  color: #ea3b3b;
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  margin: 0px;
+  margin-bottom: 10px;
+  width: 180px;
+}
+
+div#user div.header
+{
+  text-align: center;
+  color: #fff;
+  margin-top: 13px;
+  font-size: 24px;
+}
+
+div#version {
+  font-size: 16px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  text-align: right;
+}
+
+div#logo img {
+  width: 320px;
+  height: 240px;
+  position: absolute;
+  top: 60px;
+  margin: 0px auto;
+}
