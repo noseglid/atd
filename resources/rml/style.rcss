@@ -83,7 +83,7 @@ scrollbarvertical sliderbar:hover {
 
 input.text, input.password {
   height: 38px;
-  padding: 6px 4px 0px 6px;
+  padding: 7px 4px 0px 6px;
   margin: 0px 0px 5px 0px;
   vertical-align: middle;
 
@@ -96,6 +96,13 @@ input.text, input.password {
   background-left-image:   images/textinput.png          0px  0px 20px 26px;
   background-center-image: images/textinput.png stretch  20px 0px 60px 26px;
   background-right-image:  images/textinput.png          60px 0px 86px 26px;
+}
+
+input.text:focus,
+input.password:focus,
+input.submit:focus
+{
+  color: #30c0c0;
 }
 
 div.setuser button#back {
@@ -139,10 +146,6 @@ input.range sliderbar {
 select, dataselect, datacombo
 {
   text-align: left;
-}
-
-div#feedback {
-  display: none;
 }
 
 div#levels-container {

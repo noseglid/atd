@@ -53,6 +53,8 @@ SetUserMenu::SetUserMenu() : Menu("resources/rml/setuser.rml")
 
   Mix_Music *mus = Audio::instance().load_music("menu.ogg");
   Audio::instance().play(mus);
+
+  feedback("Please enter credentials", false);
 }
 
 void
@@ -67,7 +69,7 @@ SetUserMenu::keyup(const engine::Event& ev)
 void
 SetUserMenu::evolve()
 {
-  feedback();
+  feedback("Please enter credentials", false);
 
   document->GetElementById("back")->SetProperty("display", "block");
   document->GetElementById("setuser-title")->SetInnerRML("Change user");
