@@ -30,13 +30,20 @@ div {
   display: block;
 }
 
-tr {
+table tr {
   display: block;
 }
 
-tr td {
+table tr td {
   display: inline;
   margin: 2px 5px;
+}
+
+table tr td.label {
+  display: inline-block;
+  text-align: right;
+  vertical-align: middle;
+  width: 160px;
 }
 
 p {
@@ -82,7 +89,8 @@ scrollbarvertical sliderbar:hover {
   background-bottom-image-t: 17px 21px;
 }
 
-input.text, input.password {
+input.text,
+input.password {
   height: 38px;
   padding: 7px 4px 0px 6px;
   margin: 0px 0px 5px 0px;
@@ -99,25 +107,6 @@ input.text, input.password {
   background-right-image:  images/textinput.png          60px 0px 86px 26px;
 }
 
-input.text:focus,
-input.password:focus,
-input.submit:focus
-{
-  color: #30c0c0;
-}
-
-div.setuser button#back {
-  margin-top: 5px;
-  display: none;
-}
-
-div.setuser tr:nth-last-child(1) td:first-child,
-div.setuser tr:nth-last-child(2) td:first-child {
-  display: inline-block;
-  vertical-align: middle;
-  width: 100px;
-}
-
 button,
 input.submit {
   bg-decorator: tiled-horizontal;
@@ -128,6 +117,13 @@ input.submit {
   margin: 0px auto;
   display: block;
   width: 100px;
+}
+
+input.text:focus,
+input.password:focus,
+input.submit:focus
+{
+  color: #30c0c0;
 }
 
 input.range slidertrack {
@@ -149,42 +145,7 @@ select, dataselect, datacombo
   text-align: left;
 }
 
-div#levels-container {
-  overflow: hidden scroll;
-  height: 300px;
-}
-
-div#user
-{
-  header-font-effect: shadow;
-  header-color: #444;
-  header-offset: 1px 1px;
-
-  font-size: 22px;
-  color: #ea3b3b;
-  position: absolute;
-  left: 10px;
-  top: 10px;
-  margin: 0px;
-  margin-bottom: 10px;
-  width: 180px;
-}
-
-div#user div.header
-{
-  text-align: center;
-  color: #fff;
-  margin-top: 13px;
-  font-size: 24px;
-}
-
-div#version {
-  font-size: 16px;
-  position: absolute;
-  right: 10px;
-  text-align: right;
-}
-
+div.wide-container,
 div.container {
   width: 50%;
   position: absolute;
@@ -206,14 +167,11 @@ div.container {
   bg-center-image:       images/container_008080.png 32px 32px 96px  96px ;
 }
 
-div.logo img {
-  width: 320px;
-  height: 240px;
-  position: absolute;
-  top: 60px;
-  margin: 0px auto;
+div.wide-container {
+  width: 75%;
 }
 
+div.wide-container div.header,
 div.container div.header {
   position: relative;
   top: 0px;
@@ -223,20 +181,58 @@ div.container div.header {
   text-align: left;
 }
 
-div.title {
-  width: 50%;
+div#levels-container {
+  overflow: hidden scroll;
+  height: 300px;
 }
 
-div.levelselect {
-  width: 75%;
+div.setuser button#back {
+  margin-top: 5px;
+  display: none;
 }
 
-div.options tr:nth-last-child(1) td:first-child,
-div.options tr:nth-last-child(2) td:first-child {
-  display: inline-block;
-  text-align: right;
-  vertical-align: middle;
+div.setuser td.label {
+  width: 100px;
+}
+
+div.options td.label {
   width: 160px;
+}
+
+div#user
+{
+  font-size: 22px;
+  color: #ea3b3b;
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  margin: 0px;
+  margin-bottom: 10px;
+  width: 180px;
+}
+
+div#user div.header
+{
+  text-align: center;
+  color: #fff;
+  margin-top: 13px;
+  font-size: 24px;
+}
+
+div#version {
+  font-size: 16px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  text-align: right;
+}
+
+div#logo img {
+  width: 320px;
+  height: 240px;
+  position: absolute;
+  top: 60px;
+  margin: 0px auto;
 }
 
 datagrid.selectable datagridrow:hover,

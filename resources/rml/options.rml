@@ -7,7 +7,7 @@
       <div class="header">Options</div>
       <table>
         <tr>
-          <td>SFX Volume:</td>
+          <td class="label">SFX Volume:</td>
           <td><input type="range"
                      id="vol-sfx"
                      min="0"
@@ -17,7 +17,7 @@
                      orientation="horizontal" /></td>
         </tr>
         <tr>
-          <td>Music Volume:</td>
+          <td class="label">Music Volume:</td>
           <td><input type="range"
                       id="vol-music"
                       min="0"

@@ -3,7 +3,7 @@
     <link type="text/rcss" href="style.rcss" />
   </head>
   <body class="window">
-    <div class="logo">
+    <div id="logo">
       <img src="images/logo.png" />
     </div>
 

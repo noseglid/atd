@@ -3,7 +3,7 @@
     <link type="text/rcss" href="style.rcss" />
   </head>
   <body class="window">
-    <div id="main" class="container title">
+    <div id="main" class="container pause">
       <div class="header">Paused</div>
       <div id="menu">
         <p class="link" id="options">Options</p>

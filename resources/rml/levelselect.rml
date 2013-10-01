@@ -3,7 +3,7 @@
     <link type="text/rcss" href="style.rcss" />
   </head>
   <body class="window">
-    <div id="main" class="container levelselect">
+    <div id="main" class="wide-container levelselect">
       <div class="header">Battleground</div>
 
       <div id="levels-container">

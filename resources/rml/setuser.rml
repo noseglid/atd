@@ -3,14 +3,14 @@
     <link type="text/rcss" href="style.rcss" />
   </head>
   <body class="window">
-    <div id="main" class="container title setuser">
+    <div id="main" class="container setuser">
       <div class="header" id="setuser-title">Welcome to Cratania</div>
       <div id="feedback"></div>
       <div id="menu">
         <form id="user-form">
           <table>
             <tr>
-              <td>Username:</td>
+              <td class="label">Username:</td>
               <td><input type="text"
                          size="14"
                          maxlength="18"
@@ -18,7 +18,7 @@
                          id="username" /></td>
             </tr>
             <tr>
-              <td>Password:</td>
+              <td class="label">Password:</td>
               <td><input type="password"
                          size="14"
                          maxlength="18"
