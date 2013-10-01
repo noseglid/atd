@@ -2,9 +2,8 @@ SUBDIRS = resources/levels/
 
 CXX     = clang++
 CFLAGS  = -O0 -g3 -c -Wall -pedantic $(shell deps/target/bin/sdl-config --cflags)
-CFLAGS += -DDEBUG=1 -DROCKETDEBUG=0 -std=c++11 -stdlib=libc++
+CFLAGS += -DDEBUG=1 -std=c++11 -stdlib=libc++
 CFLAGS += -Ideps/target/include -Ideps/target/include/soci -I.
-CFLAGS += -DSFXVOL=32 -DMUSICVOL=16
 
 LDFLAGS  = $(shell deps/target/bin/sdl-config --libs)
 LDFLAGS += -Ldeps/target/lib -stdlib=libc++ -headerpad_max_install_names

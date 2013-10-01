@@ -30,10 +30,10 @@ UI::UI()
 
   context = Rocket::Core::CreateContext("default", Rocket::Core::Vector2i(res.width, res.height));
 
-#if ROCKETDEBUG == 1
-  Rocket::Debugger::Initialise(context);
-  Rocket::Debugger::SetVisible(true);
-#endif
+  if (getenv("ROCKETDEBUG")) {
+    Rocket::Debugger::Initialise(context);
+    Rocket::Debugger::SetVisible(true);
+  }
 
   engine::Engine& e = engine::Engine::instance();
   e.on("tick_nodepth", std::bind(&UI::tick,        this, std::placeholders::_1));
