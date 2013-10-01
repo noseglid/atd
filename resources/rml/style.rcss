@@ -36,6 +36,7 @@ tr {
 
 tr td {
   display: inline;
+  margin: 2px 5px;
 }
 
 p {
@@ -114,7 +115,7 @@ div.setuser tr:nth-last-child(1) td:first-child,
 div.setuser tr:nth-last-child(2) td:first-child {
   display: inline-block;
   vertical-align: middle;
-  width: 120px;
+  width: 100px;
 }
 
 button,
@@ -230,7 +231,12 @@ div.levelselect {
   width: 75%;
 }
 
-div.options {
+div.options tr:nth-last-child(1) td:first-child,
+div.options tr:nth-last-child(2) td:first-child {
+  display: inline-block;
+  text-align: right;
+  vertical-align: middle;
+  width: 160px;
 }
 
 datagrid.selectable datagridrow:hover,

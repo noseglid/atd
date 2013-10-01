@@ -5,24 +5,28 @@
   <body class="window">
     <div id="main" class="container options">
       <div class="header">Options</div>
-      <p>SFX Volume:
-        <input type="range"
-               id="vol-sfx"
-               min="0"
-               max="100"
-               step="2"
-               value="128"
-               orientation="horizontal" />
-      </p>
-      <p>Music Volume:
-        <input type="range"
-               id="vol-music"
-               min="0"
-               max="100"
-               step="2"
-               value="32"
-               orientation="horizontal" />
-      </p>
+      <table>
+        <tr>
+          <td>SFX Volume:</td>
+          <td><input type="range"
+                     id="vol-sfx"
+                     min="0"
+                     max="100"
+                     step="2"
+                     value="128"
+                     orientation="horizontal" /></td>
+        </tr>
+        <tr>
+          <td>Music Volume:</td>
+          <td><input type="range"
+                      id="vol-music"
+                      min="0"
+                      max="100"
+                      step="2"
+                      value="32"
+                      orientation="horizontal" /></td>
+        </tr>
+      </table>
       <p class="link" id="back">Back</p>
     </div>
   </body>
