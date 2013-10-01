@@ -12,50 +12,56 @@ class SetUserListener : public Rocket::Core::EventListener
 {
   void ProcessEvent(Rocket::Core::Event& event)
   {
-    auto goback_fn = []() {
-      SetUserMenu::instance().hide(200, []() {
-        TitleMenu::instance().show(200, Menu::ANIM_RIGHT);
-        SetUserMenu::instance().evolve();
-      }, Menu::ANIM_RIGHT);
-    };
-
-    auto el = event.GetCurrentElement();
-    if (el->GetId() == "back") {
-      goback_fn();
-    }
-
-    if (el->GetId() == "login") {
-      el->SetInnerRML("Authenticating...");
-      el->SetClass("link", false);
-      std::string user = SetUserMenu::instance().get_form_value("username");
-      std::string pass = SetUserMenu::instance().get_form_value("password");
-      User::instance().login(user, pass, [el, goback_fn](bool success) {
-        el->SetInnerRML("Login");
-        el->SetClass("link", true);
-        if (success) goback_fn();
-        else SetUserMenu::instance().feedback("Invalid username or password.");
-      });
-    }
-
+    SetUserMenu::instance().hide(200, []() {
+      TitleMenu::instance().show(200, Menu::ANIM_RIGHT);
+      SetUserMenu::instance().evolve();
+    }, Menu::ANIM_RIGHT);
   }
-} set_user_listener;
+} set_user_back_listener;
+
+class SubmitListener : public Rocket::Core::EventListener
+{
+  void ProcessEvent(Rocket::Core::Event& event)
+  {
+    SetUserMenu::instance().feedback("Authenticating...", false);
+    auto el = event.GetCurrentElement();
+
+    std::string user(event.GetParameter<Rocket::Core::String>("username", "").CString());
+    std::string pass(event.GetParameter<Rocket::Core::String>("password", "").CString());
+    User::instance().login(user, pass, [el](bool success) {
+      if (success) {
+        SetUserMenu::instance().hide(200, []() {
+          TitleMenu::instance().show(200, Menu::ANIM_RIGHT);
+          SetUserMenu::instance().evolve();
+        }, Menu::ANIM_RIGHT);
+        return;
+      }
+
+      SetUserMenu::instance().feedback("Invalid username or password.");
+    });
+  }
+} submit_listener;
 
 SetUserMenu::SetUserMenu() : Menu("resources/rml/setuser.rml")
 {
-  document->GetElementById("back")->AddEventListener("click", &set_user_listener);
-  document->GetElementById("login")->AddEventListener("click", &set_user_listener);
+  document->GetElementById("back")->AddEventListener("click", &set_user_back_listener);
+  document->GetElementById("user-form")->AddEventListener("submit", &submit_listener);
+
+  engine::Engine::instance().on(
+    "keyup", std::bind(&SetUserMenu::keyup, this, std::placeholders::_1)
+  );
 
   Mix_Music *mus = Audio::instance().load_music("menu.ogg");
   Audio::instance().play(mus);
 }
 
-std::string
-SetUserMenu::get_form_value(const char* id) const
+void
+SetUserMenu::keyup(const engine::Event& ev)
 {
-  using Rocket::Controls::ElementFormControl;
-  ElementFormControl *el = dynamic_cast<ElementFormControl*>(document->GetElementById(id));
+  if (ev.ev.key.keysym.sym != SDLK_RETURN) return;
 
-  return std::string(el->GetValue().CString());
+  static_cast<Rocket::Controls::ElementForm*>
+    (document->GetElementById("user-form"))->Submit();
 }
 
 void
@@ -67,9 +73,9 @@ SetUserMenu::evolve()
   document->GetElementById("setuser-title")->SetInnerRML("Change user");
 
   static_cast<Rocket::Controls::ElementFormControl*>
-    (document->GetElementById("username")) ->SetValue("");
+    (document->GetElementById("username"))->SetValue("");
   static_cast<Rocket::Controls::ElementFormControl*>
-    (document->GetElementById("password")) ->SetValue("");
+    (document->GetElementById("password"))->SetValue("");
 }
 
 SetUserMenu&

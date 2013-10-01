@@ -7,12 +7,30 @@
       <div class="header" id="setuser-title">Welcome to Cratania</div>
       <div id="feedback"></div>
       <div id="menu">
-        <form>
-          <p>Username</p> <input type="text" size="14" maxlength="18" id="username" />
-          <p>Password</p> <input type="password" size="14" maxlength="18" id="password" />
+        <form id="user-form">
+          <table>
+            <tr>
+              <td>Username:</td>
+              <td><input type="text"
+                         size="14"
+                         maxlength="18"
+                         name="username"
+                         id="username" /></td>
+            </tr>
+            <tr>
+              <td>Password:</td>
+              <td><input type="password"
+                         size="14"
+                         maxlength="18"
+                         name="password"
+                         id="password" /></td>
+            </tr>
+            <tr>
+              <td><input class="link" type="submit">Login</input></td>
+              <td><button class="link" id="back">Back</button></td>
+            </tr>
+          </table>
         </form>
-        <p class="link" id="login">Login</p>
-        <p class="link" id="back">Back</p>
       </div>
     </div>
   </body>

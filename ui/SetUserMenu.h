@@ -13,12 +13,12 @@ class SetUserMenu : public Menu
   SetUserMenu();
   SetUserMenu(const SetUserMenu& rhs);
   void operator=(const SetUserMenu& rhs);
-  void tick(const engine::Event& ev);
+
+  void keyup(const engine::Event& ev);
 
 public:
   static SetUserMenu& instance();
 
-  std::string get_form_value(const char *id) const;
   void evolve();
 };
 

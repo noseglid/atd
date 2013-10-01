@@ -26,31 +26,33 @@ h2 {
   text-align: left;
 }
 
-div
-{
+div {
   display: block;
-  padding: 0px 20px 20px 20px;
 }
 
-p
-{
+tr {
+  display: block;
+}
+
+tr td {
+  display: inline;
+}
+
+p {
   vertical-align: middle;
   display: block;
   z-index: 1;
 }
 
-em
-{
+em {
   font-style: italic;
 }
 
-strong
-{
+strong {
   font-weight: bold;
 }
 
-datagrid
-{
+datagrid {
   display: block;
   text-align: left;
 }
@@ -79,12 +81,6 @@ scrollbarvertical sliderbar:hover {
   background-bottom-image-t: 17px 21px;
 }
 
-form p {
-  display: inline-block;
-  margin: 5px 0px 0px 0px;
-  padding: 0px;
-}
-
 input.text, input.password {
   height: 38px;
   padding: 6px 4px 0px 6px;
@@ -100,6 +96,30 @@ input.text, input.password {
   background-left-image:   images/textinput.png          0px  0px 20px 26px;
   background-center-image: images/textinput.png stretch  20px 0px 60px 26px;
   background-right-image:  images/textinput.png          60px 0px 86px 26px;
+}
+
+div.setuser button#back {
+  margin-top: 5px;
+  display: none;
+}
+
+div.setuser tr:nth-last-child(1) td:first-child,
+div.setuser tr:nth-last-child(2) td:first-child {
+  display: inline-block;
+  vertical-align: middle;
+  width: 120px;
+}
+
+button,
+input.submit {
+  bg-decorator: tiled-horizontal;
+  bg-left-image:   images/header.png 0px  0px 39px  60px;
+  bg-center-image: images/header.png 39px 0px 78px  60px;
+  bg-right-image:  images/header.png 79px 0px 120px 60px;
+
+  margin: 0px auto;
+  display: block;
+  width: 100px;
 }
 
 input.range slidertrack {
@@ -161,17 +181,14 @@ div#version {
   text-align: right;
 }
 
-div.setuser p#back
-{
-  display: none;
-}
-
 div.container {
   width: 50%;
   position: absolute;
   margin: 0px auto;
   top: 250px;
   text-align: center;
+  padding-bottom: 10px;
+  padding: 0px 20px 20px 20px;
 
   bg-decorator: tiled-box;
   bg-top-left-image:     images/header.png 0px  0px 39px  60px ;
@@ -198,7 +215,6 @@ div.container div.header {
   top: 0px;
   left: 0px;
   font-size: 36px;
-  padding: 0px;
   margin: 6px 0px 20px 0px;
   text-align: left;
 }
