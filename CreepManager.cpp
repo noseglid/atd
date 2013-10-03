@@ -7,15 +7,12 @@
 #include "Debug.h"
 
 CreepManager::CreepManager(const Json::Value& levelspec) :
-  last_spawn(0), spawned(0), winbox(HUD::InfoBox::SNAP_CENTER)
+  last_spawn(0), spawned(0)
 {
   DBG("Registering events for CreepManager");
   tickev = engine::Engine::instance().on(
     "tick", std::bind(&CreepManager::tick, this, std::placeholders::_1)
   );
-
-  using HUD::InfoBox;
-  winbox << InfoBox::size(32.0f) << utils::colors::green << "Level complete!";
 
   setup(levelspec);
 }
@@ -78,10 +75,6 @@ CreepManager::check_spawn(const float& elapsed)
 void
 CreepManager::tick(const engine::Event& ev)
 {
-  if (level_complete()) {
-    winbox.draw();
-  }
-
   std::list<Creep *> tmp = creeps;
   for (Creep *c : tmp) {
     glPushMatrix();
@@ -133,9 +126,7 @@ CreepManager::remove_creep(Creep *creep)
   delete creep;
 
   if (level_complete()) {
-    engine::Engine::instance().queue_event(7.0f, []() {
-      Game::instance().stop();
-    });
+    emit("complete");
   }
 }
 

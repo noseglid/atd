@@ -32,9 +32,13 @@ Player::alter_gold(int delta)
 Player *
 Player::alter_lives(int delta)
 {
-  lives +=delta;
-  if (lives <= 0)
-    throw PlayerDeath();
+  if (0 < lives && 0 >= lives + delta) {
+    /* We are currently alive, and this alteration will kill us */
+    emit("death");
+  }
+
+  lives = std::max(lives + delta, 0);
+
   stats_text();
 
   return this;

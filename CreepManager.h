@@ -6,9 +6,10 @@
 #include "hud/InfoBox.h"
 
 #include <pjson.hpp>
+#include <de.h>
 #include <list>
 
-class CreepManager
+class CreepManager : public de::Emitter<>
 {
   typedef struct {
     Json::Value spec;
@@ -21,8 +22,6 @@ class CreepManager
   float last_spawn;
   unsigned int spawned;
   std::list<Creep*> creeps;
-
-  HUD::InfoBox winbox;
 
   CreepManager(const CreepManager&);
   void operator=(CreepManager const&);

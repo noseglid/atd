@@ -5,13 +5,9 @@
 #include "Purchasable.h"
 #include "hud/InfoBar.h"
 
-class PlayerDeath : public Exception
-{
-public:
-  PlayerDeath() : Exception("Player died") {}
-};
+#include <de.h>
 
-class Player
+class Player : public de::Emitter<>
 {
   friend class HUD::InfoBar;
 

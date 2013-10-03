@@ -18,10 +18,13 @@
 class Game : public de::Emitter<>
 {
   bool running;
+  HUD::InfoBox finishedbox;
 
   Game();
   void operator=(Game const&);
   Game(const Game&);
+
+  void tick(const engine::Event& ev);
 
 public:
   MetaManager *meta_manager;

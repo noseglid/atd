@@ -22,8 +22,9 @@ InfoBox::InfoBox(SNAP snap, bool followmouse) :
   inputx(BOX_PADDING), inputy(BOX_PADDING), input_ptsize(18.0f),
   input_indent(0.0f), clr(1.0f, 1.0f, 1.0f)
 {
-  auto fn = std::bind(mousemotion, std::placeholders::_1);
-  mousemotion_emit = engine::Engine::instance().on("mousemotion", fn);
+  mousemotion_emit = engine::Engine::instance().on(
+    "mousemotion", std::bind(mousemotion, std::placeholders::_1)
+  );
 }
 
 InfoBox::~InfoBox()

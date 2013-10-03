@@ -98,8 +98,8 @@ public:
   };
 
   /**
-   * Creates a new infobox. Content can be added with operator<<() and it can be shown
-   * with draw().
+   * Creates a new infobox. Content can be added with operator<<(), it can be shown
+   * with draw() and emptied with clear().
    *
    * @param snap          Where the box should be placed 0 - bottom left, 1 - top left,
    *                      2 - top right, 3 bottom right. If followmouse is true, then this
