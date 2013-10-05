@@ -11,6 +11,7 @@ class Camera
   Vector3 pos, dir, up;
   GLdouble xzangle;
   int mouse_buttons_active;
+  bool enabled;
 
   struct {
     float xmin, xmax;
@@ -26,6 +27,7 @@ class Camera
 public:
 
   void set_limits(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax);
+  void enable(bool state);
 
   void orientate() const;
   void hover(GLdouble dx, GLdouble dz);

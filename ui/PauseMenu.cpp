@@ -46,9 +46,11 @@ void
 PauseMenu::toggle()
 {
   if (open) {
+    Camera::instance().enable(true);
     Menu::hide();
     OptionsMenu::instance().hide();
   } else {
+    Camera::instance().enable(false);
     Menu::show();
   }
 

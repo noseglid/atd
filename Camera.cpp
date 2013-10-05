@@ -5,7 +5,7 @@
 #include <iostream>
 #include <cmath>
 
-Camera::Camera() : mouse_buttons_active(0)
+Camera::Camera() : mouse_buttons_active(0), enabled(true)
 {
   pos.x = 10;
   pos.y = 8;
@@ -46,6 +46,12 @@ Camera::set_limits(float xmin, float xmax, float ymin, float ymax, float zmin, f
   limits.zmax = zmax;
 
   center();
+}
+
+void
+Camera::enable(bool state)
+{
+  this->enabled = state;
 }
 
 void
@@ -98,7 +104,7 @@ Camera::mousebutton(const engine::Event& ev)
 void
 Camera::mousemotion(const engine::Event& ev)
 {
-  if (HUD::ButtonBar::instance().in_turf(ev.ev.motion.x, ev.ev.motion.y)) {
+  if (!enabled || HUD::ButtonBar::instance().in_turf(ev.ev.motion.x, ev.ev.motion.y)) {
     return;
   }
 
