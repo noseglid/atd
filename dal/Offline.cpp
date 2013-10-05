@@ -43,6 +43,7 @@ void
 Offline::get_levels(std::function<void(bool success, struct levels)> cb)
 {
   if (!authenticated) {
+    DBGWRN("Not authenticated");
     cb(false, levels());
     return;
   }
@@ -70,6 +71,7 @@ void
 Offline::get_completed_levels(std::function<void(bool success, struct completed_levels)> cb)
 {
   if (!authenticated) {
+    DBGWRN("Not authenticated");
     cb(false, completed_levels());
     return;
   }
@@ -90,6 +92,29 @@ Offline::get_completed_levels(std::function<void(bool success, struct completed_
   } catch (const soci_error& e) {
     DBGERR(e.what());
     cb(false, completed_levels());
+  }
+}
+
+void
+Offline::set_level_completed(int id, std::function<void(bool success)> cb)
+{
+  if (!authenticated) {
+    DBGWRN("Not authenticated");
+    cb(false);
+    return;
+  }
+
+  try {
+    sql << "DELETE FROM completed_levels WHERE username = :username AND levelid = :id",
+      use(active_user, "username"), use(id, "id");
+
+    sql << "INSERT INTO completed_levels (username, levelid) VALUES (:username, :id)",
+      use(active_user, "username"), use(id, "id");
+
+    cb(true);
+  } catch (const soci_error& e) {
+    DBGERR(e.what());
+    cb(false);
   }
 }
 

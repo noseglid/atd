@@ -36,7 +36,7 @@ public:
 
   static Game& instance();
 
-  void start(const Json::Value& levelspec);
+  void start(int levelid, const Json::Value& levelspec);
   void stop();
   bool is_running();
 };

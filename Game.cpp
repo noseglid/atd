@@ -2,6 +2,7 @@
 #include "ui/TitleMenu.h"
 #include "ui/OptionsMenu.h"
 #include "Debug.h"
+#include "dal/Dal.h"
 
 Game::Game() : running(false), finishedbox(HUD::InfoBox::SNAP_CENTER)
 {
@@ -27,7 +28,7 @@ Game::tick(const engine::Event& ev)
 }
 
 void
-Game::start(const Json::Value& levelspec)
+Game::start(int levelid, const Json::Value& levelspec)
 {
   DBG("Starting a new game");
 
@@ -48,9 +49,16 @@ Game::start(const Json::Value& levelspec)
     engine::Engine::instance().queue_event(7.0f, std::bind(&Game::stop, this));
   };
 
-  creep_manager->on(
-    "complete", std::bind(finishedcb, utils::colors::green, "Level complete")
-  );
+  creep_manager->on("complete", [finishedcb, levelid, this]() {
+    finishedcb(utils::colors::green, "Level complete");
+    dal::get()->set_level_completed(levelid, [levelid, this](bool success) {
+      if (!success) {
+        DBGERR("Could not set level complete for levelid: " << levelid);
+        return;
+      }
+    });
+  });
+
   player->on(
     "death", std::bind(finishedcb, utils::colors::red, "Crater lost")
   );

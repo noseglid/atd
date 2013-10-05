@@ -31,6 +31,11 @@ public:
   void get_completed_levels(
     std::function<void(bool success, struct completed_levels)> cb
   );
+
+  void set_level_completed(
+    int id,
+    std::function<void(bool success)> cb
+  );
 };
 
 E_NS_DAL

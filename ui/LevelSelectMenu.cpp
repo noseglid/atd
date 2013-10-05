@@ -41,7 +41,9 @@ class SelectListener : public Rocket::Core::EventListener
     TitleMenu::instance().display(false);
     LevelSelectMenu::instance().hide(0, Menu::ANIM_LEFT);
 
-    Game::instance().start(LevelDatabase::instance().get_level(click_index));
+    int id = 0;
+    Json::Value spec = LevelDatabase::instance().get_level(click_index, id);
+    Game::instance().start(id, spec);
   }
 } select_listener;
 

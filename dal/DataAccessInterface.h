@@ -63,6 +63,11 @@ public:
   virtual void get_completed_levels(
     std::function<void(bool success, struct completed_levels)> cb
   ) = 0;
+
+  virtual void set_level_completed(
+    int id,
+    std::function<void(bool success)> cb
+  ) = 0;
 };
 
 E_NS_DAL

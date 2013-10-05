@@ -30,7 +30,7 @@ public:
     int row_index,
     const Rocket::Core::StringList& columns
   );
-  Json::Value get_level(int row_index) const;
+  Json::Value get_level(int row_index, int& id) const;
   int GetNumRows(const Rocket::Core::String& table);
 
   static LevelDatabase& instance();

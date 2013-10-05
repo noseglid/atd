@@ -1,5 +1,6 @@
 #include "ui/LevelDatabase.h"
 #include "User.h"
+#include "Game.h"
 #include "Debug.h"
 #include "Exception.h"
 #include "IO.h"
@@ -12,13 +13,14 @@ LevelDatabase::LevelDatabase() : Rocket::Controls::DataSource("levels")
 {
   dal::get()->get_levels([this](bool success, struct dal::levels levels) {
     for (dal::level l : levels.list) {
-      this->levels.push_back({ l.id, l.spec });
+      this->levels.push_back({ l.id, l.spec, false });
     }
   });
 
   this->set_completed_levels();
 
   User::instance().on("changed", std::bind(&LevelDatabase::set_completed_levels, this));
+  Game::instance().on("stop",    std::bind(&LevelDatabase::set_completed_levels, this));
 }
 
 void
@@ -63,8 +65,9 @@ LevelDatabase::GetRow(
 }
 
 Json::Value
-LevelDatabase::get_level(int row_index) const
+LevelDatabase::get_level(int row_index, int& id) const
 {
+  id = levels[row_index].id;
   return levels[row_index].spec;
 }
 
