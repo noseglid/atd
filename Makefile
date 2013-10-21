@@ -14,27 +14,18 @@ LDFLAGS += -lRocketControls -lRocketDebugger -lRocketCore
 
 DB = $(shell pwd)/resources/offline.db
 
+# Core
 SRCS  = main.cpp
+SRCS += Mobile.cpp Model.cpp Camera.cpp Text.cpp Audio.cpp
 SRCS += Player.cpp User.cpp Game.cpp Map.cpp Path.cpp
 SRCS += KeyboardHandler.cpp MetaManager.cpp GLTransform.cpp GLShapes.cpp
 
-# Engine
-SRCS += engine/Engine.cpp engine/Video.cpp
-
-# Data access layer
-SRCS += dal/Dal.cpp dal/Offline.cpp
-
-# Core
-SRCS += Mobile.cpp Model.cpp Camera.cpp Text.cpp Audio.cpp
-
-# UI
-SRCS += ui/UI.cpp ui/System.cpp ui/Renderer.cpp ui/LevelDatabase.cpp
-SRCS += ui/Menu.cpp ui/TitleMenu.cpp ui/LevelSelectMenu.cpp ui/OptionsMenu.cpp
-SRCS += ui/PauseMenu.cpp ui/SetUserMenu.cpp
-
-# Hud
-SRCS += hud/HUD.cpp hud/Bar.cpp hud/ButtonBar.cpp hud/InfoBar.cpp hud/InfoBox.cpp
-SRCS += hud/Button.cpp
+# Namespaces
+SRCS += $(wildcard engine/*.cpp)
+SRCS += $(wildcard dal/*.cpp)
+SRCS += $(wildcard ui/*.cpp)
+SRCS += $(wildcard hud/*.cpp)
+SRCS += $(wildcard math/*.cpp)
 
 # Creep
 SRCS += CreepManager.cpp Creep.cpp DummyCreep.cpp
@@ -42,9 +33,6 @@ SRCS += CreepManager.cpp Creep.cpp DummyCreep.cpp
 # Tower
 SRCS += TowerManager.cpp Tower.cpp
 SRCS += Projectile.cpp
-
-# Math
-SRCS += math/Math.cpp math/Vector2.cpp math/Vector3.cpp math/Matrix4.cpp
 
 # Utils
 SRCS += utils/Color.cpp ImageLoader.cpp
