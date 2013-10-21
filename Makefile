@@ -99,6 +99,6 @@ release_clean_osx:
 	rm -rf $(BIN).app
 
 clean: release_clean_osx
-	rm -f $(OBJS) $(DEPS) $(BIN) # $(DB) purposfully left out
+	rm -f $(OBJS) $(DEPS) $(BIN) $(DB)
 
 -include $(DEPS)
