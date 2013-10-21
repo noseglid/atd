@@ -7,6 +7,7 @@ BUILDDIR=$RUNDIR/deps/build/
 INSTALLDIR=$RUNDIR/deps/target/
 
 BZIP2VER=1.0.6
+JPEGVER=v9
 SQLITE3VER=3080000
 OGGVER=1.3.1
 VORBISVER=1.3.3
@@ -53,6 +54,17 @@ build_bzip2()
   cd bzip2-*
   make
   make install PREFIX=$INSTALLDIR
+  cd -
+}
+
+build_jpeg()
+{
+  NAME="jpegsrc.$JPEGVER.tar.gz"
+  fetch "http://www.ijg.org/files/$NAME"
+
+  tar -xzf $NAME
+  cd jpeg-*
+  build
   cd -
 }
 
@@ -149,11 +161,12 @@ build_sdl_image()
   build \
     --enable-jpg=yes \
     --enable-jpg-shared=yes \
+    --enable-png=yes \
+    --enable-png-shared=yes \
     --disable-bmp \
     --disable-gif \
     --disable-lbm \
     --disable-pcx \
-    --disable-png \
     --disable-png-shared \
     --disable-pnm \
     --disable-tga \
