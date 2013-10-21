@@ -58,7 +58,7 @@ LevelDatabase::GetRow(
       Rocket::Core::String entry(8, "%d", arr.size());
       row.push_back(entry);
     } else if (col == "completed") {
-      Rocket::Core::String entry(8, "%s", level.completed ? "Done" : "HELP!" );
+      Rocket::Core::String entry(8, "%s", level.completed ? "true" : "false" );
       row.push_back(entry);
     }
   }

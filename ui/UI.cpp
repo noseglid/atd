@@ -1,6 +1,7 @@
 #include "ui/ui.h"
 #include "ui/System.h"
 #include "ui/Renderer.h"
+#include "ui/LevelCompletedFormatter.h"
 #include "RocketSDL.h"
 #include "engine/Video.h"
 #include "GLTransform.h"
@@ -42,6 +43,9 @@ UI::UI()
   e.on("mousemotion",  std::bind(&UI::mousemotion, this, std::placeholders::_1));
   e.on("mousedown",    std::bind(&UI::mousedown,   this, std::placeholders::_1));
   e.on("mouseup",      std::bind(&UI::mouseup,     this, std::placeholders::_1));
+
+  /* Make sure this instantiated before Rocket starts doing stuff */
+  ui::LevelCompletedFormatter::instance();
 }
 
 void

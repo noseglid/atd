@@ -60,6 +60,26 @@ strong {
   font-weight: bold;
 }
 
+state {
+  display: block;
+  width:  28px;
+  height: 28px;
+  image-decorator: image;
+  image-s: 0px 128px;
+  image-t: 0px 128px;
+  margin: 5px auto;
+}
+
+state.ok
+{
+  image-image-src: images/notification_done.png;
+}
+
+state.nok
+{
+  image-image-src: images/notification_error.png;
+}
+
 datagrid {
   display: block;
   text-align: left;
