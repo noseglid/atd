@@ -14,6 +14,8 @@ class PauseMenu : public Menu
   void operator=(const PauseMenu& rhs);
 
 public:
+  void _hide();
+  void _show();
   void toggle();
 
   static PauseMenu& instance();

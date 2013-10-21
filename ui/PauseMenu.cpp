@@ -43,17 +43,24 @@ PauseMenu::PauseMenu() : Menu("resources/rml/pausemenu.rml"), open(false)
 }
 
 void
+PauseMenu::_hide()
+{
+  Camera::instance().enable(true);
+  Menu::hide();
+  OptionsMenu::instance().hide();
+}
+
+void
+PauseMenu::_show()
+{
+  Camera::instance().enable(false);
+  Menu::show();
+}
+
+void
 PauseMenu::toggle()
 {
-  if (open) {
-    Camera::instance().enable(true);
-    Menu::hide();
-    OptionsMenu::instance().hide();
-  } else {
-    Camera::instance().enable(false);
-    Menu::show();
-  }
-
+  open ? _hide() : _show();
   open = !open;
 }
 

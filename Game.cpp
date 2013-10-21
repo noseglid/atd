@@ -1,6 +1,6 @@
 #include "Game.h"
 #include "ui/TitleMenu.h"
-#include "ui/OptionsMenu.h"
+#include "ui/PauseMenu.h"
 #include "Debug.h"
 #include "dal/Dal.h"
 
@@ -81,6 +81,7 @@ Game::stop()
   HUD::HUD::hide();
   finishedbox.clear();
 
+  ui::PauseMenu::instance()._hide();
   ui::TitleMenu::instance().display();
   ui::TitleMenu::instance().show(200, ui::Menu::ANIM_LEFT);
 
