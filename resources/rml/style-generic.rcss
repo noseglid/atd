@@ -62,8 +62,8 @@ strong {
 
 state {
   display: block;
-  width:  28px;
-  height: 28px;
+  width:  32px;
+  height: 32px;
   image-decorator: image;
   image-s: 0px 128px;
   image-t: 0px 128px;
@@ -77,7 +77,7 @@ state.ok
 
 state.nok
 {
-  image-image-src: images/notification_error.png;
+  image-image-src: images/notification_warning.png;
 }
 
 datagrid {

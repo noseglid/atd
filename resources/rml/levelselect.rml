@@ -9,9 +9,9 @@
 
       <div id="levels-container">
         <datagrid source="levels.list" id="levellist" class="selectable">
+          <col fields="completed" width="100" formatter="levelCompleted"></col>
           <col fields="name" width="300">Crater</col>
           <col fields="waves" width="100" >Waves</col>
-          <col fields="completed" width="0" formatter="levelCompleted">Completed</col>
         </datagrid>
       </div>
 
