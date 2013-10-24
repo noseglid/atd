@@ -7,7 +7,7 @@
   },
   "name"        : "Poran",
   "model"       : "sages/hero",
-  "hudtex"      : "tower_hero.jpg",
+  "hudtex"      : "tower1.png",
   "price"       : 135,
   "reload"      : 0.6,
   "range"       : 4.8,
