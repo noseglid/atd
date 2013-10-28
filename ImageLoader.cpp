@@ -70,6 +70,9 @@ GL::texture(std::string path, Vector2& dimensions, bool set_searchdir)
   dimensions.x = image->w;
   dimensions.y = image->h;
   loaded_textures.insert(std::make_pair(path, texid));
+
+  SDL_FreeSurface(image);
+
   return texid;
 }
 

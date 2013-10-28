@@ -186,7 +186,7 @@ Map::generate_edge_normals()
 {
   for (size_t h = 0; h < EDGE_STEPS + 1; ++h) {
     std::vector<Vector3> row;
-    for(size_t w = 0; w < edge_width; ++w) {
+    for(size_t w = 0; w < edge_width + 1; ++w) {
       row.push_back(calc_normal(h, EDGE_STEPS, w, edge_width, heightmap_edge));
     }
     normals_edge.push_back(row);

@@ -7,7 +7,7 @@ CFLAGS += -Ideps/target/include -Ideps/target/include/soci -I.
 
 LDFLAGS  = $(shell deps/target/bin/sdl-config --libs)
 LDFLAGS += -Ldeps/target/lib -stdlib=libc++ -headerpad_max_install_names
-LDFLAGS += -Wl,-framework,OpenGL -lfreetype -lpjson -lassimp -lsqlite3
+LDFLAGS += -Wl,-framework,OpenGL -lfreetype -lpjson -lde -lassimp -lsqlite3
 LDFLAGS += -lsoci_core -lsoci_sqlite3
 LDFLAGS += -lSDL_ttf -lSDL_mixer -lSDL_image
 LDFLAGS += -lRocketControls -lRocketDebugger -lRocketCore

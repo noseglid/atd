@@ -5,6 +5,10 @@ DummyCreep::DummyCreep(Vector3 pos) :
 {
 }
 
+DummyCreep::~DummyCreep()
+{
+}
+
 Vector3
 DummyCreep::get_position() const
 {

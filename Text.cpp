@@ -96,6 +96,8 @@ Text::create_texture(const std::string& text, TTF_Font *font, int& w, int& h)
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, stext->w, stext->h, 0,
                GL_BGRA, GL_UNSIGNED_BYTE, stext->pixels);
 
+  SDL_FreeSurface(stext);
+
   return texture;
 }
 

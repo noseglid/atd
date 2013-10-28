@@ -137,7 +137,10 @@ Tower::projectile_notarget(Projectile *p)
   DummyCreep *target = new DummyCreep(p->get_target_pos());
   p->set_target(target);
   p->disable("hit");
-  p->on("hit", std::bind(&Tower::remove_projectile, this, p));
+  p->on("hit", [this, target, p] {
+    remove_projectile(p);
+    delete target;
+  });
 }
 
 void

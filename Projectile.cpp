@@ -60,11 +60,10 @@ Projectile::tick(const float& elapsed)
   if ((!isnan(a) && a < 1.0) ||
       (!isnan(b) && b < 1.0) ||
       (!isnan(c) && c < 1.0)) {
-    emit("hit");
     target->struck(this);
+    emit("hit");
     return;
   }
-
 
   pos += step;
 }
