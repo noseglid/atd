@@ -17,7 +17,7 @@ Player::stats_text()
   std::stringstream ss;
   ss << "Gold: " << gold << std::endl
      << "Lives: " << lives;
-  HUD::InfoBar::instance().set_info_text(ss.str());
+  HUD::InfoBar::instance().set_info_text1(ss.str());
 }
 
 Player *

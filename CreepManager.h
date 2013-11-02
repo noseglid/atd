@@ -16,6 +16,8 @@ class CreepManager : public de::Emitter<>
     float time;
   } spawn_t;
   typedef std::list<spawn_t> wave_t;
+
+  int waves_total;
   std::list<wave_t> spawns;
   engine::Engine::id_t tickev;
 
@@ -27,6 +29,7 @@ class CreepManager : public de::Emitter<>
   void operator=(CreepManager const&);
 
   void setup(const Json::Value& levelspec);
+  void stats_text() const;
 
   void check_spawn(const float& elapsed);
   void remove_creep(Creep *creep);

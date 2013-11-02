@@ -128,6 +128,8 @@ main(int argc, char *argv[])
   } catch (Exception& e) {
     DBGERR("Game ended: " << e.what());
     exitcode = EXIT_FAILURE;
+  } catch (std::exception& e) {
+    DBGERR("exception: " << e.what());
   } catch (...) {
     DBGERR("unknown error.");
     exitcode = EXIT_FAILURE;

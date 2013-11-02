@@ -27,6 +27,7 @@ void
 CreepManager::setup(const Json::Value& levelspec)
 {
   Json::Value waves = levelspec["waves"];
+  waves_total = waves.asArray().size();
 
   float spawntime = engine::Engine::instance().get_elapsed();
 
@@ -45,6 +46,19 @@ CreepManager::setup(const Json::Value& levelspec)
     }
     spawns.push_back(w);
   }
+
+  stats_text();
+}
+
+void
+CreepManager::stats_text() const
+{
+  std::stringstream ss;
+  int waves_left = (spawns.size() == 0 ? 0 : spawns.size() - 1);
+  ss << "Current wave: " << (waves_total - waves_left) << std::endl
+     << "Creeps left: " << spawns.front().size() << std::endl
+     << "Waves left: "  << waves_left;
+  HUD::InfoBar::instance().set_info_text2(ss.str());
 }
 
 void
@@ -59,6 +73,7 @@ CreepManager::check_spawn(const float& elapsed)
   if (wave.empty()) {
     /* Wave complete */
     spawns.pop_front();
+    stats_text();
     return;
   }
 
@@ -69,6 +84,7 @@ CreepManager::check_spawn(const float& elapsed)
     creep->on("accomplished", std::bind(&CreepManager::creep_accomplished, this, creep));
     creeps.push_back(creep);
     wave.pop_front();
+    stats_text();
   }
 }
 
