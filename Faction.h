@@ -3,8 +3,7 @@
 
 namespace Faction {
   enum Faction {
-    SAGES,
-    BRUTALS
+    SAGES
   };
 
   class Loader
@@ -18,11 +17,6 @@ namespace Faction {
           return {
             "resources/specs/towers/sages/hero.json",
             "resources/specs/towers/sages/arcane.json"
-          };
-        case Faction::BRUTALS:
-          return {
-            "resources/specs/towers/brutals_hero.json",
-            "resources/specs/towers/brutals_axe.json"
           };
       }
     }

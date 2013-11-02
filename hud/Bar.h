@@ -5,7 +5,7 @@
 
 B_NS_HUD
 
-#define HUD_BUTTON_WIDTH 64.0f
+#define HUD_BUTTON_WIDTH  64.0f
 #define HUD_BUTTON_HEIGHT 64.0f
 
 #define BAR_OFFSET 3.0f

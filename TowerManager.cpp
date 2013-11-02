@@ -15,6 +15,10 @@
 #include "HUD/Button.h"
 #include "Faction.h"
 
+#define TEXTURE_UPGRADE          "thrust.png"
+#define TEXTURE_UPGRADE_DISABLED "thrust_gray.png"
+#define TEXTURE_SELL             "cash.png"
+
 TowerManager::TowerManager() : selected_tower(towers.end()), btnupgr(NULL), btnsell(NULL)
 {
   DBG("Registering events for TowerManager");
@@ -277,8 +281,7 @@ TowerManager::upgrade_tower()
   set_upgrade_infobox();
 
   if (0 >= upgrades_left(selected_tower)) {
-    btnupgr->set_texture(IL::GL::texture("upgrade_disabled.jpg"));
-    /* No more upgrades, disable button - BUT HOW?! */
+    btnupgr->set_texture(IL::GL::texture(TEXTURE_UPGRADE_DISABLED));
   }
 }
 
@@ -428,10 +431,10 @@ TowerManager::update_hud()
   }
 
   std::string tex_upgr = (0 >= upgrades_left(selected_tower)) ?
-    "upgrade_disabled.jpg" : "upgrade.jpg";
+    TEXTURE_UPGRADE_DISABLED : TEXTURE_UPGRADE;
 
   btnupgr = new HUD::Button(IL::GL::texture(tex_upgr));
-  btnsell = new HUD::Button(IL::GL::texture("sell.jpg"));
+  btnsell = new HUD::Button(IL::GL::texture(TEXTURE_SELL));
 
   btnsell->on("leftclick",  std::bind(&TowerManager::sell_tower, this));
   btnsell->on("mouseentry", std::bind(&TowerManager::set_sell_infobox, this));
