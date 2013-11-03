@@ -16,7 +16,7 @@ DB = $(shell pwd)/resources/offline.db
 
 # Core
 SRCS  = main.cpp
-SRCS += Mobile.cpp Model.cpp Camera.cpp Text.cpp Audio.cpp
+SRCS += Mobile.cpp Model.cpp Camera.cpp Audio.cpp
 SRCS += Player.cpp User.cpp Game.cpp Map.cpp Path.cpp
 SRCS += KeyboardHandler.cpp MetaManager.cpp GLTransform.cpp GLShapes.cpp
 
@@ -26,6 +26,7 @@ SRCS += $(wildcard dal/*.cpp)
 SRCS += $(wildcard ui/*.cpp)
 SRCS += $(wildcard hud/*.cpp)
 SRCS += $(wildcard math/*.cpp)
+SRCS += $(wildcard text/*.cpp)
 
 # Creep
 SRCS += CreepManager.cpp Creep.cpp DummyCreep.cpp

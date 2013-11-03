@@ -1,6 +1,5 @@
 #include "Player.h"
 #include "Game.h"
-#include "Text.h"
 
 #include <sstream>
 

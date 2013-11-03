@@ -6,7 +6,6 @@
 #include "Exception.h"
 #include "Player.h"
 #include "CreepManager.h"
-#include "Text.h"
 #include "GLTransform.h"
 
 Creep::Creep(Json::Value spec, float animinc) :

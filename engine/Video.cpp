@@ -1,6 +1,6 @@
 #include "engine/Video.h"
 #include "Exception.h"
-#include "Text.h"
+#include "text/Text.h"
 #include "hud/HUD.h"
 #include "ui/UI.h"
 #include "Debug.h"
@@ -38,7 +38,6 @@ Video::set_resolution(const int& width, const int& height)
 
   ui::UI::instance().res_change(width, height);
 
-  Text::init();
   HUD::HUD::init();
 }
 

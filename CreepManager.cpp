@@ -3,7 +3,8 @@
 #include "IO.h"
 #include "Game.h"
 #include "Player.h"
-#include "Text.h"
+#include "text/Text.h"
+#include "text/Dispatcher.h"
 #include "Debug.h"
 
 CreepManager::CreepManager(const Json::Value& levelspec) :
@@ -116,8 +117,7 @@ CreepManager::creep_death(Creep *creep)
 
   std::stringstream ss;
   ss << "+" << creep->reward << "g";
-  Text::set_color(utils::colors::gold);
-  Text::scrolling(ss.str(), creep->get_position());
+  text::Dispatcher::instance().scrolling(ss.str(), creep->get_position(), utils::colors::gold);
 
   remove_creep(creep);
 }
@@ -129,8 +129,7 @@ CreepManager::creep_accomplished(Creep *creep)
 
   std::stringstream ss;
   ss << "-" << creep->life_cost;
-  Text::set_color(utils::colors::white);
-  Text::scrolling(ss.str(), creep->get_position());
+  text::Dispatcher::instance().scrolling(ss.str(), creep->get_position());
 
   remove_creep(creep);
 }

@@ -1,7 +1,6 @@
 #include "Tower.h"
 #include "GLShapes.h"
 #include "Game.h"
-#include "Text.h"
 #include "CreepManager.h"
 #include "DummyCreep.h"
 

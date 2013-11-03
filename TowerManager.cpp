@@ -5,7 +5,8 @@
 #include "IO.h"
 #include "Game.h"
 #include "ImageLoader.h"
-#include "Text.h"
+#include "text/Text.h"
+#include "text/Dispatcher.h"
 #include "Player.h"
 #include "Creep.h"
 #include "engine/Engine.h"
@@ -173,7 +174,7 @@ TowerManager::button_mouse_event(bool on, Json::Value spec, HUD::Button *button)
       << InfoBox::size(32.0f) << utils::colors::orange
       << spec["desc"]["name"].asString() << "\n"
       << InfoBox::size(18.0f) << InfoBox::indent(8.0f) << utils::colors::lightgray
-      << Text::linebreak(spec["desc"]["info"].asString()) << "\n"
+      << text::Text::linebreak(spec["desc"]["info"].asString()) << "\n"
       << utils::colors::red << limit << "\n"
       << InfoBox::size(16.0f) << InfoBox::indent(18.0f)
       << utils::colors::white << "Type: "        << utils::colors::green << spec["type"].asString()   << "\n"
@@ -196,8 +197,7 @@ TowerManager::purchase_tower(Vector3 pos)
   Tower *t = create_tower(build_tower, pos);
 
   auto purchase_fail = [pos, t](std::string msg) {
-    Text::set_color(utils::colors::white);
-    Text::scrolling(msg, pos);
+    text::Dispatcher::instance().scrolling(msg, pos);
     delete t;
     return false;
   };
@@ -223,8 +223,7 @@ TowerManager::purchase_tower(Vector3 pos)
 
   std::stringstream ss;
   ss << "-" << t->price << "g";
-  Text::set_color(utils::colors::gold);
-  Text::scrolling(ss.str(), Vector3(pos.x, pos.y + 1.0f, pos.z));
+  text::Dispatcher::instance().scrolling(ss.str(), Vector3(pos.x, pos.y + 1.0f, pos.z), utils::colors::gold);
   return true;
 }
 
@@ -260,7 +259,7 @@ TowerManager::upgrade_tower()
 
   Purchasable dummy(upgrade["price"].asInt());
   if (!Game::instance().player->purchase(&dummy)) {
-    Text::scrolling("No moneys for upgrade.", textpos);
+    text::Dispatcher::instance().scrolling("No moneys for upgrade.", textpos);
     return;
   }
 
@@ -274,8 +273,7 @@ TowerManager::upgrade_tower()
 
   std::stringstream ss;
   ss << "-" << upgrade["price"].asInt() << "g";
-  Text::set_color(utils::colors::gold);
-  Text::scrolling(ss.str(), textpos);
+  text::Dispatcher::instance().scrolling(ss.str(), textpos, utils::colors::gold);
 
   set_tower_infobox();
   set_upgrade_infobox();
@@ -296,8 +294,7 @@ TowerManager::sell_tower()
 
   std::stringstream ss;
   ss << "+" << return_value << "g";
-  Text::set_color(utils::colors::gold);
-  Text::scrolling(ss.str(), textpos);
+  text::Dispatcher::instance().scrolling(ss.str(), textpos, utils::colors::gold);
 
   towers.erase(selected_tower);
   select_tower(towers.end());

@@ -4,7 +4,7 @@
 #include "hud/HUD.h"
 #include "utils/Color.h"
 #include "engine/Engine.h"
-#include "Text.h"
+#include "text/Text.h"
 
 #include <string>
 #include <sstream>
@@ -62,7 +62,7 @@ private:
     entry.text  = ss.str();
 
     int w;
-    Text::size(entry.text, &w, NULL, entry.ptsize);
+    text::Text::size(entry.text, &w, NULL, entry.ptsize);
     inputx = entry.x + w;
 
     content.push_back(entry);
@@ -71,7 +71,7 @@ private:
   void linebreak()
   {
     inputx  = BOX_PADDING;
-    inputy += Text::overlay_line_skip(input_ptsize);
+    inputy += text::Text::line_skip(input_ptsize);
   }
 
   InfoBox& operator=(const InfoBox& rhs);

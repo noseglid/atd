@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "text/Dispatcher.h"
 #include "ui/TitleMenu.h"
 #include "ui/PauseMenu.h"
 #include "Debug.h"
@@ -6,7 +7,6 @@
 
 Game::Game() : running(false), finishedbox(HUD::InfoBox::SNAP_CENTER)
 {
-  Text::init();
   HUD::HUD::init();
 
   engine::Engine::instance().on(
@@ -77,7 +77,7 @@ Game::stop()
   delete meta_manager;
   delete keyboard;
 
-  Text::clear();
+  text::Dispatcher::instance().clear();
   HUD::HUD::hide();
   finishedbox.clear();
 

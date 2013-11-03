@@ -1,5 +1,5 @@
 #include "MetaManager.h"
-#include "Text.h"
+#include "text/Dispatcher.h"
 #include "Debug.h"
 #include "engine/Engine.h"
 #include "utils/Color.h"
@@ -45,8 +45,7 @@ MetaManager::tick(const engine::Event& ev)
     std::stringstream ss;
     ss.precision(4);
     ss << "FPS: " << current_fps;
-    Text::set_color(utils::colors::white);
-    Text::overlay(ss.str(), 100, 200, 16.0f, false, false);
+    text::Dispatcher::overlay(ss.str(), 100, 200, utils::colors::gray, 16.0f, false, false);
   }
 }
 

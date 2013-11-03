@@ -1,4 +1,5 @@
 #include "hud/InfoBox.h"
+#include "text/Dispatcher.h"
 #include "GLTransform.h"
 #include "Bar.h"
 
@@ -40,7 +41,7 @@ InfoBox::set_bounding_box()
 
   for (boxcontent c : content) {
     int w, h;
-    Text::size(c.text, &w, &h, c.ptsize);
+    text::Text::size(c.text, &w, &h, c.ptsize);
     height = std::max(height, c.y + h);
     width  = std::max(width,  c.x + w);
   }
@@ -118,8 +119,12 @@ InfoBox::draw()
   glEnd();
 
   for (boxcontent c : content) {
-    Text::set_color(c.clr);
-    Text::overlay(c.text, basex + c.x + BOX_PADDING, basey - c.y + BOX_PADDING, c.ptsize);
+    text::Dispatcher::overlay(
+      c.text,
+      basex + c.x + BOX_PADDING,
+      basey - c.y + BOX_PADDING,
+      c.clr,
+      c.ptsize);
   }
 
   GLTransform::disable2D();
