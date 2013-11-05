@@ -28,8 +28,6 @@ void
 Stream::draw() const
 {
   Rect bb = get_bounding_box();
-  engine::resolution res = engine::Video::instance().get_resolution();
-
   for (entry e : content) {
     text::Dispatcher::overlay(
       e.text,
