@@ -537,18 +537,12 @@ TowerManager::tick(const engine::Event& ev)
   if (!build_tower.empty() && dummy_tower_pos.length() > 0.0f) {
     /* Currently trying to build a tower */
     glPushMatrix();
-    dummy_towers.at(build_tower)->draw_range_circle();
+      dummy_towers.at(build_tower)->draw_range_circle();
     glPopMatrix();
-
-    for (std::pair<Vector3, Tower*> t : towers) {
-      glPushMatrix();
-      t.second->draw_range_circle();
-      glPopMatrix();
-    }
   } else if (selected_tower != towers.end()) {
     /* There is a tower selected */
     glPushMatrix();
-    selected_tower->second->draw_range_circle();
+      selected_tower->second->draw_range_circle();
     glPopMatrix();
   }
 
@@ -557,7 +551,7 @@ TowerManager::tick(const engine::Event& ev)
     t.second->update_projectiles(elapsed);
 
     glPushMatrix();
-    t.second->draw(elapsed);
+      t.second->draw(elapsed);
     glPopMatrix();
   }
 
@@ -566,7 +560,7 @@ TowerManager::tick(const engine::Event& ev)
     t->set_position(dummy_tower_pos);
 
     glPushMatrix();
-    t->draw(elapsed, 0.5f);
+      t->draw(elapsed, 0.5f);
     glPopMatrix();
 
     glDisable(GL_COLOR_MATERIAL);
