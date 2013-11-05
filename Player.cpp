@@ -68,3 +68,9 @@ Player::sell(Purchasable *p)
   stats_text();
   return return_value;
 }
+
+bool
+Player::is_alive()
+{
+  return (lives > 0);
+}

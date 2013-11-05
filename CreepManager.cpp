@@ -141,7 +141,7 @@ CreepManager::remove_creep(Creep *creep)
   creeps.remove(creep);
   delete creep;
 
-  if (level_complete()) {
+  if (level_complete() && Game::instance().player->is_alive()) {
     emit("complete");
   }
 }

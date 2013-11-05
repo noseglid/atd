@@ -29,6 +29,8 @@ public:
 
   bool purchase(Purchasable *p);
   int sell(Purchasable *p);
+
+  bool is_alive();
 };
 
 #endif
