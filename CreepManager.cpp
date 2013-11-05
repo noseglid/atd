@@ -55,10 +55,11 @@ void
 CreepManager::stats_text() const
 {
   text::Stream ts;
-  int waves_left = (spawns.size() == 0 ? 0 : spawns.size() - 1);
+  int waves_left  = (0 == spawns.size()) ? 0 : spawns.size() - 1;
+  int creeps_left = (0 == spawns.size()) ? 0 : spawns.front().size();
   ts << text::Stream::size(20.0f)
      << utils::colors::white << "Current wave: " << (waves_total - waves_left) << "\n"
-     << utils::colors::white << "Creeps left: " << utils::colors::green << spawns.front().size() << "\n"
+     << utils::colors::white << "Creeps left: " << utils::colors::green << creeps_left << "\n"
      << utils::colors::white << "Waves left: "  << utils::colors::green << waves_left;
   HUD::InfoBar::instance().set_info_text2(ts);
 }
