@@ -34,7 +34,6 @@ Dispatcher::overlay(
   bool offleft
 )
 {
-  GLTransform::enable2D();
   glEnable(GL_TEXTURE_2D);
 
   if (ptsize > Text::OVERLAY_PTSIZE) {
@@ -68,15 +67,20 @@ Dispatcher::overlay(
   glEnd();
 
   glDeleteTextures(1, &texture);
-
-  GLTransform::disable2D();
 }
 
 void
 Dispatcher::scrolling(const std::string& text, const Vector3& pos, utils::Color clr)
 {
   WorldText wt;
-  wt.texture = Text::create_texture(text, Text::instance().font_world, clr, wt.width, wt.height);
+
+  wt.texture = Text::create_texture(
+    text,
+    Text::instance().font_world,
+    clr,
+    wt.width,
+    wt.height
+  );
   if (0 == wt.texture) {
     DBGWRN("Could not create scrolling texture from text: " << text);
     return;

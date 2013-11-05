@@ -45,9 +45,9 @@ TowerManager::TowerManager() : selected_tower(towers.end()), btnupgr(NULL), btns
 
   audio_build = Audio::instance().load_sfx("build1.ogg");
 
-  towerinfo   = new HUD::InfoBox(HUD::InfoBox::SNAP_TOPRIGHT);
-  upgradeinfo = new HUD::InfoBox(HUD::InfoBox::SNAP_BOTRIGHT, true);
-  sellinfo    = new HUD::InfoBox(HUD::InfoBox::SNAP_BOTRIGHT, true);
+  towerinfo   = new HUD::InfoBox(text::Stream(), HUD::InfoBox::SNAP_TOPRIGHT);
+  upgradeinfo = new HUD::InfoBox(text::Stream(), HUD::InfoBox::SNAP_BOTRIGHT, true);
+  sellinfo    = new HUD::InfoBox(text::Stream(), HUD::InfoBox::SNAP_BOTRIGHT, true);
 }
 
 TowerManager::~TowerManager()
@@ -169,21 +169,22 @@ TowerManager::button_mouse_event(bool on, Json::Value spec, HUD::Button *button)
     std::string limit = spec["desc"].objectHasKey("limit") ?
       std::string("Limit: ") + spec["desc"]["limit"].asString() + "\n" : "";
 
-    InfoBox *box = new InfoBox(InfoBox::SNAP_BOTLEFT, true);
-    *box
-      << InfoBox::size(32.0f) << utils::colors::orange
+    text::Stream ts;
+    ts
+      << text::Stream::size(32.0f) << utils::colors::orange
       << spec["desc"]["name"].asString() << "\n"
-      << InfoBox::size(18.0f) << InfoBox::indent(8.0f) << utils::colors::lightgray
+      << text::Stream::size(18.0f) << text::Stream::indent(8.0f) << utils::colors::lightgray
       << text::Text::linebreak(spec["desc"]["info"].asString()) << "\n"
       << utils::colors::red << limit << "\n"
-      << InfoBox::size(16.0f) << InfoBox::indent(18.0f)
+      << text::Stream::size(16.0f) << text::Stream::indent(18.0f)
       << utils::colors::white << "Type: "        << utils::colors::green << spec["type"].asString()   << "\n"
       << utils::colors::white << "Price: "       << utils::colors::gold  << spec["price"].asNumber()
       << utils::colors::white << " g" << "\n"
       << utils::colors::white << "Base damage: " << utils::colors::green << spec["damage"].asNumber() << "\n"
       << utils::colors::white << "Base range: "  << utils::colors::green << spec["range"].asNumber()  << "\n"
       << utils::colors::white << "Base reload: " << utils::colors::green << spec["reload"].asNumber();
-    browseboxes.insert(std::make_pair(button, box));
+
+    browseboxes.insert(std::make_pair(button, new InfoBox(ts, InfoBox::SNAP_BOTLEFT, true)));
   }
 }
 
@@ -354,35 +355,37 @@ TowerManager::set_tower_infobox()
 {
   Tower *t = selected_tower->second;
 
-  using HUD::InfoBox;
   towerinfo->clear();
-  (*towerinfo)
-    << InfoBox::size(32.0f) << utils::colors::orange << t->get_name() << "\n"
-    << InfoBox::size(16.0f) << InfoBox::indent(18.0f)
+  text::Stream ts;
+  ts
+    << text::Stream::size(32.0f) << utils::colors::orange << t->get_name() << "\n"
+    << text::Stream::size(16.0f) << text::Stream::indent(18.0f)
     << utils::colors::white << "Level: "       << utils::colors::green << t->level  << "\n"
     << utils::colors::white << "Base damage: " << utils::colors::green << t->damage << "\n"
     << utils::colors::white << "Base range: "  << utils::colors::green << t->range  << "\n"
     << utils::colors::white << "Base reload: " << utils::colors::green << t->reload;
+  towerinfo->set_content(ts);
 }
 
 void
 TowerManager::set_sell_infobox()
 {
-  using HUD::InfoBox;
-  this->sellinfo->clear();
+  sellinfo->clear();
 
-  *this->sellinfo
-    << InfoBox::size(24.0f) << utils::colors::red << "Sell tower\n"
-    << InfoBox::size(18.0f) << utils::colors::white << "Gold return: "
+  text::Stream ts;
+  ts
+    << text::Stream::size(24.0f) << utils::colors::red << "Sell tower\n"
+    << text::Stream::size(18.0f) << utils::colors::white << "Gold return: "
     << utils::colors::gold << floor(selected_tower->second->price * Player::sell_factor)
     << utils::colors::white << " g";
+
+  sellinfo->set_content(ts);
 }
 
 void
 TowerManager::set_upgrade_infobox()
 {
-  using HUD::InfoBox;
-  this->upgradeinfo->clear();
+  upgradeinfo->clear();
 
   if (0 == upgrades_left(selected_tower)) {
     return;
@@ -396,14 +399,17 @@ TowerManager::set_upgrade_infobox()
   int delta_dmg      = upgrade["damage"].asInt() - t->damage;
   float delta_range  = round(upgrade["range"].asNumber() - t->range);
   float delta_reload = round(upgrade["reload"].asNumber() - t->reload);
-  *this->upgradeinfo
-    << InfoBox::size(24.0f) << utils::colors::green << "Upgrade tower\n"
-    << InfoBox::size(18.0f)
+
+  text::Stream ts;
+  ts
+    << text::Stream::size(24.0f) << utils::colors::green << "Upgrade tower\n"
+    << text::Stream::size(18.0f)
     << utils::colors::white << "Price: "  << utils::colors::gold << upgrade["price"].asInt()
     << utils::colors::white << " g\n"
-    << utils::colors::white << "Damage: " << InfoBox::colornumber<int>(delta_dmg,false)      << "\n"
-    << utils::colors::white << "Range: "  << InfoBox::colornumber<float>(delta_range,false)  << "\n"
-    << utils::colors::white << "Reload: " << InfoBox::colornumber<float>(delta_reload, true);
+    << utils::colors::white << "Damage: " << text::Stream::colornumber<int>(delta_dmg,false)      << "\n"
+    << utils::colors::white << "Range: "  << text::Stream::colornumber<float>(delta_range,false)  << "\n"
+    << utils::colors::white << "Reload: " << text::Stream::colornumber<float>(delta_reload, true);
+  upgradeinfo->set_content(ts);
 }
 
 void

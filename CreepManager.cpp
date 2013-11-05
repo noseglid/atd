@@ -54,12 +54,13 @@ CreepManager::setup(const Json::Value& levelspec)
 void
 CreepManager::stats_text() const
 {
-  std::stringstream ss;
+  text::Stream ts;
   int waves_left = (spawns.size() == 0 ? 0 : spawns.size() - 1);
-  ss << "Current wave: " << (waves_total - waves_left) << std::endl
-     << "Creeps left: " << spawns.front().size() << std::endl
-     << "Waves left: "  << waves_left;
-  HUD::InfoBar::instance().set_info_text2(ss.str());
+  ts << text::Stream::size(20.0f)
+     << utils::colors::white << "Current wave: " << (waves_total - waves_left) << "\n"
+     << utils::colors::white << "Creeps left: " << utils::colors::green << spawns.front().size() << "\n"
+     << utils::colors::white << "Waves left: "  << utils::colors::green << waves_left;
+  HUD::InfoBar::instance().set_info_text2(ts);
 }
 
 void

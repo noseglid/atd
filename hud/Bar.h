@@ -8,11 +8,11 @@ B_NS_HUD
 #define HUD_BUTTON_WIDTH  64.0f
 #define HUD_BUTTON_HEIGHT 64.0f
 
-#define BAR_OFFSET 3.0f
+#define BAR_OFFSET 5.0f
 #define BAR_PADDING 5.0f
 #define BAR_HEIGHT (HUD_BUTTON_HEIGHT + 2 * BAR_PADDING)
 
-#define BAR_COLOR 0.6f, 0.6f, 0.6f, 0.85f
+#define BAR_COLOR 0.0f, 0.0f, 0.0f, 0.6f
 
 class Bar
 {

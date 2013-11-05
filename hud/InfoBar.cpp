@@ -11,7 +11,6 @@
 B_NS_HUD
 
 #define TITLE_PTSIZE 48.0f
-#define INFO_PTSIZE 20.0f
 
 InfoBar::InfoBar()
 {
@@ -32,55 +31,15 @@ InfoBar::set_title(std::string title)
 }
 
 void
-InfoBar::set_info_text(std::vector<std::string>& vector, std::string text)
+InfoBar::set_info_text1(text::Stream stream)
 {
-  vector.clear();
-
-  std::stringstream ss(text);
-  std::string elem;
-  while (std::getline(ss, elem)) {
-    vector.push_back(elem);
-  }
+  info_text2 = stream;
 }
 
 void
-InfoBar::set_info_text1(std::string text)
+InfoBar::set_info_text2(text::Stream stream)
 {
-  set_info_text(info_text1, text);
-}
-
-void
-InfoBar::set_info_text2(std::string text)
-{
-  set_info_text(info_text2, text);
-}
-
-void
-InfoBar::draw_info_text(bool leftjustify, const std::vector<std::string>& text) const
-{
-  if (text.empty()) return;
-
-  int maxwidth = 0, maxheight = 0;
-  for (std::string line : text) {
-    int width, height;
-    text::Text::size(line, &width, &height, INFO_PTSIZE);
-    maxwidth  = std::max(maxwidth, width);
-    maxheight = std::max(maxheight, height);
-  }
-
-  int left = leftjustify ? 10.0f : HUD::screen_width - 10.0f - maxwidth;
-
-  int i = 0;
-  for (std::string line : text) {
-    text::Dispatcher::overlay(
-      line,
-      left,
-      (i++) * maxheight + 5.0f,
-      utils::colors::white,
-      INFO_PTSIZE,
-      false
-    );
-  }
+  info_text1 = stream;
 }
 
 void
@@ -107,8 +66,20 @@ InfoBar::tick() const
     );
   }
 
-  draw_info_text(true, info_text1);
-  draw_info_text(false, info_text2);
+  glPushMatrix();
+  glLoadIdentity();
+  Rect bb1 = info_text1.get_bounding_box();
+  glTranslatef(HUD::screen_width - (BAR_OFFSET + BAR_PADDING + bb1.width),
+               HUD::screen_height - (BAR_OFFSET + BAR_PADDING + bb1.height), 0.0f);
+  info_text1.draw();
+  glPopMatrix();
+
+  glPushMatrix();
+  Rect bb2 = info_text2.get_bounding_box();
+  glTranslatef(BAR_OFFSET + BAR_PADDING,
+               HUD::screen_height - (BAR_OFFSET + BAR_PADDING + bb2.height), 0.0f);
+  info_text2.draw();
+  glPopMatrix();
 
   GLTransform::disable2D();
 }

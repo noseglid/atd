@@ -12,7 +12,7 @@ class Player : public de::Emitter<>
   friend class HUD::InfoBar;
 
   int gold;
-  int lives;
+  int lives, max_lives;
 
   Player(const Player&);
   void operator=(Player const&);

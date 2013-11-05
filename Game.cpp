@@ -5,7 +5,7 @@
 #include "Debug.h"
 #include "dal/Dal.h"
 
-Game::Game() : running(false), finishedbox(HUD::InfoBox::SNAP_CENTER)
+Game::Game() : running(false), finishedbox(text::Stream(), HUD::InfoBox::SNAP_CENTER)
 {
   HUD::HUD::init();
 
@@ -45,7 +45,9 @@ Game::start(int levelid, const Json::Value& levelspec)
   player->alter_gold(12000)->alter_lives(10);
 
   auto finishedcb = [this](utils::Color c, std::string msg) {
-    finishedbox << HUD::InfoBox::size(32.0f) << c << msg;
+    text::Stream ts = text::Stream();
+    ts << text::Stream::size(32.0f) << c << msg;
+    finishedbox.set_content(ts);
     engine::Engine::instance().queue_event(7.0f, std::bind(&Game::stop, this));
   };
 

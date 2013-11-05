@@ -3,9 +3,10 @@
 BEGIN_NS_UTILS
 
 namespace colors {
-  Color red       = Color(0.86f, 0.09f, 0.10f);
+  Color red       = Color(1.00f, 0.00f, 0.00f);
   Color green     = Color(0.00f, 1.00f, 0.00f);
   Color blue      = Color(0.00f, 0.00f, 1.00f);
+  Color yellow    = Color(1.00f, 1.00f, 1.00f);
   Color white     = Color(1.00f, 1.00f, 1.00f);
   Color black     = Color(0.00f, 0.00f, 0.00f);
   Color gray      = Color(0.50f, 0.50f, 0.50f);
@@ -31,6 +32,20 @@ Color::to_sdl() const
     static_cast<Uint8>(g * 255),
     static_cast<Uint8>(b * 255)
   };
+}
+
+Color
+Color::interpolate_progress(float frac)
+{
+  Color ret;
+
+  float redm   = (frac > 0.5) ? 2.0f * (frac - 0.5f) : 0.0f;
+  float greenm = (frac < 0.5) ? 2.0f * (0.5f - frac) : 0.0f;
+  ret.r = 1.0f - redm;
+  ret.g = 1.0f - greenm;
+  ret.b = 0.0f;
+
+  return ret;
 }
 
 END_NS_UTILS

@@ -1,11 +1,12 @@
 #include "Player.h"
 #include "Game.h"
+#include "text/Stream.h"
 
 #include <sstream>
 
 float Player::sell_factor = 0.5f;
 
-Player::Player() : gold(0), lives(0)
+Player::Player() : gold(0), lives(0), max_lives(0)
 {
   stats_text();
 }
@@ -13,10 +14,14 @@ Player::Player() : gold(0), lives(0)
 void
 Player::stats_text()
 {
-  std::stringstream ss;
-  ss << "Gold: " << gold << std::endl
-     << "Lives: " << lives;
-  HUD::InfoBar::instance().set_info_text1(ss.str());
+  float frac = (0 == max_lives) ? 1.0f : (float)lives / (float)max_lives;
+  utils::Color lives_color = utils::Color::interpolate_progress(frac);
+
+  text::Stream ts;
+  ts << text::Stream::size(24.0f)
+     << utils::colors::white << "Gold: " << utils::colors::gold << gold << "\n"
+     << utils::colors::white << "Lives: " << lives_color << lives;
+  HUD::InfoBar::instance().set_info_text1(ts);
 }
 
 Player *
@@ -37,6 +42,7 @@ Player::alter_lives(int delta)
   }
 
   lives = std::max(lives + delta, 0);
+  max_lives = std::max(max_lives, lives);
 
   stats_text();
 

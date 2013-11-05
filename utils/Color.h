@@ -16,6 +16,8 @@ public:
   Color(float r, float g, float b);
 
   SDL_Color to_sdl() const;
+
+  static Color interpolate_progress(float factor);
 };
 
 namespace colors {

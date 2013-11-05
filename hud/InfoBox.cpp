@@ -18,14 +18,15 @@ static mousemotion(const engine::Event& ge)
   mousey = (int)ge.ev.motion.y;
 }
 
-InfoBox::InfoBox(SNAP snap, bool followmouse) :
-  left(INT_MAX), top(INT_MAX), snap(snap), followmouse(followmouse),
-  inputx(BOX_PADDING), inputy(BOX_PADDING), input_ptsize(18.0f),
-  input_indent(0.0f), clr(1.0f, 1.0f, 1.0f)
+InfoBox::InfoBox(text::Stream stream, SNAP snap, bool followmouse) :
+  top(0), left(0), width(2 * BOX_PADDING), height(2 * BOX_PADDING),
+  stream(stream), snap(snap), followmouse(followmouse)
 {
   mousemotion_emit = engine::Engine::instance().on(
     "mousemotion", std::bind(mousemotion, std::placeholders::_1)
   );
+
+  set_bounding_box();
 }
 
 InfoBox::~InfoBox()
@@ -34,17 +35,18 @@ InfoBox::~InfoBox()
 }
 
 void
+InfoBox::set_content(text::Stream stream)
+{
+  this->stream = stream;
+  set_bounding_box();
+}
+
+void
 InfoBox::set_bounding_box()
 {
-  height = BOX_PADDING;
-  width  = BOX_PADDING;
-
-  for (boxcontent c : content) {
-    int w, h;
-    text::Text::size(c.text, &w, &h, c.ptsize);
-    height = std::max(height, c.y + h);
-    width  = std::max(width,  c.x + w);
-  }
+  Rect streambb = stream.get_bounding_box();
+  height = streambb.height;
+  width  = streambb.width;
 
   int lr = HUD::screen_width - width - BOX_MARGIN - 2 * BOX_PADDING;
   int ll = BOX_MARGIN;
@@ -79,15 +81,13 @@ InfoBox::set_bounding_box()
 void
 InfoBox::clear()
 {
-  content.clear();
-  inputx = inputy = BOX_PADDING;
-  top = left = INT_MAX;
+  stream.clear();
 }
 
 void
 InfoBox::draw()
 {
-  if (0 == content.size()) return;
+  if (stream.empty()) return;
 
   GLTransform::enable2D();
 
@@ -112,20 +112,14 @@ InfoBox::draw()
   glTranslatef(0.0f, 2 * BOX_PADDING, 0.0f);
 
   glBegin(GL_TRIANGLE_STRIP);
-  glVertex2f(basex,         basey);
-  glVertex2f(basex,         basey - height - 2 * BOX_PADDING);
-  glVertex2f(basex + width + 2 * BOX_PADDING, basey);
-  glVertex2f(basex + width + 2 * BOX_PADDING, basey - height - 2 * BOX_PADDING);
+    glVertex2f(basex,                           basey);
+    glVertex2f(basex,                           basey - height - 2 * BOX_PADDING);
+    glVertex2f(basex + width + 2 * BOX_PADDING, basey);
+    glVertex2f(basex + width + 2 * BOX_PADDING, basey - height - 2 * BOX_PADDING);
   glEnd();
 
-  for (boxcontent c : content) {
-    text::Dispatcher::overlay(
-      c.text,
-      basex + c.x + BOX_PADDING,
-      basey - c.y + BOX_PADDING,
-      c.clr,
-      c.ptsize);
-  }
+  glTranslatef(basex + BOX_PADDING, basey - height - BOX_PADDING, 0.0f);
+  stream.draw();
 
   GLTransform::disable2D();
 }
