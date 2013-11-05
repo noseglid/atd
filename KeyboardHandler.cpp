@@ -31,7 +31,7 @@ KeyboardHandler::keydown(const engine::Event& ev)
 
     case SDLK_p:
     case SDLK_ESCAPE:
-      ui::PauseMenu::instance().toggle();
+      Game::instance().escape();
       break;
 
     case SDLK_w:

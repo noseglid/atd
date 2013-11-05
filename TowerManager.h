@@ -70,7 +70,13 @@ class TowerManager
 public:
   TowerManager();
   ~TowerManager();
+
   void set_faction(Faction::Faction faction);
+
+  bool is_building() const;
+  bool has_selected() const;
+
+  bool escape();
 };
 
 #endif

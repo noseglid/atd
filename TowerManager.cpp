@@ -20,6 +20,8 @@
 #define TEXTURE_UPGRADE_DISABLED "thrust_gray.png"
 #define TEXTURE_SELL             "cash.png"
 
+#define CLICK_FUZZ 3
+
 TowerManager::TowerManager() : selected_tower(towers.end()), btnupgr(NULL), btnsell(NULL)
 {
   DBG("Registering events for TowerManager");
@@ -502,8 +504,8 @@ TowerManager::mouseup(const engine::Event& ge)
   if (HUD::ButtonBar::instance().in_turf(event.x, event.y)) return;
 
   if (event.button == SDL_BUTTON_LEFT &&
-      abs(event.x - click.x) < 3 &&
-      abs(event.y - click.z) < 3) {
+      abs(event.x - click.x) < CLICK_FUZZ &&
+      abs(event.y - click.z) < CLICK_FUZZ) {
 
     /* Since coordinates didn't change (granted, some fuzz),
      * it was a `click`, not a `drag` */
@@ -565,4 +567,32 @@ TowerManager::tick(const engine::Event& ev)
 
     glDisable(GL_COLOR_MATERIAL);
   }
+}
+
+bool
+TowerManager::is_building() const
+{
+  return (!build_tower.empty());
+}
+
+bool
+TowerManager::has_selected() const
+{
+  return (towers.end() != selected_tower);
+}
+
+bool
+TowerManager::escape()
+{
+  if (is_building()) {
+    build_tower_unset();
+    return true;
+  }
+
+  if (has_selected()) {
+    select_tower(towers.end());
+    return true;
+  }
+
+  return false;
 }

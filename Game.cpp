@@ -96,3 +96,13 @@ Game::is_running()
 {
   return running;
 }
+
+void
+Game::escape()
+{
+  if (tower_manager->escape()) {
+    return;
+  }
+
+  ui::PauseMenu::instance().toggle();
+}
