@@ -19,6 +19,7 @@ class Game : public de::Emitter<>
 {
   bool running;
   HUD::InfoBox finishedbox;
+  engine::Engine::eventid_t ev_done;
 
   Game();
   void operator=(Game const&);
@@ -37,7 +38,7 @@ public:
   static Game& instance();
 
   void start(int levelid, const Json::Value& levelspec);
-  void stop();
+  void stop(bool clear_ev_done = true);
   bool is_running();
   void escape();
 };

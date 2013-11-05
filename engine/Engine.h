@@ -15,7 +15,9 @@ class Engine : public de::Emitter<engine::Event>
 {
   bool running;
   float elapsed;
-  std::map<float, std::function<void()>> queued_events;
+
+  typedef std::map<float, std::function<void()>> events_t;
+  events_t queued_events;
 
   Engine();
 
@@ -26,11 +28,15 @@ class Engine : public de::Emitter<engine::Event>
   void handle_queued_events();
 
 public:
+  typedef events_t::const_iterator eventid_t;
+
   void run();
   void stop();
   float get_elapsed();
 
-  void queue_event(float seconds, std::function<void()> cb);
+  eventid_t invalid_eventid() const;
+  eventid_t queue_event(float seconds, std::function<void()> cb);
+  void remove_event(eventid_t id);
 
   static Engine& instance();
 };

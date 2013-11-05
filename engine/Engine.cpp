@@ -86,10 +86,22 @@ Engine::stop()
   running = false;
 }
 
-void
+Engine::eventid_t
+Engine::invalid_eventid() const
+{
+  return queued_events.end();
+}
+
+Engine::eventid_t
 Engine::queue_event(float seconds, std::function<void()> cb)
 {
-  queued_events.insert(std::make_pair(get_elapsed() + seconds, cb));
+  return queued_events.insert(std::make_pair(get_elapsed() + seconds, cb)).first;
+}
+
+void
+Engine::remove_event(eventid_t id)
+{
+  queued_events.erase(id);
 }
 
 Engine&

@@ -5,7 +5,10 @@
 #include "Debug.h"
 #include "dal/Dal.h"
 
-Game::Game() : running(false), finishedbox(text::Stream(), HUD::InfoBox::SNAP_CENTER)
+Game::Game() :
+  running(false),
+  finishedbox(text::Stream(), HUD::InfoBox::SNAP_CENTER),
+  ev_done(engine::Engine::instance().invalid_eventid())
 {
   HUD::HUD::init();
 
@@ -48,7 +51,7 @@ Game::start(int levelid, const Json::Value& levelspec)
     text::Stream ts = text::Stream();
     ts << text::Stream::size(32.0f) << c << msg;
     finishedbox.set_content(ts);
-    engine::Engine::instance().queue_event(7.0f, std::bind(&Game::stop, this));
+    ev_done = engine::Engine::instance().queue_event(7.0f, std::bind(&Game::stop, this, false));
   };
 
   creep_manager->on("complete", [finishedcb, levelid, this]() {
@@ -70,7 +73,7 @@ Game::start(int levelid, const Json::Value& levelspec)
 }
 
 void
-Game::stop()
+Game::stop(bool clear_ev_done)
 {
   delete player;
   delete creep_manager;
@@ -86,6 +89,11 @@ Game::stop()
   ui::PauseMenu::instance()._hide();
   ui::TitleMenu::instance().display();
   ui::TitleMenu::instance().show(200, ui::Menu::ANIM_LEFT);
+
+  if (clear_ev_done && ev_done != engine::Engine::instance().invalid_eventid()) {
+    engine::Engine::instance().remove_event(ev_done);
+    ev_done = engine::Engine::instance().invalid_eventid();
+  }
 
   running = false;
   emit("stop");
