@@ -7,7 +7,7 @@
   },
   "name"        : "Poran",
   "model"       : "sages/hero",
-  "hudtex"      : "sages_hero.png",
+  "hudtex"      : "moebius-triangle.png",
   "price"       : 135,
   "reload"      : 0.6,
   "range"       : 4.8,

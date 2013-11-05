@@ -5,7 +5,7 @@
     "info"  : "The Arcane tower. The flagship of towers from the sages of cratania.",
   },
   "model"       : "sages/arcane",
-  "hudtex"      : "sages_arcane.png",
+  "hudtex"      : "orbital.png",
   "price"       : 80,
   "reload"      : 1.4,
   "range"       : 2.0,
