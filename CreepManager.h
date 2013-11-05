@@ -21,6 +21,7 @@ class CreepManager : public de::Emitter<>
   std::list<wave_t> spawns;
   engine::Engine::id_t tickev;
 
+  float starttime;
   float last_spawn;
   unsigned int spawned;
   std::list<Creep*> creeps;

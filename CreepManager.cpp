@@ -8,7 +8,7 @@
 #include "Debug.h"
 
 CreepManager::CreepManager(const Json::Value& levelspec) :
-  last_spawn(0), spawned(0)
+  starttime(-1.0f), last_spawn(0), spawned(0)
 {
   DBG("Registering events for CreepManager");
   tickev = engine::Engine::instance().on(
@@ -30,7 +30,7 @@ CreepManager::setup(const Json::Value& levelspec)
   Json::Value waves = levelspec["waves"];
   waves_total = waves.asArray().size();
 
-  float spawntime = engine::Engine::instance().get_elapsed();
+  float spawntime = 0;
 
   for (Json::Value wave : levelspec["waves"].asArray()) {
     wave_t w;
@@ -66,6 +66,8 @@ CreepManager::stats_text() const
 void
 CreepManager::check_spawn(const float& elapsed)
 {
+  if (0 > starttime) starttime = engine::Engine::instance().get_elapsed();
+
   if (spawns.empty()) {
     /* All waves complete. When last creeps either dies or accomplishes, it's done */
     return;
@@ -80,7 +82,7 @@ CreepManager::check_spawn(const float& elapsed)
   }
 
   spawn_t& spawn = wave.front();
-  if (elapsed >= spawn.time) {
+  if (elapsed >= starttime + spawn.time) {
     Creep *creep = new Creep(spawn.spec, 10.0f * rand() / RAND_MAX );
     creep->on("death", std::bind(&CreepManager::creep_death, this, creep));
     creep->on("accomplished", std::bind(&CreepManager::creep_accomplished, this, creep));
