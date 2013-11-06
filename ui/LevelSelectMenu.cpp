@@ -21,9 +21,15 @@ class BackListener : public Rocket::Core::EventListener
 
 class SelectListener : public Rocket::Core::EventListener
 {
+  bool processing;
+
+public:
+  SelectListener() : processing(false) {}
+
   void ProcessEvent(Rocket::Core::Event& event)
   {
-    if (!LevelSelectMenu::instance().is_visible()) return;
+    if (processing || !LevelSelectMenu::instance().is_visible()) return;
+    processing = true;
 
     Rocket::Controls::ElementDataGrid *el =
       dynamic_cast<Rocket::Controls::ElementDataGrid*>(event.GetCurrentElement());
@@ -39,7 +45,9 @@ class SelectListener : public Rocket::Core::EventListener
     }
 
     TitleMenu::instance().display(false);
-    LevelSelectMenu::instance().hide(0, Menu::ANIM_LEFT);
+    LevelSelectMenu::instance().hide(0, [this]() {
+      processing = false;
+    }, Menu::ANIM_LEFT);
 
     int id = 0;
     Json::Value spec = LevelDatabase::instance().get_level(click_index, id);
