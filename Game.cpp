@@ -92,8 +92,9 @@ Game::stop(bool clear_ev_done)
 
   if (clear_ev_done && ev_done != engine::Engine::instance().invalid_eventid()) {
     engine::Engine::instance().remove_event(ev_done);
-    ev_done = engine::Engine::instance().invalid_eventid();
   }
+
+  ev_done = engine::Engine::instance().invalid_eventid();
 
   running = false;
   emit("stop");
