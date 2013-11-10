@@ -13,8 +13,10 @@ struct resolution
 class Video
 {
   resolution res;
+  SDL_Surface *surface;
 
   Video();
+  ~Video();
 
 public:
   static Video& instance();

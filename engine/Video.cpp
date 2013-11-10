@@ -7,7 +7,11 @@
 
 B_NS_ENGINE
 
-Video::Video()
+Video::Video() : surface(NULL)
+{
+}
+
+Video::~Video()
 {
 }
 
@@ -30,13 +34,11 @@ Video::set_resolution(const int& width, const int& height)
   res.width = width;
   res.height = height;
 
-  SDL_Surface *surface = SDL_SetVideoMode(
-    res.width, res.height, 16, SDL_OPENGL | SDL_SWSURFACE | SDL_NOFRAME);
+  surface = SDL_SetVideoMode(res.width, res.height, 16, SDL_OPENGL | SDL_SWSURFACE | SDL_NOFRAME);
   if (NULL == surface) {
+    DBGERR("SDL error: " << SDL_GetError());
     throw Exception("Could not set resolution.");
   }
-
-  ui::UI::instance().res_change(width, height);
 
   HUD::HUD::init();
 }

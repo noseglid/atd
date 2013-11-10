@@ -45,6 +45,10 @@ DEPS := $(OBJS:.o=.d)
 
 BIN = atd
 
+MODELVIEWER = modelviewer
+MODELVIEWER_SRCS = modelviewer.cpp Model.cpp ImageLoader.cpp Camera.cpp GLTransform.cpp engine/Engine.cpp engine/Video.cpp hud/HUD.cpp hud/InfoBar.cpp hud/ButtonBar.cpp hud/Bar.cpp hud/Button.cpp text/Dispatcher.cpp text/Text.cpp text/Stream.cpp math/Vector2.cpp math/Math.cpp math/Matrix4.cpp math/Vector3.cpp utils/Color.cpp
+MODELVIEWER_OBJS = $(MODELVIEWER_SRCS:.cpp=.o)
+
 all: $(DB) $(BIN) $(SUBDIRS)
 
 $(SUBDIRS): $(DB)
@@ -66,7 +70,7 @@ $(SUBDIRS): $(DB)
 
 $(BIN): $(OBJS)
 	$(CXX) $^ $(LDFLAGS) -o $@
-	install_name_tool -change libassimp.3.dylib $(shell pwd)/deps/target/lib/libassimp.3.dylib $(BIN)
+	install_name_tool -change libassimp.3.dylib $(shell pwd)/deps/target/lib/libassimp.3.dylib $@
 
 $(DB): resources/create_db.sh
 	   ./resources/create_db.sh $(DB)
@@ -88,6 +92,10 @@ release_clean_osx:
 	rm -rf $(BIN).app
 
 clean: release_clean_osx
-	rm -f $(OBJS) $(DEPS) $(BIN) $(DB)
+	rm -f $(OBJS) $(DEPS) $(BIN) $(DB) $(MODELVIEWER) $(MODELVIEWER_OBJS)
+
+$(MODELVIEWER): $(MODELVIEWER_OBJS)
+	$(CXX) $^ $(LDFLAGS) -o $@
+	install_name_tool -change libassimp.3.dylib $(shell pwd)/deps/target/lib/libassimp.3.dylib $@
 
 -include $(DEPS)

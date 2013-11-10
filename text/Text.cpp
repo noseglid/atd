@@ -13,11 +13,13 @@ Text::Text() : font_world(NULL), font_overlay(NULL)
 {
   if (!(font_world = TTF_OpenFont("resources/fonts/Riky-Vampdator.ttf",
                                   Text::SCROLLING_PTSIZE))) {
+    DBGERR(SDL_GetError());
     throw Exception("Could not load font file.");
   }
 
   if (!(font_overlay = TTF_OpenFont("resources/fonts/Riky-Vampdator.ttf",
                                     Text::OVERLAY_PTSIZE))) {
+    DBGERR(SDL_GetError());
     throw Exception("Could not load font file.");
   }
 

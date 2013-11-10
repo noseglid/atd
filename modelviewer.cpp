@@ -1,11 +1,11 @@
-#include "Menu.h"
 #include "Debug.h"
 #include "Exception.h"
-#include "Shutdown.h"
+#include "Model.h"
+#include "Camera.h"
+#include "GLTransform.h"
 #include "engine/Engine.h"
 #include "engine/Video.h"
-#include "ui/UI.h"
-#include "ui/SetUserMenu.h"
+#include "text/Stream.h"
 
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
@@ -14,13 +14,15 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 
-#include <pjson.hpp>
 #include <unistd.h>
 #include <math.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <libgen.h>
+
+static SDL_Surface *surface;
 
 void
 init_SDL()
@@ -36,17 +38,8 @@ init_SDL()
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-  if (Mix_Init(MIX_INIT_OGG) < 0) {
-    throw Exception("Could not initiate SDL mixer file formats.");
-  }
-  if (-1 == Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 4096)) {
-    throw Exception("Could not initiate SDL Mixer library.");
-  }
   if (TTF_Init() < 0) {
     throw Exception("Could not initiate SDL TTF library.");
-  }
-  if (IMG_Init(IMG_INIT_JPG) < 0) {
-    throw Exception("Could not initiate SDL Image library.");
   }
 
   engine::Video::instance().set_resolution(1024, 768);
@@ -54,14 +47,10 @@ init_SDL()
   const SDL_version *v;
   v = SDL_Linked_Version();
   DBG("SDL version: " << (int)v->major << "." << (int)v->minor << "." << (int)v->patch);
-  v = Mix_Linked_Version();
-  DBG("SDL Mixer version: " << (int)v->major << "." << (int)v->minor << "." << (int)v->patch);
   v = TTF_Linked_Version();
   DBG("SDL TTF version: " << (int)v->major << "." << (int)v->minor << "." << (int)v->patch);
-  v = IMG_Linked_Version();
-  DBG("SDL Image version: " << (int)v->major << "." << (int)v->minor << "." << (int)v->patch);
 
-  SDL_WM_SetCaption("ATD", NULL);
+  SDL_WM_SetCaption("ATD Model viewer", NULL);
 }
 
 void
@@ -102,6 +91,9 @@ init_OpenGL()
   glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
   glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
   glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
+
+  glLineWidth(5.0f);
+  glPointSize(12.0f);
 }
 
 int
@@ -110,21 +102,57 @@ main(int argc, char *argv[])
   srand(time(NULL));
   int exitcode = EXIT_SUCCESS;
 
+  if (2 != argc) {
+    DBGERR("Usage: " << argv[0] << " <model-file>");
+    exit(EXIT_FAILURE);
+  }
+
   try {
     init_SDL();
     init_OpenGL();
 
-    ui::SetUserMenu::instance().show(200, ui::Menu::ANIM_LEFT);
+    Model *m = Model::load(argv[1]);
+    engine::Engine& e = engine::Engine::instance();
+    Camera::instance().set_position();
 
-    engine::Engine::instance().run();
+    text::Stream helptext;
+    helptext
+      << "Showing model: " << utils::colors::green << basename(argv[1]) << utils::colors::white << "\n"
+      << "Zoom with mouse wheel\n\n"
+      << utils::colors::yellow << "q" << utils::colors::white << " to quit\n"
+      << utils::colors::yellow << "b" << utils::colors::white << " to toggle bones\n"
+      << utils::colors::yellow << "r" << utils::colors::white << " to toggle rotation\n"
+      << utils::colors::yellow << "a" << utils::colors::white << " to animation\n";
 
-  } catch (Json::Exception& e) {
-    DBGERR("json error: " << e.what());
-    exitcode = EXIT_FAILURE;
-  } catch (Shutdown& e) {
-    DBG("Game shutdown gracefully: " << e.what());
+    bool bones = false, rotate = false, animate = false;
+    e.on("tick", [m, &bones, &rotate, &animate](engine::Event e) {
+      static int rotation = 0;
+      if (rotate) rotation = (rotation + 2) % 360;
+      glPushMatrix();
+      glRotatef(rotation, 0.0f, 1.0f, 0.0f);
+      m->draw(animate ? e.elapsed : 0.0f, 1.0f, bones);
+      glPopMatrix();
+    });
+
+    e.on("tick_nodepth", [helptext](engine::Event e) {
+        GLTransform::enable2D();
+        helptext.draw();
+        GLTransform::disable2D();
+    });
+
+    e.on("keydown", [&bones, &rotate, &animate](engine::Event e) {
+      switch (e.ev.key.keysym.sym) {
+        case SDLK_q: engine::Engine::instance().stop(); break;
+        case SDLK_b: bones   = !bones;   break;
+        case SDLK_r: rotate  = !rotate;  break;
+        case SDLK_a: animate = !animate; break;
+        default: /* Avoid warning about unhandled keys */ break;
+      }
+    });
+
+    e.run();
   } catch (Exception& e) {
-    DBGERR("Game ended: " << e.what());
+    DBGERR("Exit: " << e.what());
     exitcode = EXIT_FAILURE;
   } catch (std::exception& e) {
     DBGERR("exception: " << e.what());
@@ -133,6 +161,7 @@ main(int argc, char *argv[])
     exitcode = EXIT_FAILURE;
   }
 
+  SDL_FreeSurface(surface);
   SDL_Quit();
 
   return exitcode;

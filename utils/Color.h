@@ -24,6 +24,7 @@ namespace colors {
   extern Color red;
   extern Color green;
   extern Color blue;
+  extern Color yellow;
   extern Color white;
   extern Color black;
   extern Color gray;

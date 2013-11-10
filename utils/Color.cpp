@@ -6,7 +6,7 @@ namespace colors {
   Color red       = Color(1.00f, 0.00f, 0.00f);
   Color green     = Color(0.00f, 1.00f, 0.00f);
   Color blue      = Color(0.00f, 0.00f, 1.00f);
-  Color yellow    = Color(1.00f, 1.00f, 1.00f);
+  Color yellow    = Color(1.00f, 1.00f, 0.00f);
   Color white     = Color(1.00f, 1.00f, 1.00f);
   Color black     = Color(0.00f, 0.00f, 0.00f);
   Color gray      = Color(0.50f, 0.50f, 0.50f);

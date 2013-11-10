@@ -418,7 +418,7 @@ Model::normalize()
 }
 
 void
-Model::draw(float elapsed, float opacity)
+Model::draw(float elapsed, float opacity, bool bones)
 {
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_COLOR_MATERIAL);
@@ -431,7 +431,9 @@ Model::draw(float elapsed, float opacity)
 
   glColor4f(1.0f, 1.0f, 1.0f, opacity);
   this->rrender(scene->mRootNode);
-  this->rrenderbones(scene->mRootNode);
+
+  if (bones)
+    this->rrenderbones(scene->mRootNode);
 }
 
 void
@@ -440,7 +442,6 @@ Model::rrenderbones(const aiNode *node)
   glDisable(GL_DEPTH_TEST);
   glDisable(GL_LIGHTING);
   glDisable(GL_TEXTURE_2D);
-  glPointSize(2.0f);
 
   glColor3f(1.0, 0.0, 0.0);
   for (std::pair<std::string, struct bone> p : bones) {

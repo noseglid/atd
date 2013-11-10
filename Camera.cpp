@@ -1,9 +1,10 @@
 #include "Camera.h"
-#include "hud/ButtonBar.h"
+#include "engine/Engine.h"
 
 #include <OpenGL/glu.h>
 #include <iostream>
 #include <cmath>
+#include <float.h>
 
 Camera::Camera() : mouse_buttons_active(0), enabled(true)
 {
@@ -16,6 +17,8 @@ Camera::Camera() : mouse_buttons_active(0), enabled(true)
   up.x = 0;
   up.y = 1;
   up.z = 0;
+
+  set_limits(-FLT_MAX, FLT_MAX, -FLT_MAX, FLT_MAX, -FLT_MAX, FLT_MAX);
 
   xzangle = asin(dir.x);
   engine::Engine& e = engine::Engine::instance();
@@ -46,6 +49,14 @@ Camera::set_limits(float xmin, float xmax, float ymin, float ymax, float zmin, f
   limits.zmax = zmax;
 
   center();
+}
+
+void
+Camera::set_position(Vector3 pos, Vector3 dir, Vector3 up)
+{
+  this->pos = pos;
+  this->dir = dir;
+  this->up  = up;
 }
 
 void
@@ -104,7 +115,7 @@ Camera::mousebutton(const engine::Event& ev)
 void
 Camera::mousemotion(const engine::Event& ev)
 {
-  if (!enabled || HUD::ButtonBar::instance().in_turf(ev.ev.motion.x, ev.ev.motion.y)) {
+  if (!enabled) {
     return;
   }
 

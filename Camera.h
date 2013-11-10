@@ -27,6 +27,11 @@ class Camera
 public:
 
   void set_limits(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax);
+  void set_position(
+    Vector3 pos = Vector3(0.0f, 0.0f,  2.5f),
+    Vector3 dir = Vector3(0.0f, 0.0f, -1.0f),
+    Vector3 up  = Vector3(0.0f, 1.0f,  0.0f)
+  );
   void enable(bool state);
 
   void orientate() const;
