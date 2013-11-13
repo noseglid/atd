@@ -3,17 +3,18 @@
 #include "Debug.h"
 #include "engine/Engine.h"
 #include "utils/Color.h"
+#include "GLTransform.h"
 
 #include <sstream>
 
-#define FPS_MEASURE_INTERVAL 2.00f /* seconds */
+#define FPS_MEASURE_INTERVAL 1.00f /* seconds */
 
 MetaManager::MetaManager() : last_measure(0), draw_meta(false)
 {
   DBG("Registering events for MetaManager");
   engine::Engine& e = engine::Engine::instance();
   events.push_back(
-    e.on("tick",    std::bind(&MetaManager::tick,    this, std::placeholders::_1))
+    e.on("tick", std::bind(&MetaManager::tick, this, std::placeholders::_1))
   );
   events.push_back(
     e.on("keydown", std::bind(&MetaManager::keydown, this, std::placeholders::_1))
@@ -45,7 +46,9 @@ MetaManager::tick(const engine::Event& ev)
     std::stringstream ss;
     ss.precision(4);
     ss << "FPS: " << current_fps;
-    text::Dispatcher::overlay(ss.str(), 100, 200, utils::colors::gray, 16.0f, false, false);
+    GLTransform::enable2D();
+    text::Dispatcher::overlay(ss.str(), 20, 100, utils::colors::gray, 16.0f, false, true);
+    GLTransform::disable2D();
   }
 }
 

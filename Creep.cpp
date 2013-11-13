@@ -19,8 +19,8 @@ Creep::Creep(Json::Value spec, float animinc) :
   reward(spec["reward"].asInt()),
   life_cost(spec["cost"].asInt())
 {
-  std::string modelfile = "resources/models/" + spec["model"].asString() +
-    "/" + spec["model"].asString() + ".dae";
+  std::string modelfile = "resources/models/" + spec["model"]["resource"].asString() +
+    "/" + spec["model"]["resource"].asString() + ".dae";
   model = Model::load(modelfile);
 
   Map *map = Game::instance().map;
@@ -28,6 +28,13 @@ Creep::Creep(Json::Value spec, float animinc) :
   PathCoord start = path->get_start();
   pos = map->get_center_of(start.x, start.y);
   travel_to(path->next_coord(start));
+
+  trafo = Matrix4(
+    spec["model"]["scale"]["x"].asNumber(), 0.0, 0.0, 0.0,
+    0.0, spec["model"]["scale"]["y"].asNumber(), 0.0, 0.0,
+    0.0, 0.0, spec["model"]["scale"]["z"].asNumber(), 0.0,
+    0.0, 0.0, 0.0, 1.0
+  );
 }
 
 Creep::~Creep()
@@ -102,6 +109,7 @@ Creep::draw(const float& elapsed) const
   glRotatef(rad2deg(angle), 0.0f, 1.0f, 0.0f);
 
   glPushMatrix();
+  glMultMatrixf((GLfloat*)&trafo);
   this->model->draw(elapsed + animinc);
   glPopMatrix();
 

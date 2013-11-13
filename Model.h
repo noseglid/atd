@@ -25,6 +25,7 @@ class Model
 
   Assimp::Importer importer;
   aiVector3D scene_min, scene_max, scene_center;
+  int n_vertices;
 
   void get_bounding_box_for_node(const aiNode* nd, aiVector3D& min, aiVector3D& max, aiMatrix4x4* trafo);
   void get_bounding_box (aiVector3D& min, aiVector3D& max);
@@ -55,6 +56,8 @@ public:
 
   void normalize();
   void draw(float animtime, float opacity = 1.0, bool bones = false);
+
+  int get_vertex_count() const;
 };
 
 #endif

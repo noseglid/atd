@@ -19,6 +19,7 @@ class Creep : public de::Emitter<>, public Targetable, public Mobile
   float distance_moved;
   Mix_Chunk *audio_death;
   Model *model;
+  Matrix4 trafo;
 
   void travel_to(const PathCoord& target);
 

@@ -76,7 +76,7 @@ init_OpenGL()
   glViewport(0, 0, (GLsizei)res.width, (GLsizei)res.height);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective(45, (double)res.width / (double)res.height, 0.1, 100.0);
+  gluPerspective(45, (double)res.width / (double)res.height, 0.1, 1000.0);
   glMatrixMode(GL_MODELVIEW);
 
   glEnable(GL_LIGHTING);
@@ -92,8 +92,8 @@ init_OpenGL()
   glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
   glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
 
-  glLineWidth(5.0f);
-  glPointSize(12.0f);
+  glLineWidth(3.0f);
+  glPointSize(6.0f);
 }
 
 int
@@ -118,6 +118,7 @@ main(int argc, char *argv[])
     text::Stream helptext;
     helptext
       << "Showing model: " << utils::colors::green << basename(argv[1]) << utils::colors::white << "\n"
+      << "Number vertices: " << m->get_vertex_count() << "\n"
       << "Zoom with mouse wheel\n\n"
       << utils::colors::yellow << "q" << utils::colors::white << " to quit\n"
       << utils::colors::yellow << "b" << utils::colors::white << " to toggle bones\n"
@@ -136,6 +137,7 @@ main(int argc, char *argv[])
 
     e.on("tick_nodepth", [helptext](engine::Event e) {
         GLTransform::enable2D();
+        glTranslatef(10.0f, 0.0f, 0.0f);
         helptext.draw();
         GLTransform::disable2D();
     });

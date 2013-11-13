@@ -54,7 +54,7 @@ Model::get_bounding_box(aiVector3D& min, aiVector3D& max)
   get_bounding_box_for_node(scene->mRootNode, min, max, &trafo);
 }
 
-Model::Model(std::string file)
+Model::Model(std::string file) : n_vertices(0)
 {
   DBG("Loading model: " << file);
   importer.ReadFile(file, aiProcessPreset_TargetRealtime_Quality | aiProcess_FlipUVs);
@@ -70,12 +70,11 @@ Model::Model(std::string file)
 
   load_nodes(scene, scene->mRootNode);
 
-  size_t num_vertices = 0;
   for (size_t i = 0; i < scene->mNumMeshes; ++i) {
-    num_vertices += scene->mMeshes[i]->mNumVertices;
+    n_vertices += scene->mMeshes[i]->mNumVertices;
   }
 
-  DBG("Loaded '" << file << "', " << num_vertices << " vertices.");
+  DBG("Loaded '" << file << "', " << n_vertices << " vertices.");
 }
 
 Model::~Model()
@@ -468,6 +467,12 @@ Model::rrenderbones(const aiNode *node)
     glPopMatrix();
   }
   glEnd();
+}
+
+int
+Model::get_vertex_count() const
+{
+  return n_vertices;
 }
 
 Model *
