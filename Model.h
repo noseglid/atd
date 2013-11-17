@@ -1,6 +1,9 @@
 #ifndef MODEL_H
 #define MODEL_H
 
+#include "VBO.h"
+#include "math/Matrix4.h"
+
 #include <SDL/SDL.h>
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
@@ -27,6 +30,8 @@ class Model
   aiVector3D scene_min, scene_max, scene_center;
   int n_vertices;
 
+  std::vector<VBO *> vertex_buffers;
+
   void get_bounding_box_for_node(const aiNode* nd, aiVector3D& min, aiVector3D& max, aiMatrix4x4* trafo);
   void get_bounding_box (aiVector3D& min, aiVector3D& max);
 
@@ -41,6 +46,7 @@ class Model
   void load_nodes(const aiScene *sceme, const aiNode *node);
   void load_textures(const aiScene *scene, const aiMesh* mesh);
   void load_bones(const aiScene *scene, const aiMesh* mesh);
+  void build_buffers(const aiNode* node, aiMatrix4x4 trafo);
 
   void animate(aiNode *node, float animtime, const aiMatrix4x4& tp);
   void apply_material(const aiMaterial *mtl);

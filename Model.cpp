@@ -3,6 +3,8 @@
 #include "ModelException.h"
 #include "ImageLoader.h"
 
+#include <time.h>
+
 #define aisgl_min(x,y) (x<y?x:y)
 #define aisgl_max(x,y) (y>x?y:x)
 
@@ -56,6 +58,7 @@ Model::get_bounding_box(aiVector3D& min, aiVector3D& max)
 
 Model::Model(std::string file) : n_vertices(0)
 {
+  clock_t begin = clock();
   DBG("Loading model: " << file);
   importer.ReadFile(file, aiProcessPreset_TargetRealtime_Quality | aiProcess_FlipUVs);
   scene = importer.GetScene();
@@ -70,16 +73,23 @@ Model::Model(std::string file) : n_vertices(0)
 
   load_nodes(scene, scene->mRootNode);
 
+  build_buffers(scene->mRootNode, aiMatrix4x4());
+
   for (size_t i = 0; i < scene->mNumMeshes; ++i) {
     n_vertices += scene->mMeshes[i]->mNumVertices;
   }
 
-  DBG("Loaded '" << file << "', " << n_vertices << " vertices.");
+  DBG("Loaded '" << file << "', " << n_vertices << " vertices in "
+    << (float)(clock() - begin)/CLOCKS_PER_SEC << " s");
 }
 
 Model::~Model()
 {
   delete scene;
+
+  for (VBO *vbo : vertex_buffers) {
+    delete vbo;
+  }
 }
 
 void
@@ -146,6 +156,58 @@ Model::load_bones(const aiScene *scene, const aiMesh *mesh)
   for (unsigned int i = 0; i < mesh->mNumBones; ++i) {
     std::string name(mesh->mBones[i]->mName.data);
     bones[name] = load_bone(scene, mesh->mBones[i]);
+  }
+}
+
+void
+Model::build_buffers(const aiNode* node, aiMatrix4x4 trafo)
+{
+  trafo *= node->mTransformation;
+
+  for (unsigned int n = 0; n < node->mNumMeshes; ++n) {
+    const aiMesh *mesh = scene->mMeshes[node->mMeshes[n]];
+    const aiMaterial *mtl = scene->mMaterials[mesh->mMaterialIndex];
+
+    mesh->HasNormals() ? glEnable(GL_LIGHTING) : glDisable(GL_LIGHTING);
+
+    std::vector<GLfloat> vertices, normals, texcoords;
+    for (size_t i = 0; i < mesh->mNumVertices; ++i) {
+      aiVector3D v = trafo * mesh->mVertices[i];
+      aiVector3D n = trafo * mesh->mNormals[i];
+      vertices.push_back(v.x);
+      vertices.push_back(v.y);
+      vertices.push_back(v.z);
+      normals.push_back(n.x);
+      normals.push_back(n.y);
+      normals.push_back(n.z);
+      texcoords.push_back(mesh->mTextureCoords[0][i].x);
+      texcoords.push_back(mesh->mTextureCoords[0][i].y);
+    }
+
+    std::vector<GLushort> indices;
+    for (unsigned int t = 0; t < mesh->mNumFaces; ++t) {
+      const aiFace *face = &mesh->mFaces[t];
+      for (unsigned int i = 0; i < face->mNumIndices; ++i) {
+        unsigned short index = face->mIndices[i];
+        indices.push_back(index);
+      }
+    }
+
+    VBO *vbo = new VBO();
+    if (0 != mtl->GetTextureCount(aiTextureType_DIFFUSE)) {
+      vbo->set_texture(textures[mesh->mMaterialIndex]);
+    }
+
+    vbo->bind_indices(indices);
+    vbo->bind_data(VBO::TEXCOORD, texcoords);
+    vbo->bind_data(VBO::VERTEX,   vertices, GL_DYNAMIC_COPY);
+    vbo->bind_data(VBO::NORMAL,   normals,  GL_DYNAMIC_COPY);
+
+    vertex_buffers.push_back(vbo);
+  }
+
+  for (unsigned int c = 0; c < node->mNumChildren; ++c) {
+    build_buffers(node->mChildren[c], trafo);
   }
 }
 
@@ -419,9 +481,7 @@ Model::normalize()
 void
 Model::draw(float elapsed, float opacity, bool bones)
 {
-  glEnable(GL_DEPTH_TEST);
-  glEnable(GL_COLOR_MATERIAL);
-
+  glEnable(GL_LIGHTING);
   if (0 < scene->mNumAnimations) {
     const aiAnimation *anim = scene->mAnimations[0];
     float animtime = fmod(elapsed * anim->mTicksPerSecond, anim->mDuration);
@@ -429,7 +489,9 @@ Model::draw(float elapsed, float opacity, bool bones)
   }
 
   glColor4f(1.0f, 1.0f, 1.0f, opacity);
-  this->rrender(scene->mRootNode);
+  for (VBO *vbo : vertex_buffers) {
+    vbo->draw();
+  }
 
   if (bones)
     this->rrenderbones(scene->mRootNode);
@@ -467,6 +529,10 @@ Model::rrenderbones(const aiNode *node)
     glPopMatrix();
   }
   glEnd();
+
+  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_LIGHTING);
+  glEnable(GL_TEXTURE_2D);
 }
 
 int
