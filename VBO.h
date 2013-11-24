@@ -19,6 +19,7 @@ public:
   };
 
 private:
+  GLfloat ambient[4], diffuse[4], specular[4], emission[4], shininess;
   GLuint texture;
   GLsizei count;
   GLuint buffers[4];
@@ -37,7 +38,12 @@ public:
   void update_data(BUFFER_TYPE type, const std::vector<GLfloat>& data);
 
   void set_texture(GLuint texture);
+  void mtl_ambient(GLfloat ambient[4]);
+  void mtl_diffuse(GLfloat diffuse[4]);
+  void mtl_emission(GLfloat emission[4]);
+  void mtl_specular(GLfloat specular[4], GLfloat shininess);
 
+  void use_material() const;
   void draw() const;
 };
 

@@ -3,8 +3,12 @@
 #include "Game.h"
 #include "CreepManager.h"
 #include "DummyCreep.h"
+#include "gl/ShaderProgram.h"
+#include "gl/Shader.h"
 
 #include <OpenGL/gl.h>
+
+gl::ShaderProgram *shader_range_circle = NULL;
 
 Tower::Tower(Json::Value spec, Vector3 pos) :
   Purchasable(spec["price"].asInt()),
@@ -18,6 +22,13 @@ Tower::Tower(Json::Value spec, Vector3 pos) :
   last_shot(0.0f),
   model(NULL)
 {
+  if (NULL == shader_range_circle) {
+    shader_range_circle = new gl::ShaderProgram();
+    gl::Shader *fragment = new gl::Shader(GL_FRAGMENT_SHADER, "resources/shaders/range_circle.f.glsl");
+    shader_range_circle->attachShader(fragment);
+    shader_range_circle->link();
+  }
+
   std::string modelfile = "resources/models/towers/" + spec["model"].asString() + ".dae";
   model = Model::load(modelfile);
 }
@@ -27,11 +38,11 @@ Tower::draw_range_circle() const
 {
   glDisable(GL_DEPTH_TEST);
   glDisable(GL_TEXTURE_2D);
-  glEnable(GL_COLOR_MATERIAL);
 
+  shader_range_circle->use();
   glTranslatef(pos.x, pos.y, pos.z);
-  glColor4f(0.0f, 0.0f, 0.8f, 0.2f);
   GLShapes::circle(range);
+  shader_range_circle->disuse();
 
   glEnable(GL_DEPTH_TEST);
 }

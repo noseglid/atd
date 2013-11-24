@@ -2,6 +2,8 @@
 #include "Debug.h"
 #include "ModelException.h"
 #include "ImageLoader.h"
+#include "gl/Shader.h"
+#include "gl/ShaderProgram.h"
 
 #include <time.h>
 
@@ -9,6 +11,8 @@
 #define aisgl_max(x,y) (y>x?y:x)
 
 std::map<std::string, Model*> Model::loaded_models;
+
+gl::ShaderProgram *shader_program = NULL;
 
 void
 Model::get_bounding_box_for_node(
@@ -58,13 +62,13 @@ Model::get_bounding_box(aiVector3D& min, aiVector3D& max)
 
 Model::Model(std::string file) : n_vertices(0)
 {
-  clock_t begin = clock();
   DBG("Loading model: " << file);
+
+  clock_t begin = clock();
+
   importer.ReadFile(file, aiProcessPreset_TargetRealtime_Quality | aiProcess_FlipUVs);
   scene = importer.GetScene();
-  if (NULL == scene) {
-    throw ModelException("Could not load file: " + file);
-  }
+  if (NULL == scene) throw ModelException("Could not load file: " + file);
 
   get_bounding_box(scene_min, scene_max);
   scene_center.x = (scene_min.x + scene_max.x) / 2.0f;
@@ -73,7 +77,7 @@ Model::Model(std::string file) : n_vertices(0)
 
   load_nodes(scene, scene->mRootNode);
 
-  build_buffers(scene->mRootNode, aiMatrix4x4());
+  build_vbo(scene->mRootNode, aiMatrix4x4());
 
   for (size_t i = 0; i < scene->mNumMeshes; ++i) {
     n_vertices += scene->mMeshes[i]->mNumVertices;
@@ -120,7 +124,7 @@ Model::load_textures(const aiScene *scene, const aiMesh *mesh)
     GLuint t = IL::GL::texture(path.data);
     textures.insert(std::make_pair(mesh->mMaterialIndex, t));
   } catch (const std::exception& e) {
-    std::cerr << "Warning: could not load texture from: " << path.data << std::endl;
+    throw ModelException("Warning: could not load texture from: " +  std::string(path.data));
   }
 }
 
@@ -160,15 +164,13 @@ Model::load_bones(const aiScene *scene, const aiMesh *mesh)
 }
 
 void
-Model::build_buffers(const aiNode* node, aiMatrix4x4 trafo)
+Model::build_vbo(const aiNode* node, aiMatrix4x4 trafo)
 {
   trafo *= node->mTransformation;
 
   for (unsigned int n = 0; n < node->mNumMeshes; ++n) {
     const aiMesh *mesh = scene->mMeshes[node->mMeshes[n]];
     const aiMaterial *mtl = scene->mMaterials[mesh->mMaterialIndex];
-
-    mesh->HasNormals() ? glEnable(GL_LIGHTING) : glDisable(GL_LIGHTING);
 
     std::vector<GLfloat> vertices, normals, texcoords;
     for (size_t i = 0; i < mesh->mNumVertices; ++i) {
@@ -198,42 +200,35 @@ Model::build_buffers(const aiNode* node, aiMatrix4x4 trafo)
       vbo->set_texture(textures[mesh->mMaterialIndex]);
     }
 
+    GLfloat shininess = 64.0;
+    aiColor4D ambient, diffuse, specular, emissive;
+    if (aiReturn_SUCCESS != mtl->Get(AI_MATKEY_SHININESS, shininess)) {
+      DBGWRN("Could not get shininess component. Will use " << shininess << "instead.");
+    }
+    if (aiReturn_SUCCESS == mtl->Get(AI_MATKEY_COLOR_AMBIENT, ambient)) {
+      vbo->mtl_ambient((GLfloat*)&ambient);
+    }
+    if (aiReturn_SUCCESS == mtl->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse)) {
+      vbo->mtl_diffuse((GLfloat*)&diffuse);
+    }
+    if (aiReturn_SUCCESS == mtl->Get(AI_MATKEY_COLOR_SPECULAR, specular)) {
+      vbo->mtl_specular((GLfloat*)&specular, shininess);
+    }
+    if (aiReturn_SUCCESS == mtl->Get(AI_MATKEY_COLOR_EMISSIVE, emissive)) {
+      vbo->mtl_emission((GLfloat*)&emissive);
+    }
+
     vbo->bind_indices(indices);
     vbo->bind_data(VBO::TEXCOORD, texcoords);
-    vbo->bind_data(VBO::VERTEX,   vertices, GL_DYNAMIC_COPY);
-    vbo->bind_data(VBO::NORMAL,   normals,  GL_DYNAMIC_COPY);
+    vbo->bind_data(VBO::VERTEX,   vertices);
+    vbo->bind_data(VBO::NORMAL,   normals);
 
     vertex_buffers.push_back(vbo);
   }
 
   for (unsigned int c = 0; c < node->mNumChildren; ++c) {
-    build_buffers(node->mChildren[c], trafo);
+    build_vbo(node->mChildren[c], trafo);
   }
-}
-
-void
-mtlpart(const aiMaterial *mtl, GLenum gltype, const char *pKey, unsigned int type, unsigned int idx)
-{
-  aiColor4D clr;
-  if (aiReturn_SUCCESS != mtl->Get(pKey, type, idx, clr)) {
-    return;
-  }
-
-  GLfloat params[4] = { clr.r, clr.g, clr.b, clr.a };
-  glMaterialfv(GL_FRONT, gltype, params);
-}
-
-void
-Model::apply_material(const aiMaterial *mtl)
-{
-  mtlpart(mtl, GL_DIFFUSE,  AI_MATKEY_COLOR_DIFFUSE);
-  mtlpart(mtl, GL_SPECULAR, AI_MATKEY_COLOR_SPECULAR);
-  mtlpart(mtl, GL_AMBIENT,  AI_MATKEY_COLOR_AMBIENT);
-  mtlpart(mtl, GL_EMISSION, AI_MATKEY_COLOR_EMISSIVE);
-
-  GLfloat shininess = 64.0;
-  mtl->Get(AI_MATKEY_SHININESS, shininess);
-  glMaterialf(GL_FRONT, GL_SHININESS, shininess);
 }
 
 unsigned int
@@ -338,10 +333,10 @@ Model::interpolated_scale(aiMatrix4x4& out, float animtime, const aiNodeAnim *no
 void
 Model::rrender(const aiNode *node)
 {
-  glPushMatrix();
+  //glPushMatrix();
 
-  aiMatrix4x4 trafo = node->mTransformation;
-  glMultTransposeMatrixf((GLfloat*)&trafo);
+  //aiMatrix4x4 trafo = node->mTransformation;
+  //glMultTransposeMatrixf((GLfloat*)&trafo);
 
   for (unsigned int n = 0; n < node->mNumMeshes; ++n) {
     const aiMesh *mesh = scene->mMeshes[node->mMeshes[n]];
@@ -349,65 +344,94 @@ Model::rrender(const aiNode *node)
 
     mesh->HasNormals() ? glEnable(GL_LIGHTING) : glDisable(GL_LIGHTING);
 
-    if (0 != mtl->GetTextureCount(aiTextureType_DIFFUSE)) {
-      glEnable(GL_TEXTURE_2D);
-      glBindTexture(GL_TEXTURE_2D, textures[mesh->mMaterialIndex]);
-    } else {
-      glDisable(GL_TEXTURE_2D);
-    }
+    //if (0 != mtl->GetTextureCount(aiTextureType_DIFFUSE)) {
+    //  glEnable(GL_TEXTURE_2D);
+    //  glBindTexture(GL_TEXTURE_2D, textures[mesh->mMaterialIndex]);
+    //} else {
+    //  glDisable(GL_TEXTURE_2D);
+    //}
 
-    apply_material(mtl);
+    //apply_material(mtl);
 
-    std::vector<aiVector3D> resultPos(mesh->mNumVertices);
-    std::vector<aiVector3D> resultNrm(mesh->mNumVertices);
-    if (mesh->mNumBones == 0) {
+    std::vector<GLfloat> vertices;
+    std::vector<GLfloat> normals;
+    std::vector<GLfloat> texcoords;
+    //if (mesh->mNumBones == 0) {
       for (size_t i = 0; i < mesh->mNumVertices; ++i) {
-        resultPos[i] = mesh->mVertices[i];
-        resultNrm[i] = mesh->mNormals[i];
+        vertices.push_back(mesh->mVertices[i].x);
+        vertices.push_back(mesh->mVertices[i].y);
+        vertices.push_back(mesh->mVertices[i].z);
+        normals.push_back(mesh->mNormals[i].x);
+        normals.push_back(mesh->mNormals[i].y);
+        normals.push_back(mesh->mNormals[i].z);
+        texcoords.push_back(mesh->mTextureCoords[0][i].x);
+        texcoords.push_back(mesh->mTextureCoords[0][i].y);
       }
-    }
+    //}
 
-    for (size_t b = 0; b < mesh->mNumBones; ++b) {
-      const aiBone *abone = mesh->mBones[b];
-      struct bone bone = bones[abone->mName.data];
-
-      aiMatrix4x4 posTrafo = bone.offset * bone.begin;
-      posTrafo.Transpose();
-
-      aiMatrix3x3 nrmTrafo = aiMatrix3x3(posTrafo);
-
-      for (size_t w = 0; w < abone->mNumWeights; ++w) {
-        const aiVertexWeight& weight = abone->mWeights[w];
-        size_t vertexId = weight.mVertexId;
-
-        aiVector3D& srcPos = mesh->mVertices[vertexId];
-        aiVector3D& srcNrm = mesh->mNormals[vertexId];
-
-        resultPos[vertexId] += (weight.mWeight * (posTrafo * srcPos));
-        resultNrm[vertexId] += weight.mWeight * (nrmTrafo * srcNrm);
-      }
-    }
-
+    std::vector<GLushort> indices;
     for (unsigned int t = 0; t < mesh->mNumFaces; ++t) {
       const aiFace *face = &mesh->mFaces[t];
-
-      glBegin(GL_TRIANGLES);
       for (unsigned int i = 0; i < face->mNumIndices; ++i) {
-        int index = face->mIndices[i];
-        if (mesh->HasTextureCoords(0))
-          glTexCoord3fv((GLfloat*)&mesh->mTextureCoords[0][index]);
-        glNormal3fv((GLfloat*)&resultNrm[index]);
-        glVertex3fv((GLfloat*)&resultPos[index]);
+        unsigned short index = face->mIndices[i];
+        indices.push_back(index);
       }
-      glEnd();
     }
+
+
+    //for (size_t b = 0; b < mesh->mNumBones; ++b) {
+    //  const aiBone *abone = mesh->mBones[b];
+    //  struct bone bone = bones[abone->mName.data];
+
+    //  //aiMatrix4x4 posTrafo = bone.offset * bone.begin;
+    //  //posTrafo.Transpose();
+
+    //  //aiMatrix3x3 nrmTrafo = aiMatrix3x3(posTrafo);
+
+    //  for (size_t w = 0; w < abone->mNumWeights; ++w) {
+    //    const aiVertexWeight& weight = abone->mWeights[w];
+    //    size_t vertexId = weight.mVertexId;
+
+    //    //aiVector3D& srcPos = mesh->mVertices[vertexId];
+    //    //aiVector3D& srcNrm = mesh->mNormals[vertexId];
+
+    //    //resultPos[vertexId] += (weight.mWeight * (posTrafo * srcPos));
+    //    //resultNrm[vertexId] += weight.mWeight * (nrmTrafo * srcNrm);
+    //  }
+    //}
+
+    VBO *vbo = new VBO();
+    if (0 != mtl->GetTextureCount(aiTextureType_DIFFUSE)) {
+      vbo->set_texture(textures[mesh->mMaterialIndex]);
+    }
+
+    vbo->bind_indices(indices);
+    vbo->bind_data(VBO::TEXCOORD, texcoords);
+    vbo->bind_data(VBO::VERTEX,   vertices, GL_DYNAMIC_COPY);
+    vbo->bind_data(VBO::NORMAL,   normals,  GL_DYNAMIC_COPY);
+
+    vertex_buffers.push_back(vbo);
+
+    //for (unsigned int t = 0; t < mesh->mNumFaces; ++t) {
+    //  const aiFace *face = &mesh->mFaces[t];
+
+    //  glBegin(GL_TRIANGLES);
+    //  for (unsigned int i = 0; i < face->mNumIndices; ++i) {
+    //    int index = face->mIndices[i];
+    //    //if (mesh->HasTextureCoords(0))
+    //    //  glTexCoord3fv((GLfloat*)&mesh->mTextureCoords[0][index]);
+    //    //glNormal3fv((GLfloat*)&resultNrm[index]);
+    //    //glVertex3fv((GLfloat*)&resultPos[index]);
+    //  }
+    //  glEnd();
+    //}
   }
 
   for (unsigned int c = 0; c < node->mNumChildren; ++c) {
     rrender(node->mChildren[c]);
   }
 
-  glPopMatrix();
+  //glPopMatrix();
 }
 
 static const aiNodeAnim *
@@ -482,16 +506,18 @@ void
 Model::draw(float elapsed, float opacity, bool bones)
 {
   glEnable(GL_LIGHTING);
+
   if (0 < scene->mNumAnimations) {
     const aiAnimation *anim = scene->mAnimations[0];
     float animtime = fmod(elapsed * anim->mTicksPerSecond, anim->mDuration);
     this->animate(scene->mRootNode, animtime, aiMatrix4x4());
   }
 
-  glColor4f(1.0f, 1.0f, 1.0f, opacity);
+  shader_program->use();
   for (VBO *vbo : vertex_buffers) {
     vbo->draw();
   }
+  shader_program->disuse();
 
   if (bones)
     this->rrenderbones(scene->mRootNode);
@@ -544,6 +570,15 @@ Model::get_vertex_count() const
 Model *
 Model::load(std::string file)
 {
+  if (NULL == shader_program) {
+    shader_program = new gl::ShaderProgram();
+    gl::Shader *vertex_shader   = new gl::Shader(GL_VERTEX_SHADER, "resources/shaders/model.v.glsl");
+    gl::Shader *fragment_shader = new gl::Shader(GL_FRAGMENT_SHADER, "resources/shaders/model.f.glsl");
+    shader_program->attachShader(vertex_shader);
+    shader_program->attachShader(fragment_shader);
+    shader_program->link();
+  }
+
   auto it = loaded_models.find(file);
   if (loaded_models.end() != it) {
     return it->second;

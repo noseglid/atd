@@ -27,6 +27,7 @@ SRCS += $(wildcard ui/*.cpp)
 SRCS += $(wildcard hud/*.cpp)
 SRCS += $(wildcard math/*.cpp)
 SRCS += $(wildcard text/*.cpp)
+SRCS += $(wildcard gl/*.cpp)
 
 # Creep
 SRCS += CreepManager.cpp Creep.cpp DummyCreep.cpp
@@ -46,7 +47,7 @@ DEPS := $(OBJS:.o=.d)
 BIN = atd
 
 MODELVIEWER = modelviewer
-MODELVIEWER_SRCS = modelviewer.cpp Model.cpp VBO.cpp ImageLoader.cpp Camera.cpp GLTransform.cpp engine/Engine.cpp engine/Video.cpp hud/HUD.cpp hud/InfoBar.cpp hud/ButtonBar.cpp hud/Bar.cpp hud/Button.cpp text/Dispatcher.cpp text/Text.cpp text/Stream.cpp math/Vector2.cpp math/Math.cpp math/Matrix4.cpp math/Vector3.cpp utils/Color.cpp
+MODELVIEWER_SRCS = modelviewer.cpp Model.cpp VBO.cpp ImageLoader.cpp Camera.cpp GLTransform.cpp engine/Engine.cpp engine/Video.cpp hud/HUD.cpp hud/InfoBar.cpp hud/ButtonBar.cpp hud/Bar.cpp hud/Button.cpp text/Dispatcher.cpp text/Text.cpp text/Stream.cpp math/Vector2.cpp math/Math.cpp math/Matrix4.cpp math/Vector3.cpp utils/Color.cpp gl/Shader.cpp gl/ShaderProgram.cpp
 MODELVIEWER_OBJS = $(MODELVIEWER_SRCS:.cpp=.o)
 
 all: $(DB) $(BIN) $(SUBDIRS)

@@ -46,10 +46,9 @@ class Model
   void load_nodes(const aiScene *sceme, const aiNode *node);
   void load_textures(const aiScene *scene, const aiMesh* mesh);
   void load_bones(const aiScene *scene, const aiMesh* mesh);
-  void build_buffers(const aiNode* node, aiMatrix4x4 trafo);
+  void build_vbo(const aiNode* node, aiMatrix4x4 trafo);
 
   void animate(aiNode *node, float animtime, const aiMatrix4x4& tp);
-  void apply_material(const aiMaterial *mtl);
   void rrender(const aiNode* node);
   void rrenderbones(const aiNode* node);
 
