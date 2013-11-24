@@ -1,0 +1,14 @@
+{
+  "name"   : "Chump",
+  "health" : 80,
+  "cost"   : 2,
+  "reward" : 40,
+  "speed"  : 0.80,
+  "model"  : {
+    "resource" : "chump",
+    "scale" : { "x" : 0.5, "y" : 0.5, "z" : 0.5 }
+  },
+  "audio"  : {
+    "death" : "creep_death.ogg"
+   }
+}
