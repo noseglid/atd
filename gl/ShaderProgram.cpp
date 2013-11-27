@@ -59,4 +59,16 @@ ShaderProgram::disuse()
   glUseProgram(0);
 }
 
+GLint
+ShaderProgram::getAttribLocation(std::string name)
+{
+  return glGetAttribLocation(reference, name.c_str());
+}
+
+GLint
+ShaderProgram::getUniformLocation(std::string name)
+{
+  return glGetUniformLocation(reference, name.c_str());
+}
+
 E_NS_GL

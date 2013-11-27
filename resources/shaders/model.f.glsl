@@ -7,7 +7,7 @@ uniform sampler2D tex;
 
 void main()
 {
-  vec3 n = normalize(normal);
+  vec3 n = normal;
   float NdotL = max(dot(n, lightDir), 0.0);
   vec4 texel = texture2D(tex, gl_TexCoord[0].st);
 

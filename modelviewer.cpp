@@ -42,7 +42,7 @@ init_SDL()
     throw Exception("Could not initiate SDL TTF library.");
   }
 
-  engine::Video::instance().set_resolution(1024, 768);
+  engine::Video::instance().set_resolution(1600, 900);
 
   const SDL_version *v;
   v = SDL_Linked_Version();
@@ -65,12 +65,6 @@ init_OpenGL()
   glEnable(GL_CULL_FACE);
   glEnable(GL_DEPTH_TEST);
 
-  glEnable(GL_LINE_SMOOTH);
-  glEnable(GL_POINT_SMOOTH);
-  glEnable(GL_NORMALIZE);
-  glShadeModel(GL_SMOOTH);
-  glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -82,11 +76,10 @@ init_OpenGL()
   glMatrixMode(GL_MODELVIEW);
 
   glEnable(GL_LIGHTING);
-  GLfloat lmodel_ambient[] = { 0.2, 0.2, 0.2, 1.0 };
+  GLfloat lmodel_ambient[] = { 0.4, 0.4, 0.4, 1.0 };
   glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
 
   glEnable(GL_LIGHT0);
-
   GLfloat position[] = { 0.33, 0.33, 0.33, 0.0 };
   glLightfv(GL_LIGHT0, GL_POSITION, position);
 
@@ -120,7 +113,7 @@ main(int argc, char *argv[])
       return helptext
         << "Showing model: " << utils::colors::green << basename(argv[1]) << "\n"
         << utils::colors::white << "Number vertices: " << m->get_vertex_count() << "\n"
-        << utils::colors::white << "Frames per second: " << utils::colors::yellow << current_fps << "\n"
+        << utils::colors::white << "Frames per second: " << utils::colors::yellow << (int)current_fps << "\n"
         << utils::colors::white << "Number of instances: " << utils::colors::green << n << "\n"
         << utils::colors::white << "Zoom with mouse wheel\n\n"
         << utils::colors::yellow << "q" << utils::colors::white << " to quit\n"
@@ -139,7 +132,7 @@ main(int argc, char *argv[])
       static float last_measure = 0;
       frames++;
 
-      if (e.elapsed - last_measure > 0.3f /* Measure every X seconds */) {
+      if (e.elapsed - last_measure > 1.0f /* Measure every X seconds */) {
         current_fps = (float)(frames) / (e.elapsed - last_measure);
         frames = 0;
         last_measure = e.elapsed;
@@ -156,7 +149,7 @@ main(int argc, char *argv[])
         glRotatef(rotation, 0.0f, 1.0f, 0.0f);
         glTranslatef(0.0f, 0.0f,  1 - i);
         m->normalize();
-        m->draw(animate ? e.elapsed : 0.0f, 1.0f, bones);
+        m->draw(animate ? e.elapsed : 0.0f);
 
         glPopMatrix();
       }

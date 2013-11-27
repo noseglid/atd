@@ -1,14 +1,22 @@
 #include "VBO.h"
 
-VBO::VBO() : texture(0), count(0)
+VBO::VBO() : shininess(0.0), texture(0), count(0)
 {
-  ambient[0] = diffuse[0] = emission[0] = specular[0] = -1.0;
+  ambient[0]  = ambient[1]  = ambient[2]  = 0.2; ambient[3]  = 1.0;
+  diffuse[0]  = diffuse[1]  = diffuse[2]  = 0.8; diffuse[3]  = 1.0;
+  specular[0] = specular[1] = specular[2] = 0.0; specular[3] = 1.0;
+  emission[0] = emission[1] = emission[2] = 0.0; emission[3] = 1.0;
+
   glGenBuffers(BUFFER_TYPE_END, buffers);
 }
 
 VBO::~VBO()
 {
   glDeleteBuffers(BUFFER_TYPE_END, buffers);
+
+  for (auto attrib : attribs) {
+    glDeleteBuffers(1, &attrib.buffer);
+  }
 }
 
 GLuint
@@ -41,14 +49,29 @@ VBO::bind_indices(const std::vector<GLushort>& data)
 }
 
 void
-VBO::update_data(BUFFER_TYPE type, const std::vector<GLfloat>& data)
+VBO::set_vertex_attrib(
+  GLint location,
+  GLuint buffer,
+  GLint size,
+  GLenum type,
+  GLsizei stride,
+  char offset
+)
 {
-  GLsizei size = sizeof(data[0]) * data.size();
+  if (-1 == location) {
+    DBGERR("Cannot use attrib location: " << location);
+    return;
+  }
 
-  glBindBuffer(GL_ARRAY_BUFFER, get_buffer(type));
-  glBufferSubData(GL_ARRAY_BUFFER, 0, size, data.data());
+  attrib a;
+  a.location = location;
+  a.buffer   = buffer;
+  a.size     = size;
+  a.type     = type;
+  a.stride   = stride;
+  a.offset   = offset;
 
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  attribs.push_back(a);
 }
 
 void
@@ -85,22 +108,11 @@ VBO::mtl_specular(GLfloat specular[4], GLfloat shininess)
 void
 VBO::use_material() const
 {
-  if (ambient[0] > 0.0) {
-    glMaterialfv(GL_FRONT, GL_AMBIENT,   ambient);
-  }
-
-  if (diffuse[0] > 0.0) {
-    glMaterialfv(GL_FRONT, GL_DIFFUSE,   diffuse);
-  }
-
-  if (emission[0] > 0.0) {
-    glMaterialfv(GL_FRONT, GL_EMISSION,  emission);
-  }
-
-  if (specular[0] > 0.0) {
-    glMaterialfv(GL_FRONT, GL_SPECULAR,  specular);
-    glMaterialf (GL_FRONT, GL_SHININESS, shininess);
-  }
+  glMaterialfv(GL_FRONT, GL_AMBIENT,   ambient);
+  glMaterialfv(GL_FRONT, GL_DIFFUSE,   diffuse);
+  glMaterialfv(GL_FRONT, GL_EMISSION,  emission);
+  glMaterialfv(GL_FRONT, GL_SPECULAR,  specular);
+  glMaterialf (GL_FRONT, GL_SHININESS, shininess);
 }
 
 void
@@ -126,8 +138,25 @@ VBO::draw() const
   glBindBuffer(GL_ARRAY_BUFFER, get_buffer(TEXCOORD));
   glTexCoordPointer(2, GL_FLOAT, 0, 0);
 
+  for (auto attrib : attribs) {
+    glEnableVertexAttribArray(attrib.location);
+    glBindBuffer(GL_ARRAY_BUFFER, attrib.buffer);
+    glVertexAttribPointer(
+      attrib.location,
+      attrib.size,
+      attrib.type,
+      GL_FALSE,
+      attrib.stride,
+      (const GLvoid*)attrib.offset
+    );
+  }
+
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, get_buffer(INDICE));
   glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, 0);
+
+  for (auto attrib : attribs) {
+    glDisableVertexAttribArray(attrib.location);
+  }
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);

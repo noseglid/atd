@@ -52,7 +52,7 @@ Tower::draw(const float& elapsed, const float& opacity) const
 {
   glPushMatrix();
   glTranslatef(pos.x, pos.y, pos.z);
-  model->draw(elapsed, opacity);
+  model->draw(elapsed); // XXX: include opacity with shader
   glPopMatrix();
 
   for (Projectile *p : projectiles) {

@@ -6,6 +6,7 @@
 #include "gl/ShaderProgram.h"
 
 #include <time.h>
+#include <sstream>
 
 #define aisgl_min(x,y) (x<y?x:y)
 #define aisgl_max(x,y) (y>x?y:x)
@@ -13,6 +14,27 @@
 std::map<std::string, Model*> Model::loaded_models;
 
 gl::ShaderProgram *shader_program = NULL;
+
+Model::VertexBoneInfluence::VertexBoneInfluence()
+{
+  memset(boneids, 0, 4 * sizeof(GLfloat));
+  memset(weights, 0, 4 * sizeof(GLfloat));
+}
+
+void
+Model::VertexBoneInfluence::add(GLint boneid, GLfloat weight)
+{
+  for (int i = 0; i < 4; ++i) {
+    if (boneids[i] == 0 && weights[i] == 0.0) {
+      boneids[i] = boneid;
+      weights[i] = weight;
+      return;
+    }
+  }
+
+  /* Ooops, more wieght than we have room for */
+  throw ModelException("More than 4 bones is not supported");
+}
 
 void
 Model::get_bounding_box_for_node(
@@ -60,7 +82,7 @@ Model::get_bounding_box(aiVector3D& min, aiVector3D& max)
   get_bounding_box_for_node(scene->mRootNode, min, max, &trafo);
 }
 
-Model::Model(std::string file) : n_vertices(0)
+Model::Model(std::string file) : n_vertices(0), bone_index(0)
 {
   DBG("Loading model: " << file);
 
@@ -76,8 +98,7 @@ Model::Model(std::string file) : n_vertices(0)
   scene_center.z = (scene_min.z + scene_max.z) / 2.0f;
 
   load_nodes(scene, scene->mRootNode);
-
-  build_vbo(scene->mRootNode, aiMatrix4x4());
+  build_vbo(scene->mRootNode);
 
   for (size_t i = 0; i < scene->mNumMeshes; ++i) {
     n_vertices += scene->mMeshes[i]->mNumVertices;
@@ -128,8 +149,8 @@ Model::load_textures(const aiScene *scene, const aiMesh *mesh)
   }
 }
 
-static struct bone
-load_bone(const aiScene *scene, const aiBone *bone)
+struct bone
+Model::load_bone(const aiScene *scene, const aiBone *bone)
 {
   std::string name(bone->mName.data);
   const aiNode *node;
@@ -139,17 +160,15 @@ load_bone(const aiScene *scene, const aiBone *bone)
   do {
     b.begin = node->mTransformation * b.begin;
   } while ((node = node->mParent));
-  b.begin.Transpose();
 
   node = scene->mRootNode->FindNode(name.c_str())->mParent;
   while (node) {
     b.end = node->mTransformation * b.end;
     node = node->mParent;
   }
-  b.end.Transpose();
 
   b.offset = bone->mOffsetMatrix;
-  b.offset.Transpose();
+  b.id = bone_index++;
 
   return b;
 }
@@ -164,18 +183,16 @@ Model::load_bones(const aiScene *scene, const aiMesh *mesh)
 }
 
 void
-Model::build_vbo(const aiNode* node, aiMatrix4x4 trafo)
+Model::build_vbo(const aiNode* node)
 {
-  trafo *= node->mTransformation;
-
   for (unsigned int n = 0; n < node->mNumMeshes; ++n) {
     const aiMesh *mesh = scene->mMeshes[node->mMeshes[n]];
     const aiMaterial *mtl = scene->mMaterials[mesh->mMaterialIndex];
 
     std::vector<GLfloat> vertices, normals, texcoords;
     for (size_t i = 0; i < mesh->mNumVertices; ++i) {
-      aiVector3D v = trafo * mesh->mVertices[i];
-      aiVector3D n = trafo * mesh->mNormals[i];
+      aiVector3D v = node->mTransformation * mesh->mVertices[i];
+      aiVector3D n = node->mTransformation * mesh->mNormals[i];
       vertices.push_back(v.x);
       vertices.push_back(v.y);
       vertices.push_back(v.z);
@@ -195,16 +212,32 @@ Model::build_vbo(const aiNode* node, aiMatrix4x4 trafo)
       }
     }
 
+    std::vector<VertexBoneInfluence> influences(indices.size());
+    for (size_t b = 0; b < mesh->mNumBones; ++b) {
+      const aiBone *abone = mesh->mBones[b];
+      struct bone bone = bones[abone->mName.data];
+
+      for (size_t w = 0; w < abone->mNumWeights; ++w) {
+        influences[abone->mWeights[w].mVertexId].add(bone.id, abone->mWeights[w].mWeight);
+      }
+    }
+
+    if (0 == mesh->mNumBones) {
+      /* If there are no bones, create a dummy influence where bone index 0
+       * have all weight. In render bone index 0 will be set to identity */
+      for (size_t i = 0; i < influences.size(); ++i) {
+        influences[i].add(0, 1.0);
+      }
+    }
+
     VBO *vbo = new VBO();
     if (0 != mtl->GetTextureCount(aiTextureType_DIFFUSE)) {
       vbo->set_texture(textures[mesh->mMaterialIndex]);
     }
 
-    GLfloat shininess = 64.0;
+    GLfloat shininess = 0.0;
     aiColor4D ambient, diffuse, specular, emissive;
-    if (aiReturn_SUCCESS != mtl->Get(AI_MATKEY_SHININESS, shininess)) {
-      DBGWRN("Could not get shininess component. Will use " << shininess << "instead.");
-    }
+    mtl->Get(AI_MATKEY_SHININESS, shininess);
     if (aiReturn_SUCCESS == mtl->Get(AI_MATKEY_COLOR_AMBIENT, ambient)) {
       vbo->mtl_ambient((GLfloat*)&ambient);
     }
@@ -223,11 +256,18 @@ Model::build_vbo(const aiNode* node, aiMatrix4x4 trafo)
     vbo->bind_data(VBO::VERTEX,   vertices);
     vbo->bind_data(VBO::NORMAL,   normals);
 
+    GLuint buffer = vbo->create_vertex_attrib(influences);
+
+    GLint boneids_location = shader_program->getAttribLocation("boneids");
+    vbo->set_vertex_attrib(boneids_location, buffer, 4, GL_FLOAT, sizeof(VertexBoneInfluence), 0);
+    GLint weights_location = shader_program->getAttribLocation("weights");
+    vbo->set_vertex_attrib(weights_location, buffer, 4, GL_FLOAT, sizeof(VertexBoneInfluence), 4 * sizeof(GLfloat));
+
     vertex_buffers.push_back(vbo);
   }
 
   for (unsigned int c = 0; c < node->mNumChildren; ++c) {
-    build_vbo(node->mChildren[c], trafo);
+    build_vbo(node->mChildren[c]);
   }
 }
 
@@ -330,110 +370,6 @@ Model::interpolated_scale(aiMatrix4x4& out, float animtime, const aiNodeAnim *no
   aiMatrix4x4::Scaling(res, out);
 }
 
-void
-Model::rrender(const aiNode *node)
-{
-  //glPushMatrix();
-
-  //aiMatrix4x4 trafo = node->mTransformation;
-  //glMultTransposeMatrixf((GLfloat*)&trafo);
-
-  for (unsigned int n = 0; n < node->mNumMeshes; ++n) {
-    const aiMesh *mesh = scene->mMeshes[node->mMeshes[n]];
-    const aiMaterial *mtl = scene->mMaterials[mesh->mMaterialIndex];
-
-    mesh->HasNormals() ? glEnable(GL_LIGHTING) : glDisable(GL_LIGHTING);
-
-    //if (0 != mtl->GetTextureCount(aiTextureType_DIFFUSE)) {
-    //  glEnable(GL_TEXTURE_2D);
-    //  glBindTexture(GL_TEXTURE_2D, textures[mesh->mMaterialIndex]);
-    //} else {
-    //  glDisable(GL_TEXTURE_2D);
-    //}
-
-    //apply_material(mtl);
-
-    std::vector<GLfloat> vertices;
-    std::vector<GLfloat> normals;
-    std::vector<GLfloat> texcoords;
-    //if (mesh->mNumBones == 0) {
-      for (size_t i = 0; i < mesh->mNumVertices; ++i) {
-        vertices.push_back(mesh->mVertices[i].x);
-        vertices.push_back(mesh->mVertices[i].y);
-        vertices.push_back(mesh->mVertices[i].z);
-        normals.push_back(mesh->mNormals[i].x);
-        normals.push_back(mesh->mNormals[i].y);
-        normals.push_back(mesh->mNormals[i].z);
-        texcoords.push_back(mesh->mTextureCoords[0][i].x);
-        texcoords.push_back(mesh->mTextureCoords[0][i].y);
-      }
-    //}
-
-    std::vector<GLushort> indices;
-    for (unsigned int t = 0; t < mesh->mNumFaces; ++t) {
-      const aiFace *face = &mesh->mFaces[t];
-      for (unsigned int i = 0; i < face->mNumIndices; ++i) {
-        unsigned short index = face->mIndices[i];
-        indices.push_back(index);
-      }
-    }
-
-
-    //for (size_t b = 0; b < mesh->mNumBones; ++b) {
-    //  const aiBone *abone = mesh->mBones[b];
-    //  struct bone bone = bones[abone->mName.data];
-
-    //  //aiMatrix4x4 posTrafo = bone.offset * bone.begin;
-    //  //posTrafo.Transpose();
-
-    //  //aiMatrix3x3 nrmTrafo = aiMatrix3x3(posTrafo);
-
-    //  for (size_t w = 0; w < abone->mNumWeights; ++w) {
-    //    const aiVertexWeight& weight = abone->mWeights[w];
-    //    size_t vertexId = weight.mVertexId;
-
-    //    //aiVector3D& srcPos = mesh->mVertices[vertexId];
-    //    //aiVector3D& srcNrm = mesh->mNormals[vertexId];
-
-    //    //resultPos[vertexId] += (weight.mWeight * (posTrafo * srcPos));
-    //    //resultNrm[vertexId] += weight.mWeight * (nrmTrafo * srcNrm);
-    //  }
-    //}
-
-    VBO *vbo = new VBO();
-    if (0 != mtl->GetTextureCount(aiTextureType_DIFFUSE)) {
-      vbo->set_texture(textures[mesh->mMaterialIndex]);
-    }
-
-    vbo->bind_indices(indices);
-    vbo->bind_data(VBO::TEXCOORD, texcoords);
-    vbo->bind_data(VBO::VERTEX,   vertices, GL_DYNAMIC_COPY);
-    vbo->bind_data(VBO::NORMAL,   normals,  GL_DYNAMIC_COPY);
-
-    vertex_buffers.push_back(vbo);
-
-    //for (unsigned int t = 0; t < mesh->mNumFaces; ++t) {
-    //  const aiFace *face = &mesh->mFaces[t];
-
-    //  glBegin(GL_TRIANGLES);
-    //  for (unsigned int i = 0; i < face->mNumIndices; ++i) {
-    //    int index = face->mIndices[i];
-    //    //if (mesh->HasTextureCoords(0))
-    //    //  glTexCoord3fv((GLfloat*)&mesh->mTextureCoords[0][index]);
-    //    //glNormal3fv((GLfloat*)&resultNrm[index]);
-    //    //glVertex3fv((GLfloat*)&resultPos[index]);
-    //  }
-    //  glEnd();
-    //}
-  }
-
-  for (unsigned int c = 0; c < node->mNumChildren; ++c) {
-    rrender(node->mChildren[c]);
-  }
-
-  //glPopMatrix();
-}
-
 static const aiNodeAnim *
 find_nodeanim(const aiAnimation *anim, std::string name)
 {
@@ -479,12 +415,13 @@ Model::animate(aiNode *node, float animtime, const aiMatrix4x4& tp)
   }
 
 cont:
-  trafo.Transpose();
-  trafo *= tp;
+  trafo = tp * trafo;
 
   if (bones.end() != bit) {
     bit->second.end   = tp;
     bit->second.begin = trafo;
+    bit->second.current = trafo * bit->second.offset;
+    bit->second.current.Transpose();
   }
 
   for (unsigned int c = 0; c < node->mNumChildren; ++c) {
@@ -503,62 +440,32 @@ Model::normalize()
 }
 
 void
-Model::draw(float elapsed, float opacity, bool bones)
+Model::draw(float elapsed)
 {
-  glEnable(GL_LIGHTING);
-
+  shader_program->use();
   if (0 < scene->mNumAnimations) {
     const aiAnimation *anim = scene->mAnimations[0];
     float animtime = fmod(elapsed * anim->mTicksPerSecond, anim->mDuration);
     this->animate(scene->mRootNode, animtime, aiMatrix4x4());
+
+    for (auto bone : bones) {
+      std::stringstream ss;
+      ss << "bones[" << bone.second.id << "]";
+      GLint loc = shader_program->getUniformLocation(ss.str());
+      glUniformMatrix4fv(loc, 1, GL_FALSE, (GLfloat*)&bone.second.current);
+    }
+  } else {
+    /* No animations, upload identity matrix as bones[0] */
+    GLint loc = shader_program->getUniformLocation("bones[0]");
+    aiMatrix4x4 identity;
+    glUniformMatrix4fv(loc, 1, GL_FALSE, (GLfloat*)&identity);
   }
 
-  shader_program->use();
   for (VBO *vbo : vertex_buffers) {
     vbo->draw();
   }
+
   shader_program->disuse();
-
-  if (bones)
-    this->rrenderbones(scene->mRootNode);
-}
-
-void
-Model::rrenderbones(const aiNode *node)
-{
-  glDisable(GL_DEPTH_TEST);
-  glDisable(GL_LIGHTING);
-  glDisable(GL_TEXTURE_2D);
-
-  glColor3f(1.0, 0.0, 0.0);
-  for (std::pair<std::string, struct bone> p : bones) {
-
-    glPushMatrix();
-    aiMatrix4x4 m = p.second.begin;
-
-    glMultMatrixf((GLfloat*)&m);
-    glBegin(GL_POINTS);
-    glVertex3f(0, 0, 0);
-    glEnd();
-
-    glPopMatrix();
-  }
-
-  glBegin(GL_LINES);
-  glColor3f(1.0, 1.0, 1.0);
-  for (std::pair<std::string, struct bone> p : bones) {
-    glPushMatrix();
-    aiMatrix4x4 begin = p.second.begin;
-    aiMatrix4x4 end   = p.second.end;
-    glVertex3f(begin.d1, begin.d2, begin.d3);
-    glVertex3f(end.d1, end.d2, end.d3);
-    glPopMatrix();
-  }
-  glEnd();
-
-  glEnable(GL_DEPTH_TEST);
-  glEnable(GL_LIGHTING);
-  glEnable(GL_TEXTURE_2D);
 }
 
 int

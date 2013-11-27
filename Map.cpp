@@ -328,8 +328,7 @@ Map::draw(const float& elapsed) const
   GLfloat
     diffuse[]  = { 0.8f, 0.8f, 0.8f, 1.0f },
     specular[] = { 0.0f, 0.0f, 0.0f, 1.0f },
-    ambient[]  = { 0.01f, 0.01f, 0.01f, 1.0f },
-    emission[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    ambient[]  = { 0.01f, 0.01f, 0.01f, 1.0f };
 
   glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
   glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);

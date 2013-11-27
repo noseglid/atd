@@ -33,9 +33,6 @@ init_SDL()
   SDL_EnableUNICODE(SDL_TRUE);
   SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 
-  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
-  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
   if (Mix_Init(MIX_INIT_OGG) < 0) {
     throw Exception("Could not initiate SDL mixer file formats.");
   }

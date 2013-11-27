@@ -27,6 +27,9 @@ public:
 
   void use();
   void disuse();
+
+  GLint getAttribLocation(std::string name);
+  GLint getUniformLocation(std::string name);
 };
 
 E_NS_GL
