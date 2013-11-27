@@ -2,6 +2,7 @@
 *.d
 *.swp
 atd
+modelviewer
 tags
 .DS_Store
 deps
