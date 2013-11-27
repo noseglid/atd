@@ -20,27 +20,30 @@ Renderer::RenderGeometry(
   const Rocket::Core::TextureHandle texture,
   const Rocket::Core::Vector2f& translation)
 {
-	glPushMatrix();
-	glTranslatef(translation.x, translation.y, 0);
+  glPushMatrix();
+  glTranslatef(translation.x, translation.y, 0);
 
   glEnableClientState(GL_VERTEX_ARRAY);
   glEnableClientState(GL_COLOR_ARRAY);
 
-	glVertexPointer(2, GL_FLOAT, sizeof(Rocket::Core::Vertex), &vertices[0].position);
-	glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Rocket::Core::Vertex), &vertices[0].colour);
+  glVertexPointer(2, GL_FLOAT, sizeof(Rocket::Core::Vertex), &vertices[0].position);
+  glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Rocket::Core::Vertex), &vertices[0].colour);
 
-	if (!texture) {
-		glDisable(GL_TEXTURE_2D);
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	} else {
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, (GLuint) texture);
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glTexCoordPointer(2, GL_FLOAT, sizeof(Rocket::Core::Vertex), &vertices[0].tex_coord);
-	}
+  if (!texture) {
+    glDisable(GL_TEXTURE_2D);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+  } else {
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, (GLuint) texture);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glTexCoordPointer(2, GL_FLOAT, sizeof(Rocket::Core::Vertex), &vertices[0].tex_coord);
+  }
 
-	glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, indices);
-	glPopMatrix();
+  glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, indices);
+
+  glDisableClientState(GL_VERTEX_ARRAY);
+  glDisableClientState(GL_COLOR_ARRAY);
+  glPopMatrix();
 }
 
 Rocket::Core::CompiledGeometryHandle
@@ -51,7 +54,7 @@ Renderer::CompileGeometry(
   int num_indices,
   const Rocket::Core::TextureHandle texture)
 {
-	return (Rocket::Core::CompiledGeometryHandle) NULL;
+  return (Rocket::Core::CompiledGeometryHandle) NULL;
 }
 
 void
@@ -76,7 +79,7 @@ void
 Renderer::SetScissorRegion(int x, int y, int width, int height)
 {
   engine::resolution res = engine::Video::instance().get_resolution();
-	glScissor(x, res.height - (y + height), width, height);
+  glScissor(x, res.height - (y + height), width, height);
 }
 
 bool
@@ -104,14 +107,14 @@ Renderer::GenerateTexture(
 {
   DBG("Generating texture with resolution " << dimensions.x << "," << dimensions.y << " from bytes.");
 
-	GLuint texid = 0;
-	glGenTextures(1, &texid);
-	if (texid == 0) {
-		DBGERR("Failed to generate textures.");
-		return false;
-	}
+  GLuint texid = 0;
+  glGenTextures(1, &texid);
+  if (texid == 0) {
+    DBGERR("Failed to generate textures.");
+    return false;
+  }
 
-	glBindTexture(GL_TEXTURE_2D, texid);
+  glBindTexture(GL_TEXTURE_2D, texid);
 
   gluBuild2DMipmaps(
     GL_TEXTURE_2D,
@@ -123,21 +126,21 @@ Renderer::GenerateTexture(
     source
   );
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	texture_handle = texid;
+  texture_handle = texid;
 
-	return true;
+  return true;
 }
 
 void
 Renderer::ReleaseTexture(Rocket::Core::TextureHandle texture_handle)
 {
-	glDeleteTextures(1, (GLuint*) &texture_handle);
+  glDeleteTextures(1, (GLuint*) &texture_handle);
 }
 
 E_NS_UI

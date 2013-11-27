@@ -42,7 +42,7 @@ init_SDL()
     throw Exception("Could not initiate SDL TTF library.");
   }
 
-  engine::Video::instance().set_resolution(1024, 768);
+  engine::Video::instance().set_resolution(1600, 900);
 
   const SDL_version *v;
   v = SDL_Linked_Version();
@@ -63,11 +63,7 @@ init_OpenGL()
   DBG("OpenGL shading: "  << glGetString(GL_SHADING_LANGUAGE_VERSION));
 
   glEnable(GL_CULL_FACE);
-  glEnable(GL_LINE_SMOOTH);
-  glEnable(GL_POINT_SMOOTH);
-  glEnable(GL_NORMALIZE);
-  glShadeModel(GL_SMOOTH);
-  glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+  glEnable(GL_DEPTH_TEST);
 
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -76,21 +72,16 @@ init_OpenGL()
   glViewport(0, 0, (GLsizei)res.width, (GLsizei)res.height);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective(45, (double)res.width / (double)res.height, 0.1, 1000.0);
+  gluPerspective(90, (double)res.width / (double)res.height, 0.1, 10000.0);
   glMatrixMode(GL_MODELVIEW);
 
   glEnable(GL_LIGHTING);
-  GLfloat lmodel_ambient[] = { 0.2, 0.2, 0.2, 1.0 };
+  GLfloat lmodel_ambient[] = { 0.4, 0.4, 0.4, 1.0 };
   glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
 
   glEnable(GL_LIGHT0);
-
-  GLfloat ambient[] = { 0.2, 0.2, 0.2, 1.0 };
-  GLfloat diffuse[] = { 0.8, 0.8, 0.8, 1.0 };
-  GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
-  glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
-  glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
-  glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
+  GLfloat position[] = { 0.33, 0.33, 0.33, 0.0 };
+  glLightfv(GL_LIGHT0, GL_POSITION, position);
 
   glLineWidth(3.0f);
   glPointSize(6.0f);
@@ -112,38 +103,71 @@ main(int argc, char *argv[])
     init_OpenGL();
 
     Model *m = Model::load(argv[1]);
+    int n = 1;
+    float current_fps = 0;
     engine::Engine& e = engine::Engine::instance();
     Camera::instance().set_position();
 
-    text::Stream helptext;
-    helptext
-      << "Showing model: " << utils::colors::green << basename(argv[1]) << utils::colors::white << "\n"
-      << "Number vertices: " << m->get_vertex_count() << "\n"
-      << "Zoom with mouse wheel\n\n"
-      << utils::colors::yellow << "q" << utils::colors::white << " to quit\n"
-      << utils::colors::yellow << "b" << utils::colors::white << " to toggle bones\n"
-      << utils::colors::yellow << "r" << utils::colors::white << " to toggle rotation\n"
-      << utils::colors::yellow << "a" << utils::colors::white << " to animation\n";
+    auto build_helptext = [&argv, &m, &n, &current_fps]() {
+      text::Stream helptext;
+      return helptext
+        << "Showing model: " << utils::colors::green << basename(argv[1]) << "\n"
+        << utils::colors::white << "Number vertices: " << m->get_vertex_count() << "\n"
+        << utils::colors::white << "Frames per second: " << utils::colors::yellow << (int)current_fps << "\n"
+        << utils::colors::white << "Number of instances: " << utils::colors::green << n << "\n"
+        << utils::colors::white << "Zoom with mouse wheel\n\n"
+        << utils::colors::yellow << "q" << utils::colors::white << " to quit\n"
+        << utils::colors::yellow << "b" << utils::colors::white << " to toggle bones\n"
+        << utils::colors::yellow << "r" << utils::colors::white << " to toggle rotation\n"
+        << utils::colors::yellow << "a" << utils::colors::white << " to animate\n"
+        << utils::colors::yellow << "+" << utils::colors::white << " to to increase models by 1\n"
+        << utils::colors::yellow << "-" << utils::colors::white << " to to decrease models by 1\n"
+        << utils::colors::yellow << "o" << utils::colors::white << " to to increase models by 100\n"
+        << utils::colors::yellow << "p" << utils::colors::white << " to to decrease models by 100\n"
+        ;
+    };
 
-    bool bones = false, rotate = false, animate = false;
-    e.on("tick", [m, &bones, &rotate, &animate](engine::Event e) {
-      static int rotation = 0;
-      if (rotate) rotation = (rotation + 2) % 360;
-      glPushMatrix();
-      glRotatef(rotation, 0.0f, 1.0f, 0.0f);
-      m->draw(animate ? e.elapsed : 0.0f, 1.0f, bones);
-      glPopMatrix();
+    e.on("tick", [&current_fps](engine::Event e) {
+      static int frames = 0;
+      static float last_measure = 0;
+      frames++;
+
+      if (e.elapsed - last_measure > 1.0f /* Measure every X seconds */) {
+        current_fps = (float)(frames) / (e.elapsed - last_measure);
+        frames = 0;
+        last_measure = e.elapsed;
+      }
     });
 
-    e.on("tick_nodepth", [helptext](engine::Event e) {
+    bool bones = false, rotate = false, animate = false;
+    e.on("tick", [m, &n, &bones, &rotate, &animate](engine::Event e) {
+      static int rotation = 0;
+      if (rotate) rotation = (rotation + 2) % 360;
+      for (int i = n; i > 0; --i) {
+        glPushMatrix();
+
+        glRotatef(rotation, 0.0f, 1.0f, 0.0f);
+        glTranslatef(0.0f, 0.0f,  1 - i);
+        m->normalize();
+        m->draw(animate ? e.elapsed : 0.0f);
+
+        glPopMatrix();
+      }
+    });
+
+    e.on("tick_nodepth", [build_helptext](engine::Event e) {
         GLTransform::enable2D();
         glTranslatef(10.0f, 0.0f, 0.0f);
-        helptext.draw();
+        build_helptext().draw();
         GLTransform::disable2D();
     });
 
-    e.on("keydown", [&bones, &rotate, &animate](engine::Event e) {
+    e.on("keydown", [&bones, &rotate, &animate, &n](engine::Event e) {
       switch (e.ev.key.keysym.sym) {
+        case SDLK_PLUS: n = n + 1; break;
+        case SDLK_MINUS: n = ((n - 1) < 0 ? 0 : n - 1); break;
+        case SDLK_o: n = n + 100; break;
+        case SDLK_p: n = ((n - 100) < 0 ? 0 : n - 100); break;
         case SDLK_q: engine::Engine::instance().stop(); break;
         case SDLK_b: bones   = !bones;   break;
         case SDLK_r: rotate  = !rotate;  break;

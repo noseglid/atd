@@ -291,7 +291,7 @@ Map::draw_square(const int& x, const int& y) const
     { 1.0f, 1.0f }
   };
 
-  GLfloat emission[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+  GLfloat emission[] = { 0.0f, 0.0f, 0.0f, 1.0f };
   if (y == highlighted.y && x == highlighted.x) {
     emission[0] = emission[1] = emission[2] = 0.8f;
   }
@@ -324,7 +324,6 @@ Map::draw(const float& elapsed) const
 {
   glEnable(GL_LIGHTING);
   glEnable(GL_TEXTURE_2D);
-  glDisable(GL_COLOR_MATERIAL);
 
   GLfloat
     diffuse[]  = { 0.8f, 0.8f, 0.8f, 1.0f },
@@ -341,6 +340,9 @@ Map::draw(const float& elapsed) const
     }
   }
 
+  GLfloat em[] = { 0.8, 0.8, 0.8, 1.0 };
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, em);
+
   const std::array<std::array<float, 4>, 4> rotations { {
     { { 0.0f,   0.0f, 0.0f, 0.0f } },
     { { 90.0f,  0.0f, 1.0f, 0.0f } },
@@ -353,9 +355,6 @@ Map::draw(const float& elapsed) const
     { {  -1.0f * width, 0.0f, -1.0f * height } },
     { {  0.0f,          0.0f, -1.0f * width  } }
   } };
-
-  GLfloat emission[] = { 0.5f, 0.5f, 0.5f, 1.0f };
-  glMaterialfv(GL_FRONT, GL_EMISSION, emission);
 
   for (int i = 0; i < rotations.size(); ++i) {
     glPushMatrix();

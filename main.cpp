@@ -33,9 +33,6 @@ init_SDL()
   SDL_EnableUNICODE(SDL_TRUE);
   SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 
-  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
-  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
   if (Mix_Init(MIX_INIT_OGG) < 0) {
     throw Exception("Could not initiate SDL mixer file formats.");
   }
@@ -95,13 +92,6 @@ init_OpenGL()
   glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
 
   glEnable(GL_LIGHT0);
-
-  GLfloat ambient[] = { 0.2, 0.2, 0.2, 1.0 };
-  GLfloat diffuse[] = { 0.8, 0.8, 0.8, 1.0 };
-  GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
-  glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
-  glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
-  glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
 }
 
 int

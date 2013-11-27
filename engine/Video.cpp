@@ -34,7 +34,10 @@ Video::set_resolution(const int& width, const int& height)
   res.width = width;
   res.height = height;
 
-  surface = SDL_SetVideoMode(res.width, res.height, 16, SDL_OPENGL | SDL_SWSURFACE | SDL_NOFRAME);
+  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
+  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+  surface = SDL_SetVideoMode(res.width, res.height, 32, SDL_OPENGL | SDL_SWSURFACE | SDL_NOFRAME);
   if (NULL == surface) {
     DBGERR("SDL error: " << SDL_GetError());
     throw Exception("Could not set resolution.");

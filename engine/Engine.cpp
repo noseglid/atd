@@ -50,12 +50,11 @@ Engine::run()
     }
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
     Camera::instance().orientate();
 
-    GLfloat pos[] = { 0.5, 0.5, 0.5, 0.0 };
+    GLfloat pos[] = { 0.5, 0.7, 0.5, 0.0 };
     glLightfv(GL_LIGHT0, GL_POSITION, pos);
 
     glPushMatrix();
