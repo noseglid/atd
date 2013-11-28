@@ -1,7 +1,9 @@
 #include "Engine.h"
 #include "Audio.h"
 #include "Debug.h"
+#include "gl/glm.h"
 
+#include <OpenGL/GL.h>
 #include <sys/time.h>
 
 B_NS_ENGINE
@@ -54,8 +56,8 @@ Engine::run()
 
     Camera::instance().orientate();
 
-    GLfloat pos[] = { 0.5, 0.7, 0.5, 0.0 };
-    glLightfv(GL_LIGHT0, GL_POSITION, pos);
+    glm::vec4 pos(0.5, 0.7, 0.5, 0.0);
+    glLightfv(GL_LIGHT0, GL_POSITION, &pos[0]);
 
     glPushMatrix();
     glEnable(GL_DEPTH_TEST);

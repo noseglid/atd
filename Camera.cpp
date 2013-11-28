@@ -1,23 +1,19 @@
 #include "Camera.h"
 #include "engine/Engine.h"
+#include "Debug.h"
 
-#include <OpenGL/glu.h>
+#include <OpenGL/gl.h>
 #include <iostream>
 #include <cmath>
 #include <float.h>
 
-Camera::Camera() : mouse_buttons_active(0), enabled(true)
+Camera::Camera() :
+  pos(10.0f, 8.0f, 10.0f),
+  dir(0.0f, -1.0f, -0.7f),
+  up(0.0f, 1.0f, 0.0f),
+  mouse_buttons_active(0),
+  enabled(true)
 {
-  pos.x = 10;
-  pos.y = 8;
-  pos.z = 10;
-  dir.x = 0.00;
-  dir.y = -1.00;
-  dir.z = -0.70;
-  up.x = 0;
-  up.y = 1;
-  up.z = 0;
-
   set_limits(-FLT_MAX, FLT_MAX, -FLT_MAX, FLT_MAX, -FLT_MAX, FLT_MAX);
 
   xzangle = asin(dir.x);
@@ -52,7 +48,7 @@ Camera::set_limits(float xmin, float xmax, float ymin, float ymax, float zmin, f
 }
 
 void
-Camera::set_position(Vector3 pos, Vector3 dir, Vector3 up)
+Camera::set_position(glm::vec3 pos, glm::vec3 dir, glm::vec3 up)
 {
   this->pos = pos;
   this->dir = dir;
@@ -81,18 +77,15 @@ Camera::impose_limits()
 void
 Camera::orientate() const
 {
-  gluLookAt(
-    pos.x, pos.y, pos.z,
-    pos.x + dir.x, pos.y + dir.y, pos.z + dir.z,
-    up.x, up.y, up.z
-  );
+  glm::mat4 matrix = glm::lookAt(pos, pos + dir, up);
+  glMultMatrixf(&matrix[0][0]);
 }
 
 void
-Camera::hover(GLdouble dx, GLdouble dz)
+Camera::hover(float dx, float dz)
 {
-  Vector3 perpendicular(dir.z, 0, -dir.x);
-  Vector3 direction(dir.x, 0, dir.z);
+  glm::vec3 perpendicular(dir.z, 0.0f, -dir.x);
+  glm::vec3 direction(dir.x, 0.0f, dir.z);
 
   pos -= perpendicular * dx * pos.y;
   pos -= direction * dz * pos.y;
@@ -132,22 +125,24 @@ Camera::mousemotion(const engine::Event& ev)
   if (((SDL_BUTTON_LEFT & mouse_buttons_active) ||
       (SDL_BUTTON_MIDDLE & mouse_buttons_active))
       && (mod & KMOD_LALT)) {
-    look(deg2rad(event.xrel)/5.0f, -deg2rad(event.yrel)/5.0f);
+    look(- event.xrel / 5.0f, - event.yrel / 5.0f);
   }
 }
 
 void
-Camera::look(GLdouble hangle, GLdouble vangle)
+Camera::look(float hangle, float vangle)
 {
-  Matrix4 rotationm = Matrix4::rotatey(hangle);
-  dir = rotationm * dir;
-  dir.normalize();
+  glm::mat4 rotate =
+    glm::rotate(glm::mat4(1.0), hangle, glm::vec3(0.0f, 1.0f, 0.0f)) *
+    glm::rotate(glm::mat4(1.0), vangle, glm::cross(dir, glm::vec3(0.0f, 1.0f, 0.0f)));
+
+  dir = glm::mat3(rotate) * dir;
 }
 
 void
-Camera::zoom(GLdouble delta)
+Camera::zoom(float delta)
 {
-  Vector3 newpos = pos - dir * delta;
+  glm::vec3 newpos = pos - dir * delta;
   if (newpos.y > limits.ymax || newpos.y < limits.ymin) return;
 
   pos = newpos;
