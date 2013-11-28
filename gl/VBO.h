@@ -3,6 +3,7 @@
 
 #include "Debug.h"
 #include "gl/GL.h"
+#include "gl/Material.h"
 
 #include <OpenGL/gl.h>
 
@@ -23,7 +24,7 @@ public:
   };
 
 private:
-  GLfloat ambient[4], diffuse[4], specular[4], emission[4], shininess;
+  Material mtl;
   GLuint texture;
   GLsizei count;
   GLuint buffers[BUFFER_TYPE_END];
@@ -72,12 +73,8 @@ public:
   );
 
   void set_texture(GLuint texture);
-  void mtl_ambient(GLfloat ambient[4]);
-  void mtl_diffuse(GLfloat diffuse[4]);
-  void mtl_emission(GLfloat emission[4]);
-  void mtl_specular(GLfloat specular[4], GLfloat shininess);
+  void set_material(const Material& mtl);
 
-  void use_material() const;
   void draw() const;
 };
 

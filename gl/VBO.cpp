@@ -2,13 +2,8 @@
 
 B_NS_GL
 
-VBO::VBO() : shininess(0.0), texture(0), count(0)
+VBO::VBO() : texture(0), count(0)
 {
-  ambient[0]  = ambient[1]  = ambient[2]  = 0.2; ambient[3]  = 1.0;
-  diffuse[0]  = diffuse[1]  = diffuse[2]  = 0.8; diffuse[3]  = 1.0;
-  specular[0] = specular[1] = specular[2] = 0.0; specular[3] = 1.0;
-  emission[0] = emission[1] = emission[2] = 0.0; emission[3] = 1.0;
-
   glGenBuffers(BUFFER_TYPE_END, buffers);
 }
 
@@ -83,38 +78,9 @@ VBO::set_texture(GLuint texture)
 }
 
 void
-VBO::mtl_ambient(GLfloat ambient[4])
+VBO::set_material(const Material& mtl)
 {
-  memcpy(this->ambient, ambient, 4 * sizeof(GLfloat));
-}
-
-void
-VBO::mtl_diffuse(GLfloat diffuse[4])
-{
-  memcpy(this->diffuse, diffuse, 4 * sizeof(GLfloat));
-}
-
-void
-VBO::mtl_emission(GLfloat emission[4])
-{
-  memcpy(this->emission, emission, 4 * sizeof(GLfloat));
-}
-
-void
-VBO::mtl_specular(GLfloat specular[4], GLfloat shininess)
-{
-  memcpy(this->specular, specular, 4 * sizeof(GLfloat));
-  this->shininess = shininess;
-}
-
-void
-VBO::use_material() const
-{
-  glMaterialfv(GL_FRONT, GL_AMBIENT,   ambient);
-  glMaterialfv(GL_FRONT, GL_DIFFUSE,   diffuse);
-  glMaterialfv(GL_FRONT, GL_EMISSION,  emission);
-  glMaterialfv(GL_FRONT, GL_SPECULAR,  specular);
-  glMaterialf (GL_FRONT, GL_SHININESS, shininess);
+  this->mtl = mtl;
 }
 
 void
@@ -125,7 +91,7 @@ VBO::draw() const
     glBindTexture(GL_TEXTURE_2D, this->texture);
   }
 
-  this->use_material();
+  this->mtl.use();
 
   glEnableClientState(GL_VERTEX_ARRAY);
   glEnableClientState(GL_NORMAL_ARRAY);

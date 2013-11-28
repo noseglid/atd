@@ -235,21 +235,7 @@ Model::build_vbo(const aiNode* node)
       vbo->set_texture(textures[mesh->mMaterialIndex]);
     }
 
-    GLfloat shininess = 0.0;
-    aiColor4D ambient, diffuse, specular, emissive;
-    mtl->Get(AI_MATKEY_SHININESS, shininess);
-    if (aiReturn_SUCCESS == mtl->Get(AI_MATKEY_COLOR_AMBIENT, ambient)) {
-      vbo->mtl_ambient((GLfloat*)&ambient);
-    }
-    if (aiReturn_SUCCESS == mtl->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse)) {
-      vbo->mtl_diffuse((GLfloat*)&diffuse);
-    }
-    if (aiReturn_SUCCESS == mtl->Get(AI_MATKEY_COLOR_SPECULAR, specular)) {
-      vbo->mtl_specular((GLfloat*)&specular, shininess);
-    }
-    if (aiReturn_SUCCESS == mtl->Get(AI_MATKEY_COLOR_EMISSIVE, emissive)) {
-      vbo->mtl_emission((GLfloat*)&emissive);
-    }
+    vbo->set_material(gl::Material::from_assimp(mtl));
 
     vbo->bind_indices(indices);
     vbo->bind_data(gl::VBO::TEXCOORD, texcoords);
