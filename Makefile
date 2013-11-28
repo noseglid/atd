@@ -15,8 +15,7 @@ LDFLAGS += -lRocketControls -lRocketDebugger -lRocketCore
 DB = $(shell pwd)/resources/offline.db
 
 # Core
-SRCS  = main.cpp
-SRCS += Mobile.cpp Model.cpp VBO.cpp Camera.cpp Audio.cpp
+SRCS += Mobile.cpp Model.cpp Camera.cpp Audio.cpp
 SRCS += Player.cpp User.cpp Game.cpp Map.cpp Path.cpp
 SRCS += KeyboardHandler.cpp MetaManager.cpp GLTransform.cpp GLShapes.cpp
 
@@ -47,8 +46,6 @@ DEPS := $(OBJS:.o=.d)
 BIN = atd
 
 MODELVIEWER = modelviewer
-MODELVIEWER_SRCS = modelviewer.cpp Model.cpp VBO.cpp ImageLoader.cpp Camera.cpp GLTransform.cpp engine/Engine.cpp engine/Video.cpp hud/HUD.cpp hud/InfoBar.cpp hud/ButtonBar.cpp hud/Bar.cpp hud/Button.cpp text/Dispatcher.cpp text/Text.cpp text/Stream.cpp math/Vector2.cpp math/Math.cpp math/Matrix4.cpp math/Vector3.cpp utils/Color.cpp gl/Shader.cpp gl/ShaderProgram.cpp
-MODELVIEWER_OBJS = $(MODELVIEWER_SRCS:.cpp=.o)
 
 all: $(DB) $(BIN) $(SUBDIRS)
 
@@ -69,7 +66,7 @@ $(SUBDIRS): $(DB)
 		sed -e 's/^ *//' -e 's/$$/:/' >> $*.d
 	@rm -f $*.d.tmp
 
-$(BIN): $(OBJS)
+$(BIN): $(OBJS) main.o
 	$(CXX) $^ $(LDFLAGS) -o $@
 	install_name_tool -change libassimp.3.dylib $(shell pwd)/deps/target/lib/libassimp.3.dylib $@
 
@@ -95,7 +92,7 @@ release_clean_osx:
 clean: release_clean_osx
 	rm -f $(OBJS) $(DEPS) $(BIN) $(DB) $(MODELVIEWER) $(MODELVIEWER_OBJS)
 
-$(MODELVIEWER): $(MODELVIEWER_OBJS)
+$(MODELVIEWER): $(OBJS) modelviewer.o
 	$(CXX) $^ $(LDFLAGS) -o $@
 	install_name_tool -change libassimp.3.dylib $(shell pwd)/deps/target/lib/libassimp.3.dylib $@
 
