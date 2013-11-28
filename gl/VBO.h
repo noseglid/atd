@@ -2,11 +2,14 @@
 #define __VBO_H__
 
 #include "Debug.h"
+#include "gl/GL.h"
 
 #include <OpenGL/gl.h>
 
 #include <vector>
 #include <map>
+
+B_NS_GL
 
 class VBO
 {
@@ -77,5 +80,7 @@ public:
   void use_material() const;
   void draw() const;
 };
+
+E_NS_GL
 
 #endif

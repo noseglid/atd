@@ -1,7 +1,7 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include "VBO.h"
+#include "gl/VBO.h"
 #include "math/Matrix4.h"
 
 #include <SDL/SDL.h>
@@ -41,7 +41,7 @@ class Model
   aiVector3D scene_min, scene_max, scene_center;
   int n_vertices;
 
-  std::vector<VBO *> vertex_buffers;
+  std::vector<gl::VBO*> vertex_buffers;
 
   void get_bounding_box_for_node(const aiNode* nd, aiVector3D& min, aiVector3D& max, aiMatrix4x4* trafo);
   void get_bounding_box(aiVector3D& min, aiVector3D& max);

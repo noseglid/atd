@@ -1,5 +1,7 @@
 #include "VBO.h"
 
+B_NS_GL
+
 VBO::VBO() : shininess(0.0), texture(0), count(0)
 {
   ambient[0]  = ambient[1]  = ambient[2]  = 0.2; ambient[3]  = 1.0;
@@ -167,3 +169,5 @@ VBO::draw() const
 
   glBindTexture(GL_TEXTURE_2D, 0);
 }
+
+E_NS_GL

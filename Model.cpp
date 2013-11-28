@@ -32,7 +32,7 @@ Model::VertexBoneInfluence::add(GLint boneid, GLfloat weight)
     }
   }
 
-  /* Ooops, more wieght than we have room for */
+  /* Ooops, more bones/weightsthan we have room for */
   throw ModelException("More than 4 bones is not supported");
 }
 
@@ -112,7 +112,7 @@ Model::~Model()
 {
   delete scene;
 
-  for (VBO *vbo : vertex_buffers) {
+  for (gl::VBO *vbo : vertex_buffers) {
     delete vbo;
   }
 }
@@ -230,7 +230,7 @@ Model::build_vbo(const aiNode* node)
       }
     }
 
-    VBO *vbo = new VBO();
+    gl::VBO *vbo = new gl::VBO();
     if (0 != mtl->GetTextureCount(aiTextureType_DIFFUSE)) {
       vbo->set_texture(textures[mesh->mMaterialIndex]);
     }
@@ -252,9 +252,9 @@ Model::build_vbo(const aiNode* node)
     }
 
     vbo->bind_indices(indices);
-    vbo->bind_data(VBO::TEXCOORD, texcoords);
-    vbo->bind_data(VBO::VERTEX,   vertices);
-    vbo->bind_data(VBO::NORMAL,   normals);
+    vbo->bind_data(gl::VBO::TEXCOORD, texcoords);
+    vbo->bind_data(gl::VBO::VERTEX,   vertices);
+    vbo->bind_data(gl::VBO::NORMAL,   normals);
 
     GLuint buffer = vbo->create_vertex_attrib(influences);
 
@@ -461,7 +461,7 @@ Model::draw(float elapsed)
     glUniformMatrix4fv(loc, 1, GL_FALSE, (GLfloat*)&identity);
   }
 
-  for (VBO *vbo : vertex_buffers) {
+  for (gl::VBO *vbo : vertex_buffers) {
     vbo->draw();
   }
 
