@@ -2,12 +2,9 @@
 #define __GL__MATERIAL_H__
 
 #include "gl/GL.h"
+#include "gl/glm.h"
 
 #include <assimp/material.h>
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wgnu"
-#include <glm/glm.hpp>
-#pragma clang diagnostic pop
 
 B_NS_GL
 
