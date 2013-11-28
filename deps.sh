@@ -23,6 +23,7 @@ DYLIBBUNDLERVER=0.4.3
 ROCKETVER=c95b8f4a1895340e1b847cba2d29a529601bb151
 BOOSTVER=1.54.0
 SOCIVER=3.2.2
+GLMVER=0.9.4.6
 
 build()
 {
@@ -297,6 +298,15 @@ build_soci()
   make -j8
   make install
   cd -
+}
+
+build_glm()
+{
+  NAME="glm-$GLMVER"
+  fetch "http://sourceforge.net/projects/ogl-math/files/$NAME/$NAME.zip/download" $NAME.zip
+
+  unzip -q -o "$NAME.zip"
+  cp -r glm/glm $INSTALLDIR/include/
 }
 
 export CFLAGS="-arch x86_64"
