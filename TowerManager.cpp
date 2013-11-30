@@ -114,7 +114,7 @@ TowerManager::dummy_tower(int x, int y)
       x == 0 || x == map->get_width() - 1 ||
       y == 0 || y == map->get_height() - 1) {
     /* This is not a valid coord for a dummy tower, reset all params */
-    pos = glm::vec3(0.0f, 0.0f, 0.0f);
+    pos = glm::vec3(-200.0f, 0.0f, -200.0f);
     hlx = -1;
     hly = -1;
   }
