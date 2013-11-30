@@ -92,6 +92,8 @@ init_OpenGL()
   glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
 
   glEnable(GL_LIGHT0);
+  GLfloat ambient[] = { 0.3, 0.3, 0.3, 1.0 };
+  glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
 }
 
 int

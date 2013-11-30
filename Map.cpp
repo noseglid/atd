@@ -122,7 +122,7 @@ Map::create_map_heightmap()
   for (size_t h = 0; h < height + 2; ++h) {
     std::vector<float> row;
     for (size_t w = 0; w < width + 2; ++w) {
-      row.push_back((rand() / (float)RAND_MAX) / 5.0f);
+      row.push_back((rand() / (float)RAND_MAX) / 3.5f);
     }
     heightmap.push_back(row);
   }
@@ -161,7 +161,7 @@ Map::calc_normal(
   glm::vec3 v3(0,       hmap[h + 1][w], -SQSIZE);
   glm::vec3 v4(-SQSIZE, hmap[h][w - 1], 0);
 
-  glm::vec3 res = v1 * v2 + v2 * v3 + v3 * v4 + v4 * v1;
+  glm::vec3 res = glm::cross(v1, v2) + glm::cross(v2, v3) + glm::cross(v3, v4) + glm::cross(v4, v1);
   res.x *= exaggeration;
   res.z *= exaggeration;
 
@@ -175,7 +175,7 @@ Map::generate_map_normals()
   for (size_t h = 0; h < height + 1; ++h) {
     normals[h] = new glm::vec3[width + 2];
     for (size_t w = 0; w < width + 1; ++w) {
-      normals[h][w] = calc_normal(h, height, w, width, heightmap, 4.0f);
+      normals[h][w] = calc_normal(h, height, w, width, heightmap, 2.0f);
     }
   }
 }
@@ -327,7 +327,7 @@ Map::draw(const float& elapsed) const
   GLfloat
     diffuse[]  = { 0.8f, 0.8f, 0.8f, 1.0f },
     specular[] = { 0.0f, 0.0f, 0.0f, 1.0f },
-    ambient[]  = { 0.01f, 0.01f, 0.01f, 1.0f };
+    ambient[]  = { 0.2f, 0.2f, 0.2f, 1.0f };
 
   glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
   glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
@@ -338,9 +338,6 @@ Map::draw(const float& elapsed) const
       draw_square(w, h);
     }
   }
-
-  GLfloat em[] = { 0.8, 0.8, 0.8, 1.0 };
-  glMaterialfv(GL_FRONT, GL_DIFFUSE, em);
 
   const std::array<std::array<float, 4>, 4> rotations { {
     { { 0.0f,   0.0f, 0.0f, 0.0f } },
