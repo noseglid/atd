@@ -8,23 +8,24 @@
 #include "Faction.h"
 #include "hud/InfoBox.h"
 #include "hud/Button.h"
+#include "gl/glm.h"
 
 #include <vector>
 
 class TowerManager
 {
-  typedef std::map<Vector3, Tower*, Vector3cmp> tlist_t;
+  typedef std::map<glm::vec3, Tower*, gl::glmvec3cmp > tlist_t;
 
   std::vector<engine::Engine::id_t> events;
 
-  Vector3 dummy_tower_pos;
+  glm::vec3 dummy_tower_pos;
   std::string build_tower;
   std::map<std::string, Tower*> dummy_towers;
   std::map<std::string, Json::Value> available_towers;
 
   tlist_t::iterator selected_tower;
   tlist_t towers;
-  Vector3 click;
+  glm::vec3 click;
 
   HUD::Button *btnupgr, *btnsell;
 
@@ -38,9 +39,9 @@ class TowerManager
   TowerManager(const TowerManager& rhs);
   void operator=(const TowerManager& rhs);
 
-  Tower *create_tower(std::string tower, Vector3 pos);
+  Tower *create_tower(std::string tower, glm::vec3 pos);
   void dummy_tower(int x, int y);
-  bool purchase_tower(Vector3 pos);
+  bool purchase_tower(glm::vec3 pos);
   void upgrade_tower();
   void sell_tower();
   void build_tower_unset();

@@ -2,6 +2,7 @@
 #include "text/Dispatcher.h"
 #include "GLTransform.h"
 #include "Bar.h"
+#include "gl/glm.h"
 
 #include <algorithm>
 #include <climits>
@@ -44,9 +45,9 @@ InfoBox::set_content(text::Stream stream)
 void
 InfoBox::set_bounding_box()
 {
-  Rect streambb = stream.get_bounding_box();
-  height = streambb.height;
-  width  = streambb.width;
+  glm::ivec4 streambb = stream.get_bounding_box();
+  height = streambb.w;
+  width  = streambb.z;
 
   int lr = HUD::screen_width - width - BOX_MARGIN - 2 * BOX_PADDING;
   int ll = BOX_MARGIN;

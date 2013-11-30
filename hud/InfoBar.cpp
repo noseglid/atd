@@ -68,16 +68,16 @@ InfoBar::tick() const
 
   glPushMatrix();
   glLoadIdentity();
-  Rect bb1 = info_text1.get_bounding_box();
-  glTranslatef(HUD::screen_width - (BAR_OFFSET + BAR_PADDING + bb1.width),
-               HUD::screen_height - (BAR_OFFSET + BAR_PADDING + bb1.height), 0.0f);
+  glm::ivec4 bb1 = info_text1.get_bounding_box();
+  glTranslatef(HUD::screen_width - (BAR_OFFSET + BAR_PADDING + bb1.z),
+               HUD::screen_height - (BAR_OFFSET + BAR_PADDING + bb1.w), 0.0f);
   info_text1.draw();
   glPopMatrix();
 
   glPushMatrix();
-  Rect bb2 = info_text2.get_bounding_box();
+  glm::ivec4 bb2 = info_text2.get_bounding_box();
   glTranslatef(BAR_OFFSET + BAR_PADDING,
-               HUD::screen_height - (BAR_OFFSET + BAR_PADDING + bb2.height), 0.0f);
+               HUD::screen_height - (BAR_OFFSET + BAR_PADDING + bb2.w), 0.0f);
   info_text2.draw();
   glPopMatrix();
 

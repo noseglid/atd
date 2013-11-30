@@ -1,7 +1,6 @@
 #ifndef __TOWER_H__
 #define __TOWER_H__
 
-#include "math/Math.h"
 #include "Model.h"
 #include "Creep.h"
 #include "Projectile.h"
@@ -15,7 +14,7 @@ class Tower : public Purchasable
 {
   friend class TowerManager;
 
-  Vector3 pos;
+  glm::vec3 pos;
   std::list<Projectile *> projectiles;
 
   Creep *get_target();
@@ -26,14 +25,14 @@ class Tower : public Purchasable
   Model *model;
 
 public:
-  Tower(Json::Value spec, Vector3 pos);
+  Tower(Json::Value spec, glm::vec3 pos);
   void draw(const float& elapsed, const float& opacity = 1.0) const;
   void draw_range_circle() const;
 
-  void set_position(Vector3 pos);
+  void set_position(glm::vec3 pos);
   void upgrade(int level, float reload, float range, float damage);
 
-  Vector3 get_position() const;
+  glm::vec3 get_position() const;
   std::string get_name() const;
   int get_level() const;
   bool is_hero() const;

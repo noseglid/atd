@@ -2,7 +2,6 @@
 #define MODEL_H
 
 #include "gl/VBO.h"
-#include "math/Matrix4.h"
 
 #include <SDL/SDL.h>
 #include <OpenGL/gl.h>

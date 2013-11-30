@@ -44,7 +44,7 @@ public:
   CreepManager(const Json::Value& levelspec);
   ~CreepManager();
 
-  std::vector<Creep*> creeps_inside_circle(Vector3 center, float radius);
+  std::vector<Creep*> creeps_inside_circle(glm::vec3 center, float radius);
 };
 
 #endif

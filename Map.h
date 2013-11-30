@@ -4,7 +4,7 @@
 #include "engine/Engine.h"
 #include "Path.h"
 #include "Model.h"
-#include "math/Math.h"
+#include "gl/glm.h"
 
 #include <fstream>
 #include <iostream>
@@ -24,7 +24,7 @@ struct MapEvent
 class Map : public de::Emitter<MapEvent>
 {
   typedef std::vector<std::vector<float>> heightmap_t;
-  typedef std::vector<std::vector<Vector3>> normals_t;
+  typedef std::vector<std::vector<glm::vec3>> normals_t;
   typedef struct {
     Model *model;
     float tx, ty, tz;
@@ -35,7 +35,7 @@ class Map : public de::Emitter<MapEvent>
   std::vector<engine::Engine::id_t> events;
 
   size_t width, height;
-  Vector2 highlighted;
+  glm::vec2 highlighted;
   bool draw_meta;
 
   Path *path;
@@ -43,7 +43,7 @@ class Map : public de::Emitter<MapEvent>
   std::vector<GLint> textures;
 
   heightmap_t heightmap;
-  Vector3 **normals;
+  glm::vec3 **normals;
 
   size_t edge_width;
   heightmap_t heightmap_edge;
@@ -61,7 +61,7 @@ class Map : public de::Emitter<MapEvent>
   void create_map_heightmap();
   void create_edge_heightmap();
 
-  Vector3 calc_normal(
+  glm::vec3 calc_normal(
     int h, int hmax,
     int w, int wmax,
     const heightmap_t& map,
@@ -84,13 +84,13 @@ public:
 
   void draw(const float& elapsed) const;
   void draw_normals() const;
-  Vector3 get_center_of(int x, int y) const;
+  glm::vec3 get_center_of(int x, int y) const;
   const Path *get_path() const;
   size_t get_width() const;
   size_t get_height() const;
 
   void set_highlight(const int& x, const int& y);
-  Vector2 get_highlight() const;
+  glm::vec2 get_highlight() const;
 };
 
 #endif

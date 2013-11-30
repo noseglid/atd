@@ -1,12 +1,12 @@
 #ifndef __CREEP_H__
 #define __CREEP_H__
 
-#include "math/Math.h"
 #include "Path.h"
 #include "Model.h"
 #include "Targetable.h"
 #include "Projectile.h"
 #include "Mobile.h"
+#include "gl/glm.h"
 
 #include <de.h>
 #include <pjson.hpp>
@@ -19,7 +19,7 @@ class Creep : public de::Emitter<>, public Targetable, public Mobile
   float distance_moved;
   Mix_Chunk *audio_death;
   Model *model;
-  Matrix4 trafo;
+  glm::mat4 trafo;
 
   void travel_to(const PathCoord& target);
 
@@ -27,7 +27,7 @@ protected:
   const Path *path;
 
   PathCoord target;
-  Vector3 vtarget;
+  glm::vec3 vtarget;
 
   float animinc;
 
@@ -35,14 +35,15 @@ protected:
   int reward;
   int life_cost;
 
-  Vector3 pos, dir;
+  glm::vec3 pos, dir;
+  float rotation;
 
 public:
   Creep(Json::Value spec, float animinc = 0);
   virtual ~Creep();
 
   virtual void struck(Projectile *p);
-  virtual Vector3 get_position() const;
+  virtual glm::vec3 get_position() const;
 
   float get_health() const;
   float get_distance_moved() const;

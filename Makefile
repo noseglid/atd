@@ -15,7 +15,7 @@ LDFLAGS += -lRocketControls -lRocketDebugger -lRocketCore
 DB = $(shell pwd)/resources/offline.db
 
 # Core
-SRCS += Mobile.cpp Model.cpp Camera.cpp Audio.cpp
+SRCS += Mobile.cpp Model.cpp Camera.cpp Audio.cpp Debug.cpp
 SRCS += Player.cpp User.cpp Game.cpp Map.cpp Path.cpp
 SRCS += KeyboardHandler.cpp MetaManager.cpp GLTransform.cpp GLShapes.cpp
 
@@ -24,7 +24,6 @@ SRCS += $(wildcard engine/*.cpp)
 SRCS += $(wildcard dal/*.cpp)
 SRCS += $(wildcard ui/*.cpp)
 SRCS += $(wildcard hud/*.cpp)
-SRCS += $(wildcard math/*.cpp)
 SRCS += $(wildcard text/*.cpp)
 SRCS += $(wildcard gl/*.cpp)
 

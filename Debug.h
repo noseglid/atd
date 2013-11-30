@@ -1,12 +1,13 @@
 #ifndef __DEBUG_H__
 #define __DEBUG_H__
 
-#include <iostream>
+#if DEBUG == 1
 
 #define __WHERE                "[" << __FILE__ << ":" << std::dec << __LINE__ << "] "
 #define __OUTPUT(stream, args) stream << __WHERE << args << std::endl
 
-#if DEBUG == 1
+#include <iostream>
+#include "gl/glm.h"
 
 #define BLUE    "\033[0;34m"
 #define BBLUE   "\033[1;34m"
@@ -19,6 +20,8 @@
 #define DBG(args)              __OUTPUT(std::cout, BBLUE   "[DEBUG] "   BLUE   << args << RESET)
 #define DBGWRN(args)           __OUTPUT(std::cout, BYELLOW "[WARNING] " YELLOW << args << RESET)
 #define DBGERR(args)           __OUTPUT(std::cerr, BRED    "[ERROR] "   RED    << args << RESET)
+
+std::ostream& operator<<(std::ostream& out, const glm::vec3& vec);
 
 #else
 

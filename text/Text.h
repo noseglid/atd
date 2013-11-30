@@ -1,7 +1,6 @@
 #ifndef __TEXT_H__
 #define __TEXT_H__
 
-#include "math/Math.h"
 #include "utils/Color.h"
 
 #include <string>

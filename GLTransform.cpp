@@ -6,15 +6,16 @@
 void
 GLTransform::billboard()
 {
-  Matrix4 m;
+  glm::mat4 m(1.0);
   glGetFloatv(GL_MODELVIEW_MATRIX, (GLfloat*)&m);
 
-  m.c1r1 = m.c2r2 = m.c3r3 = 1.0f;
-  m.c1r2 = m.c1r3 = 0.0f;
-  m.c2r1 = m.c2r3 = 0.0f;
-  m.c3r1 = m.c3r2 = 0.0f;
+  GLfloat *ptr = reinterpret_cast<GLfloat*>(&m);
 
-  glLoadMatrixf((GLfloat*)&m);
+  ptr[0] = 1.0f; ptr[1] = 0.0f; ptr[2]  = 0.0f;
+  ptr[4] = 0.0f; ptr[5] = 1.0f; ptr[6]  = 0.0f;
+  ptr[8] = 0.0f; ptr[9] = 0.0f; ptr[10] = 1.0f;
+
+  glLoadMatrixf(&m[0][0]);
 }
 
 void
@@ -52,7 +53,7 @@ GLTransform::disable2D()
   glEnable(GL_LIGHTING);
 }
 
-Vector3
+glm::vec3
 GLTransform::unproject(const int& x, const int& y)
 {
   GLint viewport[4];
@@ -70,5 +71,5 @@ GLTransform::unproject(const int& x, const int& y)
   glReadPixels((int)winX, (int)winY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ);
   gluUnProject(winX, winY, winZ, modelview, projection, viewport, &posX, &posY, &posZ);
 
-  return Vector3(posX, posY, posZ);
+  return glm::vec3(posX, posY, posZ);
 }

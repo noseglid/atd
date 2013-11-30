@@ -70,7 +70,7 @@ Dispatcher::overlay(
 }
 
 void
-Dispatcher::scrolling(const std::string& text, const Vector3& pos, utils::Color clr)
+Dispatcher::scrolling(const std::string& text, const glm::vec3& pos, utils::Color clr)
 {
   WorldText wt;
 
@@ -87,6 +87,7 @@ Dispatcher::scrolling(const std::string& text, const Vector3& pos, utils::Color 
   }
 
   wt.pos   = pos;
+  wt.delta = glm::vec3(0.0f, 0.0f, 0.0f);
   wt.color = clr;
 
   scrollings.push_back(wt);
@@ -117,7 +118,7 @@ Dispatcher::tick()
     glEnd();
     wt.delta.y += 0.005;
 
-    it = (wt.delta.length() >= 0.5f) ? scrollings.erase(it) : it + 1;
+    it = (glm::length(wt.delta) >= 0.5f) ? scrollings.erase(it) : it + 1;
     glPopMatrix();
   }
 

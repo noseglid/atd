@@ -88,7 +88,7 @@ Renderer::LoadTexture(
   Rocket::Core::Vector2i& texture_dimensions,
   const Rocket::Core::String& source)
 {
-  Vector2 dimensions;
+  glm::ivec2 dimensions;
   if (0 == (texture_handle = IL::GL::texture(source.CString(), dimensions, false))) {
     return false;
   }

@@ -4,7 +4,7 @@
 #include <OpenGL/gl.h>
 #include <cmath>
 
-Projectile::Projectile(Targetable *target, Vector3 pos, float damage) :
+Projectile::Projectile(Targetable *target, glm::vec3 pos, float damage) :
   Mobile(5.2),
   target(target),
   pos(pos),
@@ -23,7 +23,7 @@ Projectile::set_target(Targetable *itarget)
   target = itarget;
 }
 
-Vector3
+glm::vec3
 Projectile::get_target_pos() const
 {
   return target_pos;
@@ -42,11 +42,10 @@ Projectile::tick(const float& elapsed)
 
   target_pos = target->get_position();
 
-  Vector3 dest(target_pos.x, target_pos.y + 0.5, target_pos.z);
-  Vector3 dir = (dest - pos);
-  dir.normalize();
+  glm::vec3 dest(target_pos.x, target_pos.y + 0.5, target_pos.z);
+  glm::vec3 dir = glm::normalize(dest - pos);
 
-  Vector3 step = dir * get_speed_factor(elapsed);
+  glm::vec3 step = dir * get_speed_factor(elapsed);
 
   /* Derived from P + aS = T, where P is position, S is the step,
    * and T is the target, if a < 1.0 then less than one step

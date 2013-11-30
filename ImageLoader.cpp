@@ -14,7 +14,7 @@ BEGIN_NAMESPACE_IL
 static std::map<std::string, GLuint> loaded_textures;
 
 GLuint
-GL::texture(std::string path, Vector2& dimensions, bool set_searchdir)
+GL::texture(std::string path, glm::ivec2& dimensions, bool set_searchdir)
 {
   if (set_searchdir) {
     path = "resources/textures/" + path;
@@ -79,7 +79,7 @@ GL::texture(std::string path, Vector2& dimensions, bool set_searchdir)
 GLuint
 GL::texture(std::string path, bool set_searchdir)
 {
-  Vector2 v;
+  glm::ivec2 v;
   return GL::texture(path, v, set_searchdir);
 }
 

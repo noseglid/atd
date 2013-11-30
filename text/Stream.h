@@ -2,7 +2,7 @@
 #define __TEXT__STREAM_H__
 
 #include "text/Text.h"
-#include "math/Rect.h"
+#include "gl/glm.h"
 
 #include <sstream>
 
@@ -73,7 +73,7 @@ public:
   void clear();
   void draw() const;
 
-  Rect get_bounding_box() const;
+  glm::ivec4 get_bounding_box() const;
   bool empty() const;
 
   Stream& operator<<(const char* c)

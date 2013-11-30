@@ -90,12 +90,12 @@ TowerManager::set_faction(Faction::Faction faction)
 
     available_towers.insert(std::make_pair(name, jspec));
 
-    dummy_towers.insert(std::make_pair(name, create_tower(name, Vector3())));
+    dummy_towers.insert(std::make_pair(name, create_tower(name, glm::vec3())));
   }
 }
 
 Tower *
-TowerManager::create_tower(std::string tower, Vector3 pos)
+TowerManager::create_tower(std::string tower, glm::vec3 pos)
 {
   Json::Value spec = available_towers.at(tower);
   return new Tower(spec, pos);
@@ -105,7 +105,7 @@ void
 TowerManager::dummy_tower(int x, int y)
 {
   Map *map = Game::instance().map;
-  Vector3 pos = map->get_center_of(x, y);
+  glm::vec3 pos = map->get_center_of(x, y);
   pos.y = 0.0f;
   int hlx = x, hly = y;
 
@@ -114,7 +114,7 @@ TowerManager::dummy_tower(int x, int y)
       x == 0 || x == map->get_width() - 1 ||
       y == 0 || y == map->get_height() - 1) {
     /* This is not a valid coord for a dummy tower, reset all params */
-    pos = Vector3(0.0f, 0.0f, 0.0f);
+    pos = glm::vec3(0.0f, 0.0f, 0.0f);
     hlx = -1;
     hly = -1;
   }
@@ -191,7 +191,7 @@ TowerManager::button_mouse_event(bool on, Json::Value spec, HUD::Button *button)
 }
 
 bool
-TowerManager::purchase_tower(Vector3 pos)
+TowerManager::purchase_tower(glm::vec3 pos)
 {
   if (towers.end() != towers.find(pos)) {
     return false;
@@ -212,7 +212,7 @@ TowerManager::purchase_tower(Vector3 pos)
   if (t->is_hero()) {
     /* Trying to purchase a hero tower. If we already have one, fail - only one is allowed. */
     tlist_t::iterator it = std::find_if(towers.begin(), towers.end(),
-      [](std::pair<Vector3, Tower *> entry) {
+      [](std::pair<glm::vec3, Tower *> entry) {
         return entry.second->is_hero();
       }
     );
@@ -221,12 +221,12 @@ TowerManager::purchase_tower(Vector3 pos)
   }
 
   towers.insert(std::make_pair(pos, t));
-  dummy_tower_pos = Vector3();
+  dummy_tower_pos = glm::vec3();
   Game::instance().map->set_highlight(-1, -1);
 
   std::stringstream ss;
   ss << "-" << t->price << "g";
-  text::Dispatcher::instance().scrolling(ss.str(), Vector3(pos.x, pos.y + 1.0f, pos.z), utils::colors::gold);
+  text::Dispatcher::instance().scrolling(ss.str(), glm::vec3(pos.x, pos.y + 1.0f, pos.z), utils::colors::gold);
   return true;
 }
 
@@ -257,7 +257,7 @@ TowerManager::upgrade_tower()
     .find(selected_tower->second->get_name())
     ->second["upgrades"].asArray().at(t->get_level() - 1);
 
-  Vector3 textpos = t->get_position();
+  glm::vec3 textpos = t->get_position();
   textpos.y += 1.0f;
 
   Purchasable dummy(upgrade["price"].asInt());
@@ -292,7 +292,7 @@ TowerManager::sell_tower()
   int return_value = Game::instance().player->sell(selected_tower->second);
   sellinfo->clear();
 
-  Vector3 textpos = selected_tower->second->get_position();
+  glm::vec3 textpos = selected_tower->second->get_position();
   textpos.y += 1.0f;
 
   std::stringstream ss;
@@ -334,10 +334,10 @@ bool
 TowerManager::tower_purchase_if()
 {
   Map *map = Game::instance().map;
-  Vector2 hl = map->get_highlight();
+  glm::vec2 hl = map->get_highlight();
   if (0.0f >= hl.x || 0.0f >= hl.y) return false;
 
-  Vector3 pos = map->get_center_of(hl.x, hl.y);
+  glm::vec3 pos = map->get_center_of(hl.x, hl.y);
   pos.y = 0.0f;
   bool purchased = purchase_tower(pos);
   if (purchased) {
@@ -481,8 +481,8 @@ void
 TowerManager::tower_select_if(int clickx, int clicky)
 {
   try {
-    Vector3 pos3d = GLTransform::unproject(clickx, clicky);
-    Vector3 search = Game::instance().map->get_center_of(pos3d.x, pos3d.z);
+    glm::vec3 pos3d = GLTransform::unproject(clickx, clicky);
+    glm::vec3 search = Game::instance().map->get_center_of(pos3d.x, pos3d.z);
     search.y = 0.0f;
 
     select_tower(towers.find(search));
@@ -548,7 +548,7 @@ TowerManager::tick(const engine::Event& ev)
     glPopMatrix();
   }
 
-  for (std::pair<Vector3, Tower*> t : towers) {
+  for (std::pair<glm::vec3, Tower*> t : towers) {
     t.second->shoot_if(elapsed);
     t.second->update_projectiles(elapsed);
 

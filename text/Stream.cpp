@@ -27,12 +27,12 @@ Stream::clear()
 void
 Stream::draw() const
 {
-  Rect bb = get_bounding_box();
+  glm::ivec4 bb = get_bounding_box();
   for (entry e : content) {
     text::Dispatcher::overlay(
       e.text,
       e.x,
-      bb.height - e.y,
+      bb.w - e.y,
       e.clr,
       e.ptsize
     );
@@ -40,15 +40,15 @@ Stream::draw() const
 }
 
 
-Rect
+glm::ivec4
 Stream::get_bounding_box() const
 {
-  Rect bb;
+  glm::ivec4 bb;
   for (entry e : content) {
     int w, h;
     text::Text::size(e.text, &w, &h, e.ptsize);
-    bb.height = std::max(bb.height, e.y + h);
-    bb.width  = std::max(bb.width,  e.x + w);
+    bb.w = std::max(bb.w, e.y + h);
+    bb.z = std::max(bb.z, e.x + w);
   }
 
   return bb;

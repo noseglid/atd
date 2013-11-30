@@ -2,6 +2,7 @@
 #define __TEXT__DISPATCHER_H__
 
 #include "text/Text.h"
+#include "gl/glm.h"
 
 #include <OpenGL/gl.h>
 
@@ -12,7 +13,7 @@ class Dispatcher
   struct WorldText
   {
     GLuint texture;
-    Vector3 pos, delta;
+    glm::vec3 pos, delta;
     utils::Color color;
     int width, height;
   };
@@ -32,7 +33,7 @@ public:
 
   void scrolling(
     const std::string& text,
-    const Vector3& pos,
+    const glm::vec3& pos,
     utils::Color clr = utils::colors::white
   );
 

@@ -2,16 +2,17 @@
 #define __DUMMYCREEP_H__
 
 #include "Targetable.h"
+#include "gl/glm.h"
 
 class DummyCreep : public Targetable
 {
-  Vector3 pos;
+  glm::vec3 pos;
 
 public:
-  DummyCreep(Vector3 pos);
+  DummyCreep(glm::vec3 pos);
   virtual ~DummyCreep();
 
-  Vector3 get_position() const;
+  glm::vec3 get_position() const;
   void struck(Projectile *p);
 };
 

@@ -1,6 +1,6 @@
 #include "DummyCreep.h"
 
-DummyCreep::DummyCreep(Vector3 pos) :
+DummyCreep::DummyCreep(glm::vec3 pos) :
   pos(pos)
 {
 }
@@ -9,7 +9,7 @@ DummyCreep::~DummyCreep()
 {
 }
 
-Vector3
+glm::vec3
 DummyCreep::get_position() const
 {
   return pos;

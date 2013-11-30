@@ -146,7 +146,7 @@ Map::create_edge_heightmap()
   }
 }
 
-Vector3
+glm::vec3
 Map::calc_normal(
   int h, int hmax,
   int w, int wmax,
@@ -154,27 +154,26 @@ Map::calc_normal(
   float exaggeration) const
 {
   if (0 >= h || hmax - 1 < h || 0 >= w || wmax - 1 < w)
-    return Vector3(0.0f, 1.0f, 0.0f);
+    return glm::vec3(0.0f, 1.0f, 0.0f);
 
-  Vector3 v1(0,       hmap[h - 1][w], SQSIZE);
-  Vector3 v2(SQSIZE,  hmap[h][w + 1], 0);
-  Vector3 v3(0,       hmap[h + 1][w], -SQSIZE);
-  Vector3 v4(-SQSIZE, hmap[h][w - 1], 0);
+  glm::vec3 v1(0,       hmap[h - 1][w], SQSIZE);
+  glm::vec3 v2(SQSIZE,  hmap[h][w + 1], 0);
+  glm::vec3 v3(0,       hmap[h + 1][w], -SQSIZE);
+  glm::vec3 v4(-SQSIZE, hmap[h][w - 1], 0);
 
-  Vector3 res = v1 * v2 + v2 * v3 + v3 * v4 + v4 * v1;
+  glm::vec3 res = v1 * v2 + v2 * v3 + v3 * v4 + v4 * v1;
   res.x *= exaggeration;
   res.z *= exaggeration;
-  res.normalize();
 
-  return res;
+  return glm::normalize(res);
 }
 
 void
 Map::generate_map_normals()
 {
-  normals = new Vector3*[height + 2];
+  normals = new glm::vec3*[height + 2];
   for (size_t h = 0; h < height + 1; ++h) {
-    normals[h] = new Vector3[width + 2];
+    normals[h] = new glm::vec3[width + 2];
     for (size_t w = 0; w < width + 1; ++w) {
       normals[h][w] = calc_normal(h, height, w, width, heightmap, 4.0f);
     }
@@ -185,7 +184,7 @@ void
 Map::generate_edge_normals()
 {
   for (size_t h = 0; h < EDGE_STEPS + 1; ++h) {
-    std::vector<Vector3> row;
+    std::vector<glm::vec3> row;
     for(size_t w = 0; w < edge_width + 1; ++w) {
       row.push_back(calc_normal(h, EDGE_STEPS, w, edge_width, heightmap_edge));
     }
@@ -218,7 +217,7 @@ Map::mousemotion(const engine::Event& ge)
 {
   static MapEvent me;
 
-  Vector3 v = GLTransform::unproject(ge.ev.motion.x, ge.ev.motion.y);
+  glm::vec3 v = GLTransform::unproject(ge.ev.motion.x, ge.ev.motion.y);
   int newx = static_cast<int>(v.x);
   int newy = static_cast<int>(v.z);
   if ((newx >= 0 && newx < width && newy >= 0 && newy < height) &&
@@ -380,7 +379,7 @@ Map::draw_normals() const
   for (size_t h = 0; h < height + 1; ++h) {
     for (size_t w = 0; w < width + 1; ++w) {
       glBegin(GL_LINES);
-      Vector3 n = normals[h][w];
+      glm::vec3 n = normals[h][w];
       n /= 4;
       glVertex3f(w, heightmap[h][w], h);
       glVertex3f(w + n.x, heightmap[h][w] + n.y, h + n.z);
@@ -392,7 +391,7 @@ Map::draw_normals() const
   glEnable(GL_DEPTH_TEST);
 }
 
-Vector3
+glm::vec3
 Map::get_center_of(int x, int y) const
 {
   if (x > width || y > height)
@@ -404,7 +403,7 @@ Map::get_center_of(int x, int y) const
   ) / 4;
   float dz = (float)y + SQSIZE / 2.0f;
 
-  return Vector3(dx, dy, dz);
+  return glm::vec3(dx, dy, dz);
 }
 
 const Path *
@@ -432,7 +431,7 @@ Map::set_highlight(const int& x, const int& y)
   highlighted.y = y;
 }
 
-Vector2
+glm::vec2
 Map::get_highlight() const
 {
   return highlighted;

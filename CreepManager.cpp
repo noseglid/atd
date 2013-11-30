@@ -150,12 +150,12 @@ CreepManager::remove_creep(Creep *creep)
 }
 
 std::vector<Creep*>
-CreepManager::creeps_inside_circle(Vector3 center, float radius)
+CreepManager::creeps_inside_circle(glm::vec3 center, float radius)
 {
   std::map<float, Creep*> sorted_result;
   float radius_squared = radius * radius;
   for (Creep *c : creeps) {
-    Vector3 delta = c->get_position() - center;
+    glm::vec3 delta = c->get_position() - center;
     delta *= delta;
     if (delta.x + delta.z <= radius_squared) {
       sorted_result.insert(std::make_pair(c->get_distance_moved(), c));

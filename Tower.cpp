@@ -10,7 +10,7 @@
 
 gl::ShaderProgram *shader_range_circle = NULL;
 
-Tower::Tower(Json::Value spec, Vector3 pos) :
+Tower::Tower(Json::Value spec, glm::vec3 pos) :
   Purchasable(spec["price"].asInt()),
   pos(pos),
   name(spec["desc"]["name"].asString()),
@@ -63,7 +63,7 @@ Tower::draw(const float& elapsed, const float& opacity) const
 }
 
 void
-Tower::set_position(Vector3 pos)
+Tower::set_position(glm::vec3 pos)
 {
   this->pos = pos;
 }
@@ -77,7 +77,7 @@ Tower::upgrade(int level, float reload, float range, float damage)
   this->damage = damage;
 }
 
-Vector3
+glm::vec3
 Tower::get_position() const
 {
   return this->pos;
@@ -163,7 +163,7 @@ Tower::shoot_if(const float& elapsed)
 
   Projectile *p = new Projectile(
     target,
-    Vector3(pos.x, pos.y + 1.0f, pos.z),
+    glm::vec3(pos.x, pos.y + 1.0f, pos.z),
     damage
   );
 

@@ -29,7 +29,7 @@ Creep::Creep(Json::Value spec, float animinc) :
   pos = map->get_center_of(start.x, start.y);
   travel_to(path->next_coord(start));
 
-  trafo = Matrix4(
+  trafo = glm::mat4(
     spec["model"]["scale"]["x"].asNumber(), 0.0, 0.0, 0.0,
     0.0, spec["model"]["scale"]["y"].asNumber(), 0.0, 0.0,
     0.0, 0.0, spec["model"]["scale"]["z"].asNumber(), 0.0,
@@ -46,9 +46,10 @@ Creep::travel_to(const PathCoord& target)
 {
   this->target = target;
 
-  vtarget = Game::instance().map->get_center_of(target.x, target.y);
-  dir = (vtarget - pos);
-  dir.normalize();
+  vtarget  = Game::instance().map->get_center_of(target.x, target.y);
+  dir      = glm::normalize(vtarget - pos);
+  rotation = glm::orientedAngle(glm::vec3(0.0f, 0.0f, 1.0f), dir, glm::vec3(0.0f, 1.0f, 0.0f));
+
 }
 
 void
@@ -66,13 +67,13 @@ Creep::tick(const float& elapsed)
 {
   try {
     float sf = get_speed_factor(elapsed);
-    Vector3 v = dir * sf;
+    glm::vec3 v = dir * sf;
     pos += v;
 
-    distance_moved += v.length();
+    distance_moved += glm::length(v);
 
     /* Will yet another step takes us past our target? */
-    if ((dir * sf + pos - vtarget).length() > (pos - vtarget).length()) {
+    if (glm::length(dir * sf + pos - vtarget) > glm::length(pos - vtarget)) {
       /* `next_coord` will throw if there are no more coords */
       pos = vtarget;
       travel_to(path->next_coord(target));
@@ -82,7 +83,7 @@ Creep::tick(const float& elapsed)
   }
 }
 
-Vector3
+glm::vec3
 Creep::get_position() const
 {
   return pos;
@@ -103,13 +104,11 @@ Creep::get_distance_moved() const
 void
 Creep::draw(const float& elapsed) const
 {
-  float angle = dir.angle(Vector3(0.0f, 0.0f, 1.0f));
-
   glTranslatef(pos.x, pos.y + 0.5f, pos.z);
-  glRotatef(rad2deg(angle), 0.0f, 1.0f, 0.0f);
+  glRotatef(rotation, 0.0f, 1.0f, 0.0f);
 
   glPushMatrix();
-  glMultMatrixf((GLfloat*)&trafo);
+  glMultMatrixf(&trafo[0][0]);
   this->model->draw(elapsed + animinc);
   glPopMatrix();
 

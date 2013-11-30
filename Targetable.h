@@ -1,14 +1,14 @@
 #ifndef __TARGETABLE_H__
 #define __TARGETABLE_H__
 
-#include "math/Math.h"
+#include "gl/glm.h"
 
 class Projectile;
 
 class Targetable
 {
 public:
-  virtual Vector3 get_position() const = 0;
+  virtual glm::vec3 get_position() const = 0;
   virtual void struck(Projectile *p) = 0;
 };
 
