@@ -32,7 +32,6 @@ Material::use() const
 Material
 Material::from_assimp(const aiMaterial *mtl)
 {
-
   aiColor4D diffuse, ambient, specular, emissive;
   glm::vec4 rdiffuse, rambient, rspecular, remission;
   if (aiReturn_SUCCESS == mtl->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse))

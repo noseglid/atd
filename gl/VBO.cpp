@@ -86,11 +86,7 @@ VBO::set_material(const Material& mtl)
 void
 VBO::draw() const
 {
-  if (0 != this->texture) {
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, this->texture);
-  }
-
+  glBindTexture(GL_TEXTURE_2D, this->texture);
   this->mtl.use();
 
   glEnableClientState(GL_VERTEX_ARRAY);
