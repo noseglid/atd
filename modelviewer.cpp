@@ -2,7 +2,7 @@
 #include "Exception.h"
 #include "Model.h"
 #include "Camera.h"
-#include "GLTransform.h"
+#include "gl/Transform.h"
 #include "engine/Engine.h"
 #include "engine/Video.h"
 #include "text/Stream.h"
@@ -156,10 +156,10 @@ main(int argc, char *argv[])
     });
 
     e.on("tick_nodepth", [build_helptext](engine::Event e) {
-        GLTransform::enable2D();
+        gl::Transform::enable2D();
         glTranslatef(10.0f, 0.0f, 0.0f);
         build_helptext().draw();
-        GLTransform::disable2D();
+        gl::Transform::disable2D();
     });
 
     e.on("keydown", [&bones, &rotate, &animate, &n](engine::Event e) {

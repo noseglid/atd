@@ -4,7 +4,7 @@
 #include "ui/LevelCompletedFormatter.h"
 #include "RocketSDL.h"
 #include "engine/Video.h"
-#include "GLTransform.h"
+#include "gl/Transform.h"
 #include "Exception.h"
 #include "Debug.h"
 
@@ -63,10 +63,10 @@ void
 UI::tick(const engine::Event& ev)
 {
   glPushMatrix();
-    GLTransform::enable2D(true);
+    gl::Transform::enable2D(true);
     context->Update();
     context->Render();
-    GLTransform::disable2D();
+    gl::Transform::disable2D();
   glPopMatrix();
 }
 

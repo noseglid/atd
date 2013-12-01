@@ -1,10 +1,12 @@
-#include "GLShapes.h"
+#include "gl/Shapes.h"
 
 #include <cmath>
 #include <OpenGL/gl.h>
 
+B_NS_GL
+
 void
-GLShapes::circle(float radius, size_t points)
+Shapes::circle(float radius, size_t points)
 {
   float step =  2 * M_PI / (float)points;
 
@@ -17,3 +19,5 @@ GLShapes::circle(float radius, size_t points)
   }
   glEnd();
 }
+
+E_NS_GL

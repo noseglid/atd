@@ -1,10 +1,12 @@
-#include "GLTransform.h"
+#include "gl/Transform.h"
 
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 
+B_NS_GL
+
 void
-GLTransform::billboard()
+Transform::billboard()
 {
   glm::mat4 m(1.0);
   glGetFloatv(GL_MODELVIEW_MATRIX, (GLfloat*)&m);
@@ -19,7 +21,7 @@ GLTransform::billboard()
 }
 
 void
-GLTransform::enable2D(bool origo_top)
+Transform::enable2D(bool origo_top)
 {
   int vport[4];
   glGetIntegerv(GL_VIEWPORT, vport);
@@ -42,7 +44,7 @@ GLTransform::enable2D(bool origo_top)
 }
 
 void
-GLTransform::disable2D()
+Transform::disable2D()
 {
   glMatrixMode(GL_PROJECTION);
   glPopMatrix();
@@ -54,7 +56,7 @@ GLTransform::disable2D()
 }
 
 glm::vec3
-GLTransform::unproject(const int& x, const int& y)
+Transform::unproject(const int& x, const int& y)
 {
   GLint viewport[4];
   GLdouble modelview[16];
@@ -73,3 +75,5 @@ GLTransform::unproject(const int& x, const int& y)
 
   return glm::vec3(posX, posY, posZ);
 }
+
+E_NS_GL

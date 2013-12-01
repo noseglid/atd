@@ -1,6 +1,6 @@
 #include "text/Dispatcher.h"
 #include "engine/Video.h"
-#include "GLTransform.h"
+#include "gl/Transform.h"
 #include "Game.h"
 
 B_NS_TEXT
@@ -106,7 +106,7 @@ Dispatcher::tick()
     glPushMatrix();
     glBindTexture(GL_TEXTURE_2D, wt.texture);
     glTranslatef(wt.pos.x + wt.delta.x, wt.pos.y + wt.delta.y, wt.pos.z + wt.delta.z);
-    GLTransform::billboard();
+    gl::Transform::billboard();
     glColor3f(wt.color.r, wt.color.g, wt.color.b);
     float height = 0.25f;
     float width = (float)wt.width/(float)wt.height * height;

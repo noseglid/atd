@@ -6,7 +6,7 @@
 #include "Exception.h"
 #include "Player.h"
 #include "CreepManager.h"
-#include "GLTransform.h"
+#include "gl/Transform.h"
 
 Creep::Creep(Json::Value spec, float animinc) :
   Mobile(spec["speed"].asNumber()),
@@ -126,7 +126,7 @@ Creep::draw_health() const
   GLfloat width = 0.3f;
   GLfloat cur   = (current_health / total_health) * 0.3f;
 
-  GLTransform::billboard();
+  gl::Transform::billboard();
 
   glTranslatef(-width / 2.0f, 0.2f, 0.2f);
 

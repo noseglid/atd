@@ -1,7 +1,7 @@
 #include "Map.h"
 #include "Debug.h"
 #include "Audio.h"
-#include "GLTransform.h"
+#include "gl/Transform.h"
 #include "ImageLoader.h"
 #include "Exception.h"
 #include "hud/InfoBar.h"
@@ -217,7 +217,7 @@ Map::mousemotion(const engine::Event& ge)
 {
   static MapEvent me;
 
-  glm::vec3 v = GLTransform::unproject(ge.ev.motion.x, ge.ev.motion.y);
+  glm::vec3 v = gl::Transform::unproject(ge.ev.motion.x, ge.ev.motion.y);
   int newx = static_cast<int>(v.x);
   int newy = static_cast<int>(v.z);
   if ((newx >= 0 && newx < width && newy >= 0 && newy < height) &&

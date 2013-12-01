@@ -1,8 +1,8 @@
 #include "Tower.h"
-#include "GLShapes.h"
 #include "Game.h"
 #include "CreepManager.h"
 #include "DummyCreep.h"
+#include "gl/Shapes.h"
 #include "gl/ShaderProgram.h"
 #include "gl/Shader.h"
 
@@ -41,7 +41,7 @@ Tower::draw_range_circle() const
 
   shader_range_circle->use();
   glTranslatef(pos.x, pos.y, pos.z);
-  GLShapes::circle(range);
+  gl::Shapes::circle(range);
   shader_range_circle->disuse();
 
   glEnable(GL_DEPTH_TEST);

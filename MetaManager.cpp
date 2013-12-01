@@ -3,7 +3,7 @@
 #include "Debug.h"
 #include "engine/Engine.h"
 #include "utils/Color.h"
-#include "GLTransform.h"
+#include "gl/Transform.h"
 
 #include <sstream>
 
@@ -46,9 +46,9 @@ MetaManager::tick(const engine::Event& ev)
     std::stringstream ss;
     ss.precision(4);
     ss << "FPS: " << current_fps;
-    GLTransform::enable2D();
+    gl::Transform::enable2D();
     text::Dispatcher::overlay(ss.str(), 20, 100, utils::colors::gray, 16.0f, false, true);
-    GLTransform::disable2D();
+    gl::Transform::disable2D();
   }
 }
 

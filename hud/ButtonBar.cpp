@@ -1,5 +1,5 @@
 #include "hud/ButtonBar.h"
-#include "GLTransform.h"
+#include "gl/Transform.h"
 
 B_NS_HUD
 
@@ -23,7 +23,7 @@ ButtonBar::tick() const
 {
   if (!visible) return;
 
-  GLTransform::enable2D();
+  gl::Transform::enable2D();
 
   glColor4f(BAR_COLOR);
   glDisable(GL_TEXTURE_2D);
@@ -37,7 +37,7 @@ ButtonBar::tick() const
     glPopMatrix();
   }
 
-  GLTransform::disable2D();
+  gl::Transform::disable2D();
 }
 
 int

@@ -1,7 +1,6 @@
 #include "TowerManager.h"
 #include "Debug.h"
-#include "GLTransform.h"
-#include "GLShapes.h"
+#include "gl/Transform.h"
 #include "IO.h"
 #include "Game.h"
 #include "ImageLoader.h"
@@ -481,7 +480,7 @@ void
 TowerManager::tower_select_if(int clickx, int clicky)
 {
   try {
-    glm::vec3 pos3d = GLTransform::unproject(clickx, clicky);
+    glm::vec3 pos3d = gl::Transform::unproject(clickx, clicky);
     glm::vec3 search = Game::instance().map->get_center_of(pos3d.x, pos3d.z);
     search.y = 0.0f;
 

@@ -1,7 +1,7 @@
 #include "hud/InfoBox.h"
 #include "text/Dispatcher.h"
-#include "GLTransform.h"
 #include "Bar.h"
+#include "gl/Transform.h"
 #include "gl/glm.h"
 
 #include <algorithm>
@@ -90,7 +90,7 @@ InfoBox::draw()
 {
   if (stream.empty()) return;
 
-  GLTransform::enable2D();
+  gl::Transform::enable2D();
 
   if (followmouse) {
     left = mousex;
@@ -122,7 +122,7 @@ InfoBox::draw()
   glTranslatef(basex + BOX_PADDING, basey - height - BOX_PADDING, 0.0f);
   stream.draw();
 
-  GLTransform::disable2D();
+  gl::Transform::disable2D();
 }
 
 E_NS_HUD

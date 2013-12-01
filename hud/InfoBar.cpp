@@ -3,7 +3,7 @@
 #include "text/Text.h"
 #include "text/Dispatcher.h"
 #include "Player.h"
-#include "GLTransform.h"
+#include "gl/Transform.h"
 
 #include <sstream>
 #include <algorithm>
@@ -47,7 +47,7 @@ InfoBar::tick() const
 {
   if (!visible) return;
 
-  GLTransform::enable2D();
+  gl::Transform::enable2D();
 
   glColor4f(BAR_COLOR);
   glDisable(GL_TEXTURE_2D);
@@ -81,7 +81,7 @@ InfoBar::tick() const
   info_text2.draw();
   glPopMatrix();
 
-  GLTransform::disable2D();
+  gl::Transform::disable2D();
 }
 
 E_NS_HUD
