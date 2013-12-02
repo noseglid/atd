@@ -7,6 +7,8 @@ B_NS_GL
 
 Shader::Shader(GLenum type, std::string file)
 {
+  DBG("Creating a new shader (" << ((type == GL_FRAGMENT_SHADER) ? "fragment" : "vertex") << ")"
+    << " from file: " << file);
   std::string src = IO::file_get_contents(file);
   const GLchar *c_str_src = src.c_str();
   const GLint src_length  = src.size();

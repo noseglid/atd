@@ -49,19 +49,21 @@ TowerManager::TowerManager() : selected_tower(towers.end()), btnupgr(NULL), btns
   towerinfo   = new HUD::InfoBox(text::Stream(), HUD::InfoBox::SNAP_TOPRIGHT);
   upgradeinfo = new HUD::InfoBox(text::Stream(), HUD::InfoBox::SNAP_BOTRIGHT, true);
   sellinfo    = new HUD::InfoBox(text::Stream(), HUD::InfoBox::SNAP_BOTRIGHT, true);
+
+  dummy_tower_shader = gl::ShaderProgram::create({ "model.v.glsl" }, { "dummy_tower.f.glsl" });
 }
 
 TowerManager::~TowerManager()
 {
   DBG("Deregistering TowerManager from events");
-  using engine::Engine;
-  for (Engine::id_t ev : events) {
-    Engine::instance().off(ev);
+  for (engine::Engine::id_t ev : events) {
+    engine::Engine::instance().off(ev);
   }
 
   delete towerinfo;
   delete upgradeinfo;
   delete sellinfo;
+  delete dummy_tower_shader;
 
   HUD::ButtonBar::instance().clear_buttons();
   btnupgr = NULL;
@@ -220,7 +222,7 @@ TowerManager::purchase_tower(glm::vec3 pos)
   }
 
   towers.insert(std::make_pair(pos, t));
-  dummy_tower_pos = glm::vec3();
+  dummy_tower_pos = glm::vec3(-200.0, 0.0, -200.0);
   Game::instance().map->set_highlight(-1, -1);
 
   std::stringstream ss;
@@ -535,17 +537,15 @@ TowerManager::tick(const engine::Event& ev)
 {
   float elapsed = ev.elapsed;
 
+  glPushMatrix();
   if (!build_tower.empty() && dummy_tower_pos.length() > 0.0f) {
     /* Currently trying to build a tower */
-    glPushMatrix();
-      dummy_towers.at(build_tower)->draw_range_circle();
-    glPopMatrix();
+    dummy_towers.at(build_tower)->draw_range_circle();
   } else if (selected_tower != towers.end()) {
     /* There is a tower selected */
-    glPushMatrix();
-      selected_tower->second->draw_range_circle();
-    glPopMatrix();
+    selected_tower->second->draw_range_circle();
   }
+  glPopMatrix();
 
   for (std::pair<glm::vec3, Tower*> t : towers) {
     t.second->shoot_if(elapsed);
@@ -561,7 +561,9 @@ TowerManager::tick(const engine::Event& ev)
     t->set_position(dummy_tower_pos);
 
     glPushMatrix();
-      t->draw(elapsed, 0.5f);
+      dummy_tower_shader->use();
+      t->draw(elapsed);
+      dummy_tower_shader->disuse();
     glPopMatrix();
 
     glDisable(GL_COLOR_MATERIAL);

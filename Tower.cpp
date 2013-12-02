@@ -23,10 +23,7 @@ Tower::Tower(Json::Value spec, glm::vec3 pos) :
   model(NULL)
 {
   if (NULL == shader_range_circle) {
-    shader_range_circle = new gl::ShaderProgram();
-    gl::Shader *fragment = new gl::Shader(GL_FRAGMENT_SHADER, "resources/shaders/range_circle.f.glsl");
-    shader_range_circle->attachShader(fragment);
-    shader_range_circle->link();
+    shader_range_circle = gl::ShaderProgram::create({ "default.v.glsl" },  { "range_circle.f.glsl" });
   }
 
   std::string modelfile = "resources/models/towers/" + spec["model"].asString() + ".dae";
@@ -48,11 +45,11 @@ Tower::draw_range_circle() const
 }
 
 void
-Tower::draw(const float& elapsed, const float& opacity) const
+Tower::draw(const float& elapsed) const
 {
   glPushMatrix();
   glTranslatef(pos.x, pos.y, pos.z);
-  model->draw(elapsed); // XXX: include opacity with shader
+  model->draw(elapsed);
   glPopMatrix();
 
   for (Projectile *p : projectiles) {

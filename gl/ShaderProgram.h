@@ -14,8 +14,14 @@ class ShaderProgram
 
   std::vector<Shader*> shaders;
 
-public:
+  ShaderProgram(const ShaderProgram& rhs);
+  void operator=(const ShaderProgram& rhs);
+
+
   ShaderProgram();
+
+public:
+
   ~ShaderProgram();
 
   /**
@@ -30,6 +36,8 @@ public:
 
   GLint getAttribLocation(std::string name);
   GLint getUniformLocation(std::string name);
+
+  static ShaderProgram* create(std::vector<std::string> vshaders, std::vector<std::string> fshaders);
 };
 
 E_NS_GL

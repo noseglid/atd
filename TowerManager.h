@@ -8,6 +8,7 @@
 #include "Faction.h"
 #include "hud/InfoBox.h"
 #include "hud/Button.h"
+#include "gl/ShaderProgram.h"
 #include "gl/glm.h"
 
 #include <vector>
@@ -19,6 +20,7 @@ class TowerManager
   std::vector<engine::Engine::id_t> events;
 
   glm::vec3 dummy_tower_pos;
+  gl::ShaderProgram *dummy_tower_shader;
   std::string build_tower;
   std::map<std::string, Tower*> dummy_towers;
   std::map<std::string, Json::Value> available_towers;

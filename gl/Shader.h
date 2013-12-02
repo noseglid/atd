@@ -14,7 +14,6 @@ class Shader
 
   GLuint reference;
 
-public:
   Shader(GLenum type, std::string file);
 };
 

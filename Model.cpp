@@ -428,7 +428,12 @@ Model::normalize()
 void
 Model::draw(float elapsed)
 {
-  shader_program->use();
+  GLboolean shader_set = GL_FALSE;
+  glGetBooleanv(GL_CURRENT_PROGRAM, &shader_set);
+  if (GL_FALSE == shader_set) {
+    shader_program->use();
+  }
+
   if (0 < scene->mNumAnimations) {
     const aiAnimation *anim = scene->mAnimations[0];
     float animtime = fmod(elapsed * anim->mTicksPerSecond, anim->mDuration);
@@ -451,7 +456,9 @@ Model::draw(float elapsed)
     vbo->draw();
   }
 
-  shader_program->disuse();
+  if (GL_FALSE == shader_set) {
+    shader_program->disuse();
+  }
 }
 
 int
@@ -464,12 +471,7 @@ Model *
 Model::load(std::string file)
 {
   if (NULL == shader_program) {
-    shader_program = new gl::ShaderProgram();
-    gl::Shader *vertex_shader   = new gl::Shader(GL_VERTEX_SHADER, "resources/shaders/model.v.glsl");
-    gl::Shader *fragment_shader = new gl::Shader(GL_FRAGMENT_SHADER, "resources/shaders/model.f.glsl");
-    shader_program->attachShader(vertex_shader);
-    shader_program->attachShader(fragment_shader);
-    shader_program->link();
+    shader_program = gl::ShaderProgram::create({ "model.v.glsl" }, { "model.f.glsl" });
   }
 
   auto it = loaded_models.find(file);
