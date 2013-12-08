@@ -2,6 +2,7 @@
 #define __TEXT__DISPATCHER_H__
 
 #include "text/Text.h"
+#include "gl/ShaderProgram.h"
 #include "gl/glm.h"
 
 #include <OpenGL/gl.h>

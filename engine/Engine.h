@@ -6,6 +6,7 @@
 
 #include "engine/Event.h"
 #include "Camera.h"
+#include "Skybox.h"
 
 #include <de.h>
 
@@ -15,6 +16,7 @@ class Engine : public de::Emitter<engine::Event>
 {
   bool running;
   float elapsed;
+  Skybox *skybox;
 
   typedef std::map<float, std::function<void()>> events_t;
   events_t queued_events;

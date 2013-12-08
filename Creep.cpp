@@ -7,6 +7,7 @@
 #include "Player.h"
 #include "CreepManager.h"
 #include "gl/Transform.h"
+#include "gl/Material.h"
 
 Creep::Creep(Json::Value spec, float animinc) :
   Mobile(spec["speed"].asNumber()),
@@ -130,19 +131,23 @@ Creep::draw_health() const
 
   glTranslatef(-width / 2.0f, 0.2f, 0.2f);
 
+  gl::ShaderProgram::push(gl::ShaderProgram::PROGRAM_COLOR);
+  glColor3f(0.0f, 1.0f, 0.0f);
   glBegin(GL_TRIANGLE_STRIP);
-  glColor3f(0.0, 1.0, 0.0);
   glVertex3f(0,    0.03f, 0.0f);
   glVertex3f(0,   -0.03f, 0.0f);
   glVertex3f(cur,  0.03f, 0.0f);
   glVertex3f(cur, -0.03f, 0.0f);
+  glEnd();
 
-  glColor3f(1.0, 0.0, 0.0);
+  glColor3f(1.0f, 0.0f, 0.0f);
+  glBegin(GL_TRIANGLE_STRIP);
   glVertex3f(cur,    0.03f, 0.0f);
   glVertex3f(cur,   -0.03f, 0.0f);
   glVertex3f(width,  0.03f, 0.0f);
   glVertex3f(width, -0.03f, 0.0f);
   glEnd();
+  gl::ShaderProgram::pop();
 
   glEnable(GL_LIGHTING);
 }

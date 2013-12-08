@@ -2,8 +2,11 @@
 
 varying vec3 normal, lightDir, halfVector;
 varying vec4 diffuse, ambient;
+varying vec4 pos;
 
 uniform sampler2D tex;
+
+float fog_factor(float z);
 
 void main()
 {
@@ -27,5 +30,5 @@ void main()
     texel = vec4(1.0);
   }
 
-  gl_FragColor = texel * color;
+  gl_FragColor = mix(gl_Fog.color, texel * color, fog_factor(pos.z));
 }

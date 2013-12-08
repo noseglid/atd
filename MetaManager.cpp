@@ -14,7 +14,7 @@ MetaManager::MetaManager() : last_measure(0), draw_meta(false)
   DBG("Registering events for MetaManager");
   engine::Engine& e = engine::Engine::instance();
   events.push_back(
-    e.on("tick", std::bind(&MetaManager::tick, this, std::placeholders::_1))
+    e.on("tick_nodepth", std::bind(&MetaManager::tick, this, std::placeholders::_1))
   );
   events.push_back(
     e.on("keydown", std::bind(&MetaManager::keydown, this, std::placeholders::_1))
@@ -47,7 +47,7 @@ MetaManager::tick(const engine::Event& ev)
     ss.precision(4);
     ss << "FPS: " << current_fps;
     gl::Transform::enable2D();
-    text::Dispatcher::overlay(ss.str(), 20, 100, utils::colors::gray, 16.0f, false, true);
+    text::Dispatcher::overlay(ss.str(), 20, 100, utils::colors::white, 16.0f, false, true);
     gl::Transform::disable2D();
   }
 }

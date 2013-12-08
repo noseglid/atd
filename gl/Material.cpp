@@ -52,4 +52,17 @@ Material::from_assimp(const aiMaterial *mtl)
   return Material(rdiffuse, rambient, rspecular, remission, shininess);
 }
 
+void
+Material::set_from_color(float r, float g, float b, float opacity)
+{
+  GLfloat
+    diffuse_ambient[] = { r,    g,    b,    opacity },
+    blank[]           = { 0.0f, 0.0f, 0.0f, 1.0f    };
+
+  glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, diffuse_ambient);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, blank);
+  glMaterialfv(GL_FRONT, GL_EMISSION, blank);
+  glMaterialf (GL_FRONT, GL_SHININESS, 0.0f);
+}
+
 E_NS_GL

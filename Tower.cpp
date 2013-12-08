@@ -39,7 +39,7 @@ Tower::draw_range_circle() const
   shader_range_circle->use();
   glTranslatef(pos.x, pos.y, pos.z);
   gl::Shapes::circle(range);
-  shader_range_circle->disuse();
+  shader_range_circle->reset();
 
   glEnable(GL_DEPTH_TEST);
 }

@@ -1,6 +1,7 @@
 #include "Engine.h"
 #include "Audio.h"
 #include "Debug.h"
+#include "gl/ShaderProgram.h"
 #include "gl/glm.h"
 
 #include <OpenGL/GL.h>
@@ -10,6 +11,7 @@ B_NS_ENGINE
 
 Engine::Engine() : running(false)
 {
+  skybox = new Skybox();
 }
 
 void
@@ -56,12 +58,20 @@ Engine::run()
 
     Camera::instance().orientate();
 
-    glm::vec4 pos(0.5, 0.7, 0.5, 0.0);
+    gl::ShaderProgram::push(gl::ShaderProgram::PROGRAM_SKYBOX);
+    skybox->draw();
+    gl::ShaderProgram::pop();
+
+    glm::vec4 pos(0.5, 0.7, -0.5, 0.0);
     glLightfv(GL_LIGHT0, GL_POSITION, &pos[0]);
 
     glPushMatrix();
     glEnable(GL_DEPTH_TEST);
+
+    gl::ShaderProgram::push(gl::ShaderProgram::PROGRAM_DEFAULT);
     emit("tick", engine::Event(get_elapsed()));
+    gl::ShaderProgram::pop();
+
     glPopMatrix();
 
     glPushMatrix();

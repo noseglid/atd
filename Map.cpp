@@ -13,46 +13,34 @@
 #include <algorithm>
 #include <array>
 
-#define SQSIZE 1.0f /* ALTERING NOT SUPPORTED YET */
+static GLint texture = 0;
 
-#define EDGE_STEPS 8
+static std::map<std::string, std::array<float, 4>> maptex = {
+  { "grass",     { {0.5 / 1024.0,   0.5 / 1024.0, 255.5 / 1024.0, 255.5 / 1024.0} } },
+  { "stonepath", { {257.5 / 1024.0, 0.5 / 1024.0, 460.5 / 1024.0, 203.5 / 1024.0} } }
+};
 
 Map::Map(const Json::Value& levelspec)
 {
-  draw_meta = false;
   highlighted.x = -1;
   highlighted.y = -1;
 
   DBG("Registering events for Map");
   engine::Engine& e = engine::Engine::instance();
-  events.push_back(
-    e.on("tick",        std::bind(&Map::tick,        this, std::placeholders::_1))
-  );
-  events.push_back(
-    e.on("mousemotion", std::bind(&Map::mousemotion, this, std::placeholders::_1))
-  );
-  events.push_back(
-    e.on("keydown",     std::bind(&Map::keydown,     this, std::placeholders::_1))
-  );
-
-  cliff_texture = IL::GL::texture("cliff1.jpg");
+  events.push_back(e.on("tick",        std::bind(&Map::tick,        this, std::placeholders::_1)));
+  events.push_back(e.on("mousemotion", std::bind(&Map::mousemotion, this, std::placeholders::_1)));
 
   load_level(levelspec);
 }
 
 Map::~Map()
 {
-  for (size_t h = 0; h < height; ++h) {
-    delete[] normals[h];
-  }
-  delete[] normals;
-
+  delete vbo;
   delete path;
 
-  DBG("Deregistering Map from events");
   using engine::Engine;
-  for (Engine::id_t ev : events) {
-    Engine::instance().off(ev);
+  for (engine::Engine::id_t ev : events) {
+    engine::Engine::instance().off(ev);
   }
 
   Audio::instance().stop_music();
@@ -65,16 +53,9 @@ Map::load_level(const Json::Value& levelspec)
   width  = levelspec["width"].asInt();
   height = levelspec["height"].asInt();
 
-  /* Set camera limits */
-  Camera::instance().set_limits(
-    1.0f, width - 1.0f,
-    4.0f, 12.0f,
-    1.0f, height - 1.0f
-  );
-
   /* Load the textures */
-  for (Json::Value entry : levelspec["textures"].asArray()) {
-    textures.push_back(IL::GL::texture(entry.asString()));
+  if (0 == texture) {
+    texture = IL::GL::texture("map.png");
   }
 
   /* Load the paths */
@@ -84,6 +65,9 @@ Map::load_level(const Json::Value& levelspec)
   }
   Json::Value p = paths[0];
   path = new Path(p["texture"].asInt(), p["path"].asString());
+
+  /* Prepare the map and its vertices */
+  generate_map();
 
   /* Load the scenery */
   if (levelspec.objectHasKey("scenery")) {
@@ -105,111 +89,160 @@ Map::load_level(const Json::Value& levelspec)
     }
   }
 
-  create_map_heightmap();
-  create_edge_heightmap();
-  generate_map_normals();
-  generate_edge_normals();
-
   Mix_Music *bgmusic = Audio::instance().load_music(levelspec["bgmusic"].asString());
   Audio::instance().play(bgmusic);
 
   HUD::InfoBar::instance().set_title(levelspec["name"].asString());
+
+  /* Set camera limits */
+  Camera::instance().set_limits(
+    1.0f, width - 1.0f,
+    4.0f, 12.0f,
+    1.0f, height - 1.0f
+  );
 }
 
 void
-Map::create_map_heightmap()
+Map::generate_map()
 {
-  for (size_t h = 0; h < height + 2; ++h) {
-    std::vector<float> row;
-    for (size_t w = 0; w < width + 2; ++w) {
-      row.push_back((rand() / (float)RAND_MAX) / 3.5f);
-    }
-    heightmap.push_back(row);
-  }
-}
+  float xstart = -60.0f, xend = width + 60.0f,  xstep = 1.0f;
+  float zstart = -60.0f, zend = height + 60.0f, zstep = 1.0f;
 
-void
-Map::create_edge_heightmap()
-{
-  edge_width = std::max(width, height);
-  edge_width += ceil(edge_width / 2);
+  vbo = new gl::VBO();
 
-  for (size_t h = 0; h < EDGE_STEPS + 1; ++h) {
-    std::vector<float> row;
-    for (size_t w = 0; w < edge_width + 1; ++w) {
-      float m = (h - 1.0f) + (rand() / (float)RAND_MAX) * 3.0f;
-      m = (h == 0) ? 0 : m;
-      m = (h == 1) ? 0.5 : m;
-      row.push_back(m);
-    }
-    heightmap_edge.push_back(row);
-  }
-}
+  std::vector<GLfloat> vertices, normals, texcoords;
+  std::vector<GLushort> indices;
 
-glm::vec3
-Map::calc_normal(
-  int h, int hmax,
-  int w, int wmax,
-  const heightmap_t& hmap,
-  float exaggeration) const
-{
-  if (0 >= h || hmax - 1 < h || 0 >= w || wmax - 1 < w)
-    return glm::vec3(0.0f, 1.0f, 0.0f);
+  /* Setting all the vertices and texcoords, excluding the path */
+  std::array<float, 4> texgrass = maptex["grass"];
+  for (float x = xstart; x < xend; x += xstep) {
+    for (float z = zstart; z < zend; z += zstep) {
+      vertices.push_back(x);
+      vertices.push_back((float)rand()/(float)RAND_MAX / 3.0f);
+      vertices.push_back(z);
 
-  glm::vec3 v1(0,       hmap[h - 1][w], SQSIZE);
-  glm::vec3 v2(SQSIZE,  hmap[h][w + 1], 0);
-  glm::vec3 v3(0,       hmap[h + 1][w], -SQSIZE);
-  glm::vec3 v4(-SQSIZE, hmap[h][w - 1], 0);
-
-  glm::vec3 res = glm::cross(v1, v2) + glm::cross(v2, v3) + glm::cross(v3, v4) + glm::cross(v4, v1);
-  res.x *= exaggeration;
-  res.z *= exaggeration;
-
-  return glm::normalize(res);
-}
-
-void
-Map::generate_map_normals()
-{
-  normals = new glm::vec3*[height + 2];
-  for (size_t h = 0; h < height + 1; ++h) {
-    normals[h] = new glm::vec3[width + 2];
-    for (size_t w = 0; w < width + 1; ++w) {
-      normals[h][w] = calc_normal(h, height, w, width, heightmap, 2.0f);
+      texcoords.push_back((0 == (size_t)x % 2) ? texgrass[0] : texgrass[2]);
+      texcoords.push_back((0 == (size_t)z % 2) ? texgrass[3] : texgrass[1]);
     }
   }
-}
 
-void
-Map::generate_edge_normals()
-{
-  for (size_t h = 0; h < EDGE_STEPS + 1; ++h) {
-    std::vector<glm::vec3> row;
-    for(size_t w = 0; w < edge_width + 1; ++w) {
-      row.push_back(calc_normal(h, EDGE_STEPS, w, edge_width, heightmap_edge));
+  /* Setting all normals and draw order (indices) */
+  float h = (zend - zstart);
+  for (size_t x = 0; x < xend - xstart; x++) {
+    for (size_t z = 0; z < zend - zstart; z++) {
+      glm::vec3 res(0.0, 1.0, 0.0);
+      if (0 < x && 0 < z) {
+        glm::vec3 v1(0.0,    vertices[3 * (x * h       + z - 1) + 1], zstep);
+        glm::vec3 v2(xstep,  vertices[3 * ((x + 1) * h + z) + 1],     0.0);
+        glm::vec3 v3(0.0,    vertices[3 * (x * h       + z + 1) + 1], -zstep);
+        glm::vec3 v4(-xstep, vertices[3 * ((x - 1) * h + z) + 1],     0.0);
+        res = glm::normalize(
+          glm::cross(v1, v2) + glm::cross(v2, v3) + glm::cross(v3, v4) + glm::cross(v4, v1)
+        );
+      }
+
+      normals.push_back(res.x);
+      normals.push_back(res.y);
+      normals.push_back(res.z);
+
+      /* Don't draw path here. Texturecoords require vertex duplication */
+      if (path->has_coord(x + xstart, z + zstart)) {
+        continue;
+      }
+
+      /* Can not set indice for last row/column. */
+      if (xend - xstart - 1 <= x || zend - zstart - 1 <= z) {
+        continue;
+      }
+
+      indices.push_back(x * h       + z);
+      indices.push_back(x * h       + z + 1);
+      indices.push_back((x + 1) * h + z + 1);
+
+      indices.push_back((x + 1) * h + z + 1);
+      indices.push_back((x + 1) * h + z);
+      indices.push_back(x * h       + z);
     }
-    normals_edge.push_back(row);
   }
+
+  /* Setting the path */
+  PathCoord c = path->get_start();
+  std::array<float, 4> texstonepath = maptex["stonepath"];
+  int mapoffset = ((xend - xstart) * (zend - zstart));
+  int index = 0;
+  while (true) {
+    int msx = c.x - xstart;
+    int msz = c.y - zstart;
+    vertices.push_back(c.x);
+    vertices.push_back(vertices[3 * (msx * h + msz) + 1]);
+    vertices.push_back(c.y);
+    normals.push_back(normals[3 * (msx * h + msz) + 0]);
+    normals.push_back(normals[3 * (msx * h + msz) + 1]);
+    normals.push_back(normals[3 * (msx * h + msz) + 2]);
+    texcoords.push_back(texstonepath[0]);
+    texcoords.push_back(texstonepath[1]);
+
+    vertices.push_back(c.x);
+    vertices.push_back(vertices[3 * (msx * h + (msz + zstep)) + 1]);
+    vertices.push_back(c.y + zstep);
+    normals.push_back(normals[3 * (msx * h + (msz + zstep)) + 0]);
+    normals.push_back(normals[3 * (msx * h + (msz + zstep)) + 1]);
+    normals.push_back(normals[3 * (msx * h + (msz + zstep)) + 2]);
+    texcoords.push_back(texstonepath[0]);
+    texcoords.push_back(texstonepath[3]);
+
+    vertices.push_back(c.x + xstep);
+    vertices.push_back(vertices[3 * ((msx + xstep) * h + (msz + zstep)) + 1]);
+    vertices.push_back(c.y + zstep);
+    normals.push_back(normals[3 * ((msx + xstep) * h + (msz + zstep)) + 0]);
+    normals.push_back(normals[3 * ((msx + xstep) * h + (msz + zstep)) + 1]);
+    normals.push_back(normals[3 * ((msx + xstep) * h + (msz + zstep)) + 2]);
+    texcoords.push_back(texstonepath[2]);
+    texcoords.push_back(texstonepath[3]);
+
+    vertices.push_back(c.x + xstep);
+    vertices.push_back(vertices[3 * ((msx + xstep) * h + (msz)) + 1]);
+    vertices.push_back(c.y);
+    normals.push_back(normals[3 * ((msx + xstep) * h + msz) + 0]);
+    normals.push_back(normals[3 * ((msx + xstep) * h + msz) + 1]);
+    normals.push_back(normals[3 * ((msx + xstep) * h + msz) + 2]);
+    texcoords.push_back(texstonepath[2]);
+    texcoords.push_back(texstonepath[1]);
+
+    indices.push_back(mapoffset + index + 0);
+    indices.push_back(mapoffset + index + 1);
+    indices.push_back(mapoffset + index + 2);
+
+    indices.push_back(mapoffset + index + 0);
+    indices.push_back(mapoffset + index + 2);
+    indices.push_back(mapoffset + index + 3);
+
+    index += 4;
+
+    try {
+      c = path->next_coord(c);
+    } catch (const NoMoreCoords& e) {
+      /* Done and done */
+      break;
+    }
+  }
+
+  gl::Material m(glm::vec4(1.0, 1.0, 0.0, 1.0), glm::vec4(1.0, 1.0, 1.0, 1.0));
+
+  DBG("Map created, vertices: " << (vertices.size() / 3)
+    << ", triangles: " << (indices.size() / 3));
+
+  vbo->bind_indices(indices);
+  vbo->bind_data(gl::VBO::VERTEX, vertices);
+  vbo->bind_data(gl::VBO::TEXCOORD, texcoords);
+  vbo->bind_data(gl::VBO::NORMAL, normals);
+  vbo->set_texture(texture);
 }
 
 void
 Map::tick(const engine::Event& ge)
 {
-  glDisableClientState(GL_VERTEX_ARRAY);
-  glDisableClientState(GL_COLOR_ARRAY);
-
   this->draw(ge.elapsed);
-  if (draw_meta) this->draw_normals();
-}
-
-void
-Map::keydown(const engine::Event& ge)
-{
-  SDL_KeyboardEvent event = ge.ev.key;
-  switch (event.keysym.sym) {
-    case SDLK_m: draw_meta = !draw_meta; break;
-    default: break;
-  }
 }
 
 void
@@ -229,163 +262,21 @@ Map::mousemotion(const engine::Event& ge)
 }
 
 void
-Map::draw_edge_wall() const
-{
-  glTranslatef((edge_width - width) / -2.0f, 0.0f, 0.0f);
-  glEnable(GL_TEXTURE_2D);
-  glBindTexture(GL_TEXTURE_2D, cliff_texture);
-
-  static const GLfloat texcoords[4][2] = {
-    { 0.0f, 0.0f },
-    { 0.0f, 1.0f },
-    { 1.0f, 0.0f },
-    { 1.0f, 1.0f }
-  };
-
-  glColor3f(0.7f, 0.7f, 0.7f);
-  for (int i = 0; i < EDGE_STEPS; ++i) {
-    glBegin(GL_TRIANGLE_STRIP);
-    for (int j = 0; j < edge_width; ++j) {
-      glNormal3fv((GLfloat*)&(normals_edge[i + 1][j]));
-      glTexCoord2fv(texcoords[0]);
-      glVertex3f(j, heightmap_edge[i + 1][j], -i);
-
-      glNormal3fv((GLfloat*)&(normals_edge[i][j]));
-      glTexCoord2fv(texcoords[1]);
-      glVertex3f(j, heightmap_edge[i][j], -i + 1.0f);
-
-      glNormal3fv((GLfloat*)&(normals_edge[i + 1][j + 1]));
-      glTexCoord2fv(texcoords[2]);
-      glVertex3f(j + 1.0f, heightmap_edge[i + 1][j + 1], -i);
-
-      glNormal3fv((GLfloat*)&(normals_edge[i][j + 1]));
-      glTexCoord2fv(texcoords[3]);
-      glVertex3f(j + 1.0f, heightmap_edge[i][j + 1], -i + 1.0f);
-    }
-    glEnd();
-  }
-}
-
-void
-Map::draw_scenery(const float& elapsed) const
-{
-  for (scenery_t entry : scenery) {
-    glPushMatrix();
-    glTranslatef(entry.tx, entry.ty, entry.tz);
-    glRotatef(entry.angle, entry.rx, entry.ry, entry.rz);
-    glScalef(entry.sx, entry.sy, entry.sz);
-    entry.model->normalize();
-    entry.model->draw(elapsed);
-    glPopMatrix();
-  }
-}
-
-void
-Map::draw_square(const int& x, const int& y) const
-{
-  static const GLfloat texcoords[4][2] = {
-    { 0.0f, 0.0f },
-    { 0.0f, 1.0f },
-    { 1.0f, 0.0f },
-    { 1.0f, 1.0f }
-  };
-
-  GLfloat emission[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-  if (y == highlighted.y && x == highlighted.x) {
-    emission[0] = emission[1] = emission[2] = 0.8f;
-  }
-  glMaterialfv(GL_FRONT, GL_EMISSION, emission);
-
-  int textureid = (path->has_coord(x, y)) ? path->textureid : 0;
-  glBindTexture(GL_TEXTURE_2D, textures[textureid]);
-
-  glBegin(GL_TRIANGLE_STRIP);
-  glNormal3fv((GLfloat*)&(normals[y][x]));
-  glTexCoord2fv(texcoords[0]);
-  glVertex3f(x, heightmap[y][x], y);
-
-  glNormal3fv((GLfloat*)&(normals[y + 1][x]));
-  glTexCoord2fv(texcoords[1]);
-  glVertex3f(x, heightmap[y + 1][x], y + SQSIZE);
-
-  glNormal3fv((GLfloat*)&(normals[y][x + 1]));
-  glTexCoord2fv(texcoords[2]);
-  glVertex3f(x + SQSIZE, heightmap[y][x + 1], y);
-
-  glNormal3fv((GLfloat*)&(normals[y + 1][x + 1]));
-  glTexCoord2fv(texcoords[3]);
-  glVertex3f(x + SQSIZE, heightmap[y + 1][x + 1], y + SQSIZE);
-  glEnd();
-}
-
-void
 Map::draw(const float& elapsed) const
 {
-  glEnable(GL_LIGHTING);
-  glEnable(GL_TEXTURE_2D);
+  vbo->draw();
 
-  GLfloat
-    diffuse[]  = { 0.8f, 0.8f, 0.8f, 1.0f },
-    specular[] = { 0.0f, 0.0f, 0.0f, 1.0f },
-    ambient[]  = { 0.2f, 0.2f, 0.2f, 1.0f };
-
-  glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
-  glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
-  glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
-
-  for (size_t h = 0; h < height; ++h) {
-    for (size_t w = 0; w < width; ++w) {
-      draw_square(w, h);
-    }
-  }
-
-  const std::array<std::array<float, 4>, 4> rotations { {
-    { { 0.0f,   0.0f, 0.0f, 0.0f } },
-    { { 90.0f,  0.0f, 1.0f, 0.0f } },
-    { { 180.0f, 0.0f, 1.0f, 0.0f } },
-    { { 270.0f, 0.0f, 1.0f, 0.0f } }
-  } };
-  const std::array<std::array<float, 3>, 4> translations { {
-    { {  0.0f,          0.0f,  0.0f          } },
-    { {  -1.0f * width, 0.0f,  0.0f          } },
-    { {  -1.0f * width, 0.0f, -1.0f * height } },
-    { {  0.0f,          0.0f, -1.0f * width  } }
-  } };
-
-  for (int i = 0; i < rotations.size(); ++i) {
+  for (scenery_t entry : scenery) {
     glPushMatrix();
-    glRotatef(rotations[i][0], rotations[i][1], rotations[i][2], rotations[i][3]);
-    glTranslatef(translations[i][0], translations[i][1], translations[i][2]);
-    draw_edge_wall();
+      glm::mat4 m(1.0);
+      m = glm::translate(m, glm::vec3(entry.tx, entry.ty, entry.tz));
+      m = glm::rotate(m, entry.angle, glm::vec3(entry.rx, entry.ry, entry.rz));
+      m = glm::scale(m, glm::vec3(entry.sx, entry.sy, entry.sz));
+      glMultMatrixf(&m[0][0]);
+      entry.model->normalize();
+      entry.model->draw(elapsed);
     glPopMatrix();
   }
-
-  draw_scenery(elapsed);
-}
-
-
-void
-Map::draw_normals() const
-{
-  glDisable(GL_DEPTH_TEST);
-  glDisable(GL_LIGHTING);
-  glDisable(GL_TEXTURE_2D);
-
-  glColor3f(1.0f, 1.0f, 1.0f);
-
-  for (size_t h = 0; h < height + 1; ++h) {
-    for (size_t w = 0; w < width + 1; ++w) {
-      glBegin(GL_LINES);
-      glm::vec3 n = normals[h][w];
-      n /= 4;
-      glVertex3f(w, heightmap[h][w], h);
-      glVertex3f(w + n.x, heightmap[h][w] + n.y, h + n.z);
-      glEnd();
-    }
-  }
-
-  glColor3f(0.5f, 0.5f, 0.5f);
-  glEnable(GL_DEPTH_TEST);
 }
 
 glm::vec3
@@ -394,13 +285,7 @@ Map::get_center_of(int x, int y) const
   if (x > width || y > height)
     throw Exception("Can't get center of coords out of map boundaries");
 
-  float dx = (float)x + SQSIZE / 2.0f;
-  float dy = (
-    heightmap[y][x] + heightmap[y][x + 1] + heightmap[y + 1][x] + heightmap[y + 1][x + 1]
-  ) / 4;
-  float dz = (float)y + SQSIZE / 2.0f;
-
-  return glm::vec3(dx, dy, dz);
+  return glm::vec3((float)x + 0.5f, 0.0, (float)y + 0.5f);
 }
 
 const Path *

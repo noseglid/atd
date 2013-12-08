@@ -35,6 +35,7 @@ public:
   void use() const;
 
   static Material from_assimp(const aiMaterial *mtl);
+  static void set_from_color(float r, float g, float b, float opacity = 1.0f);
 };
 
 E_NS_GL

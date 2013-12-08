@@ -107,15 +107,18 @@ Dispatcher::tick()
     glBindTexture(GL_TEXTURE_2D, wt.texture);
     glTranslatef(wt.pos.x + wt.delta.x, wt.pos.y + wt.delta.y, wt.pos.z + wt.delta.z);
     gl::Transform::billboard();
-    glColor3f(wt.color.r, wt.color.g, wt.color.b);
+    gl::ShaderProgram::push(gl::ShaderProgram::PROGRAM_TEXTURE);
     float height = 0.25f;
     float width = (float)wt.width/(float)wt.height * height;
+
     glBegin(GL_TRIANGLE_STRIP);
       glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0f, 0.1f + height, 0.0f);
       glTexCoord2f(0.0f, 1.0f); glVertex3f(0.0f, 0.1f, 0.0f);
       glTexCoord2f(1.0f, 0.0f); glVertex3f(width, 0.1f + height, 0.0f);
       glTexCoord2f(1.0f, 1.0f); glVertex3f(width, 0.1f, 0.0f);
     glEnd();
+
+    gl::ShaderProgram::pop();
     wt.delta.y += 0.005;
 
     it = (glm::length(wt.delta) >= 0.5f) ? scrollings.erase(it) : it + 1;

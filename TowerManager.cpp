@@ -563,7 +563,7 @@ TowerManager::tick(const engine::Event& ev)
     glPushMatrix();
       dummy_tower_shader->use();
       t->draw(elapsed);
-      dummy_tower_shader->disuse();
+      dummy_tower_shader->reset();
     glPopMatrix();
 
     glDisable(GL_COLOR_MATERIAL);

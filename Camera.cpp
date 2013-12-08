@@ -1,26 +1,29 @@
 #include "Camera.h"
 #include "engine/Engine.h"
 #include "Debug.h"
+#include "text/Dispatcher.h"
+#include "gl/Transform.h"
 
 #include <OpenGL/gl.h>
-#include <iostream>
+#include <sstream>
+#include <iomanip>
 #include <cmath>
 #include <float.h>
 
 Camera::Camera() :
   pos(10.0f, 8.0f, 10.0f),
-  dir(0.0f, -1.0f, -0.7f),
+  dir(0.0f, 0.0f, -1.0f),
   up(0.0f, 1.0f, 0.0f),
   mouse_buttons_active(0),
   enabled(true)
 {
   set_limits(-FLT_MAX, FLT_MAX, -FLT_MAX, FLT_MAX, -FLT_MAX, FLT_MAX);
 
-  xzangle = asin(dir.x);
   engine::Engine& e = engine::Engine::instance();
   e.on("mousedown",   std::bind(&Camera::mousebutton, this, std::placeholders::_1));
   e.on("mouseup",     std::bind(&Camera::mousebutton, this, std::placeholders::_1));
   e.on("mousemotion", std::bind(&Camera::mousemotion, this, std::placeholders::_1));
+  e.on("tick_nodepth", std::bind(&Camera::tick, this, std::placeholders::_1));
 }
 
 void
@@ -29,9 +32,9 @@ Camera::center()
   pos.x = (limits.xmin + limits.xmax) / 2;
   pos.y = 8.0f;
   pos.z = (limits.zmin + limits.zmax) / 2;
-  dir.x = 0.00;
-  dir.y = -1.00;
-  dir.z = -0.70;
+  dir.x = -0.87f;
+  dir.y = -0.50f;
+  dir.z =  0.00f;
 }
 
 void
@@ -53,6 +56,12 @@ Camera::set_position(glm::vec3 pos, glm::vec3 dir, glm::vec3 up)
   this->pos = pos;
   this->dir = dir;
   this->up  = up;
+}
+
+glm::vec3
+Camera::get_direction() const
+{
+  return dir;
 }
 
 void
@@ -127,6 +136,19 @@ Camera::mousemotion(const engine::Event& ev)
       && (mod & KMOD_LALT)) {
     look(- event.xrel / 5.0f, - event.yrel / 5.0f);
   }
+}
+
+void
+Camera::tick(const engine::Event& ev)
+{
+  /*
+  std::stringstream ss;
+  ss << std::setprecision(2) << std::fixed
+     << "Camera position: (" << pos.x << ", " << pos.y << ", " << pos.z << ")";
+  gl::Transform::enable2D();
+  text::Dispatcher::overlay(ss.str(), 20, 140);
+  gl::Transform::disable2D();
+  */
 }
 
 void

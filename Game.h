@@ -9,6 +9,7 @@
 #include "KeyboardHandler.h"
 #include "CreepManager.h"
 #include "TowerManager.h"
+#include "Skybox.h"
 
 #include <de.h>
 #include <SDL/SDL.h>

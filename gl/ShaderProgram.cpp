@@ -4,9 +4,11 @@
 
 B_NS_GL
 
-ShaderProgram::ShaderProgram() : reference(glCreateProgram())
+std::stack<ShaderProgram::predef> ShaderProgram::program_stack;
+std::map<ShaderProgram::predef, ShaderProgram *> ShaderProgram::cache;
+
+ShaderProgram::ShaderProgram() : reference(glCreateProgram()), idle_program(0)
 {
-  DBG("Creating a new Shader program");
 }
 
 ShaderProgram::~ShaderProgram()
@@ -45,13 +47,15 @@ ShaderProgram::link()
 void
 ShaderProgram::use()
 {
+  glGetIntegerv(GL_CURRENT_PROGRAM, &idle_program);
   glUseProgram(reference);
 }
 
 void
-ShaderProgram::disuse()
+ShaderProgram::reset()
 {
-  glUseProgram(0);
+  glUseProgram(idle_program);
+  idle_program = 0;
 }
 
 GLint
@@ -84,6 +88,54 @@ ShaderProgram::create(std::vector<std::string> vshaders, std::vector<std::string
   instance->link();
 
   return instance;
+}
+
+void
+ShaderProgram::push(predef program)
+{
+  auto it = cache.find(program);
+
+  if (cache.end() == it) {
+    ShaderProgram *shader;
+    switch (program) {
+    case PROGRAM_DEFAULT:
+      shader = gl::ShaderProgram::create({ "default.v.glsl" }, { "default.f.glsl", "fog.f.glsl" });
+      break;
+
+    case PROGRAM_TEXTURE:
+      shader = gl::ShaderProgram::create({ "default.v.glsl" }, { "texture.f.glsl", "fog.f.glsl" });
+      break;
+
+    case PROGRAM_COLOR:
+      shader = gl::ShaderProgram::create({ "default.v.glsl" }, { "color.f.glsl", "fog.f.glsl" });
+      break;
+
+    case PROGRAM_SKYBOX:
+      shader = gl::ShaderProgram::create({ "default.v.glsl" }, { "skybox.f.glsl", "fog.f.glsl" });
+      break;
+
+    }
+
+    auto res = cache.insert(std::make_pair(program, shader));
+    it = res.first;
+  }
+
+  program_stack.push(program);
+  it->second->use();
+}
+
+void
+ShaderProgram::pop()
+{
+  predef program = program_stack.top();
+  program_stack.pop();
+  auto it = cache.find(program);
+  if (cache.end() == it) {
+    DBGERR("Program not found after pop.");
+    return;
+  }
+
+  it->second->reset();
 }
 
 E_NS_GL

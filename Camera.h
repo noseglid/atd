@@ -7,7 +7,6 @@
 class Camera
 {
   glm::vec3 pos, dir, up;
-  float xzangle;
   int mouse_buttons_active;
   bool enabled;
 
@@ -30,6 +29,7 @@ public:
     glm::vec3 dir = glm::vec3(0.0f, 0.0f, -1.0f),
     glm::vec3 up  = glm::vec3(0.0f, 1.0f,  0.0f)
   );
+  glm::vec3 get_direction() const;
   void enable(bool state);
 
   void orientate() const;
@@ -39,6 +39,7 @@ public:
 
   void mousebutton(const engine::Event& ev);
   void mousemotion(const engine::Event& ev);
+  void tick(const engine::Event& ev);
 
   static Camera& instance();
 };

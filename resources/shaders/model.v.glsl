@@ -2,6 +2,7 @@
 
 varying vec3 normal, lightDir, halfVector;
 varying vec4 diffuse, ambient;
+varying vec4 vertex, pos;
 
 attribute vec4 boneids;  /* No support for more than 4 bones */
 attribute vec4 weights;  /* No support for more than 4 bones */
@@ -25,4 +26,6 @@ void main(void)
 
   gl_Position = gl_ModelViewProjectionMatrix * deform * gl_Vertex;
   normal = normalize(gl_NormalMatrix * mat3(deform) * gl_Normal);
+  pos = gl_Position;
+  vertex = gl_Vertex;
 }

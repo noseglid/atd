@@ -64,9 +64,7 @@ Game::start(int levelid, const Json::Value& levelspec)
     });
   });
 
-  player->on(
-    "death", std::bind(finishedcb, utils::colors::red, "Crater lost")
-  );
+  player->on("death", std::bind(finishedcb, utils::colors::red, "Crater lost"));
 
   running = true;
   emit("start");

@@ -1,5 +1,7 @@
 #include "Menu.h"
 #include "Debug.h"
+#include "IO.h"
+#include "Game.h"
 #include "Exception.h"
 #include "Shutdown.h"
 #include "engine/Engine.h"
@@ -20,7 +22,6 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <vector>
 
 void
 init_SDL()
@@ -84,7 +85,7 @@ init_OpenGL()
   glViewport(0, 0, (GLsizei)res.width, (GLsizei)res.height);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective(45, (double)res.width / (double)res.height, 0.1, 100.0);
+  gluPerspective(45.0, (double)res.width / (double)res.height, 0.01, 60.0);
   glMatrixMode(GL_MODELVIEW);
 
   glEnable(GL_LIGHTING);
@@ -94,6 +95,12 @@ init_OpenGL()
   glEnable(GL_LIGHT0);
   GLfloat ambient[] = { 0.3, 0.3, 0.3, 1.0 };
   glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+
+  glEnable(GL_FOG);
+  GLfloat fog_color[] = { 0.831f, 0.705f, 0.552f, 1.0f };
+  glFogfv(GL_FOG_COLOR, fog_color);
+  glFogf(GL_FOG_START, 50.0f);
+  glFogf(GL_FOG_END, 60.0f);
 }
 
 int

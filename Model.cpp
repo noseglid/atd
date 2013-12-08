@@ -428,11 +428,7 @@ Model::normalize()
 void
 Model::draw(float elapsed)
 {
-  GLboolean shader_set = GL_FALSE;
-  glGetBooleanv(GL_CURRENT_PROGRAM, &shader_set);
-  if (GL_FALSE == shader_set) {
-    shader_program->use();
-  }
+  shader_program->use();
 
   if (0 < scene->mNumAnimations) {
     const aiAnimation *anim = scene->mAnimations[0];
@@ -456,9 +452,7 @@ Model::draw(float elapsed)
     vbo->draw();
   }
 
-  if (GL_FALSE == shader_set) {
-    shader_program->disuse();
-  }
+  shader_program->reset();
 }
 
 int
@@ -471,7 +465,7 @@ Model *
 Model::load(std::string file)
 {
   if (NULL == shader_program) {
-    shader_program = gl::ShaderProgram::create({ "model.v.glsl" }, { "model.f.glsl" });
+    shader_program = gl::ShaderProgram::create({ "model.v.glsl" }, { "default.f.glsl", "fog.f.glsl" });
   }
 
   auto it = loaded_models.find(file);
