@@ -3,7 +3,7 @@
 #include "Debug.h"
 #include "IO.h"
 
-B_NS_GL
+namespace gl {
 
 Shader::Shader(GLenum type, std::string file)
 {
@@ -34,4 +34,4 @@ Shader::Shader(GLenum type, std::string file)
   }
 }
 
-E_NS_GL
+}

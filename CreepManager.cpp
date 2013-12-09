@@ -61,7 +61,7 @@ CreepManager::stats_text() const
      << utils::colors::white << "Current wave: " << (waves_total - waves_left) << "\n"
      << utils::colors::white << "Creeps left: " << utils::colors::green << creeps_left << "\n"
      << utils::colors::white << "Waves left: "  << utils::colors::green << waves_left;
-  HUD::InfoBar::instance().set_info_text2(ts);
+  hud::InfoBar::instance().set_info_text2(ts);
 }
 
 void

@@ -4,7 +4,7 @@
 #include "Game.h"
 #include "Debug.h"
 
-B_NS_UI
+namespace ui {
 
 class PauseMenuListener : public Rocket::Core::EventListener
 {
@@ -71,4 +71,4 @@ PauseMenu::instance()
   return instance;
 }
 
-E_NS_UI
+}

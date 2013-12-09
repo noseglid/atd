@@ -21,7 +21,7 @@ Player::stats_text()
   ts << text::Stream::size(24.0f)
      << utils::colors::white << "Gold: " << utils::colors::gold << gold << "\n"
      << utils::colors::white << "Lives: " << lives_color << lives;
-  HUD::InfoBar::instance().set_info_text1(ts);
+  hud::InfoBar::instance().set_info_text1(ts);
 }
 
 Player *

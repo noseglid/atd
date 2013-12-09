@@ -1,10 +1,11 @@
+#include "hud/HUD.h"
 #include "hud/Bar.h"
 #include "Debug.h"
 
 #include <stdlib.h>
 #include <OpenGL/gl.h>
 
-B_NS_HUD
+namespace hud {
 
 Bar::Bar() : visible(false)
 {
@@ -63,4 +64,4 @@ Bar::hide()
   visible = false;
 }
 
-E_NS_HUD
+}

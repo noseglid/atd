@@ -6,7 +6,7 @@
 #include <SDL.h>
 #include <Rocket/Core/SystemInterface.h>
 
-B_NS_UI
+namespace ui {
 
 class System : public Rocket::Core::SystemInterface
 {
@@ -15,6 +15,6 @@ public:
   bool LogMessage(Rocket::Core::Log::Type type, const Rocket::Core::String& message);
 };
 
-E_NS_UI
+}
 
 #endif

@@ -1,6 +1,6 @@
 #include "VBO.h"
 
-B_NS_GL
+namespace gl {
 
 VBO::VBO() : texture(0), count(0)
 {
@@ -132,4 +132,4 @@ VBO::draw() const
   glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-E_NS_GL
+}

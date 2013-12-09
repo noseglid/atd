@@ -6,7 +6,7 @@
 
 #include <sstream>
 
-B_NS_TEXT
+namespace text {
 
 class Stream
 {
@@ -135,6 +135,6 @@ public:
   }
 };
 
-E_NS_TEXT
+}
 
 #endif

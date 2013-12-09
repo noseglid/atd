@@ -6,7 +6,7 @@
 
 #include <Rocket/Controls.h>
 
-B_NS_UI
+namespace ui {
 
 class SetUserListener : public Rocket::Core::EventListener
 {
@@ -87,4 +87,4 @@ SetUserMenu::instance()
   return instance;
 }
 
-E_NS_UI
+}

@@ -3,7 +3,7 @@
 
 #include "ui/Menu.h"
 
-B_NS_UI
+namespace ui {
 
 class OptionsMenu : public Menu
 {
@@ -18,6 +18,6 @@ public:
   Menu *get_back() const;
 };
 
-E_NS_UI
+}
 
 #endif

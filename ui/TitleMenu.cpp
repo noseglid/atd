@@ -8,7 +8,7 @@
 
 #include <pjson.hpp>
 
-B_NS_UI
+namespace ui {
 
 class TitleListener : public Rocket::Core::EventListener
 {
@@ -76,4 +76,4 @@ TitleMenu::instance()
   return instance;
 }
 
-E_NS_UI
+}

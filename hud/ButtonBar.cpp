@@ -1,7 +1,7 @@
 #include "hud/ButtonBar.h"
 #include "gl/Transform.h"
 
-B_NS_HUD
+namespace hud {
 
 ButtonBar&
 ButtonBar::instance()
@@ -77,4 +77,4 @@ ButtonBar::unmark_all()
   }
 }
 
-E_NS_HUD
+}

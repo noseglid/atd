@@ -3,7 +3,7 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 
-B_NS_GL
+namespace gl {
 
 void
 Transform::billboard()
@@ -76,4 +76,4 @@ Transform::unproject(const int& x, const int& y)
   return glm::vec3(posX, posY, posZ);
 }
 
-E_NS_GL
+}

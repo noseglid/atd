@@ -2,7 +2,7 @@
 #include "Exception.h"
 #include "Debug.h"
 
-B_NS_GL
+namespace gl {
 
 std::stack<ShaderProgram::predef> ShaderProgram::program_stack;
 std::map<ShaderProgram::predef, ShaderProgram *> ShaderProgram::cache;
@@ -138,4 +138,4 @@ ShaderProgram::pop()
   it->second->reset();
 }
 
-E_NS_GL
+}

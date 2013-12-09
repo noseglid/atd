@@ -7,7 +7,7 @@
 #include <Rocket/Controls/ElementDataGrid.h>
 #include <Rocket/Controls/ElementDataGridRow.h>
 
-B_NS_UI
+namespace ui {
 
 class BackListener : public Rocket::Core::EventListener
 {
@@ -69,4 +69,4 @@ LevelSelectMenu::instance()
   return instance;
 }
 
-E_NS_UI
+}

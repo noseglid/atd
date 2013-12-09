@@ -3,7 +3,7 @@
 
 #include "ui/Menu.h"
 
-B_NS_UI
+namespace ui {
 
 class LevelSelectMenu : public Menu
 {
@@ -13,6 +13,6 @@ public:
   static LevelSelectMenu& instance();
 };
 
-E_NS_UI
+}
 
 #endif

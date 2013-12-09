@@ -9,10 +9,7 @@
 #include <OpenGL/gl.h>
 #include <SDL/SDL_ttf.h>
 
-#define B_NS_TEXT namespace text {
-#define E_NS_TEXT }
-
-B_NS_TEXT
+namespace text {
 
 class Text
 {
@@ -50,6 +47,6 @@ public:
   static std::string linebreak(std::string s, int col = 40);
 };
 
-E_NS_TEXT
+}
 
 #endif

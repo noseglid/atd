@@ -3,7 +3,7 @@
 
 #include "ui/Menu.h"
 
-B_NS_UI
+namespace ui {
 
 class PauseMenu : public Menu
 {
@@ -21,6 +21,6 @@ public:
   static PauseMenu& instance();
 };
 
-E_NS_UI
+}
 
 #endif

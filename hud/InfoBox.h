@@ -1,13 +1,12 @@
 #ifndef __HUD__INFOBOX_H__
 #define __HUD__INFOBOX_H__
 
-#include "hud/HUD.h"
 #include "engine/Engine.h"
 #include "text/Stream.h"
 
 #include <de.h>
 
-B_NS_HUD
+namespace hud {
 
 #define BOX_PADDING 3.0f
 #define BOX_MARGIN 3.0f
@@ -52,6 +51,6 @@ public:
   void draw();
 };
 
-E_NS_HUD
+}
 
 #endif

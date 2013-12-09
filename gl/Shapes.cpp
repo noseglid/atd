@@ -3,7 +3,7 @@
 #include <cmath>
 #include <OpenGL/gl.h>
 
-B_NS_GL
+namespace gl {
 
 void
 Shapes::circle(float radius, size_t points)
@@ -20,4 +20,4 @@ Shapes::circle(float radius, size_t points)
   glEnd();
 }
 
-E_NS_GL
+}

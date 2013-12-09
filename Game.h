@@ -19,7 +19,7 @@
 class Game : public de::Emitter<>
 {
   bool running;
-  HUD::InfoBox finishedbox;
+  hud::InfoBox finishedbox;
   engine::Engine::eventid_t ev_done;
 
   Game();

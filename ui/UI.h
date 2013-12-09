@@ -1,14 +1,11 @@
 #ifndef __UI__UI_H_
 #define __UI__UI_H_
 
-#define B_NS_UI namespace ui {
-#define E_NS_UI }
-
 #include "engine/Engine.h"
 
 #include <Rocket/Core.h>
 
-B_NS_UI
+namespace ui {
 
 class System;
 class Renderer;
@@ -37,6 +34,6 @@ public:
   void res_change(int width, int height);
 };
 
-E_NS_UI
+}
 
 #endif

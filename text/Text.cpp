@@ -7,7 +7,7 @@
 #include <OpenGL/glu.h>
 #include <SDL/SDL.h>
 
-B_NS_TEXT
+namespace text {
 
 Text::Text() : font_world(NULL), font_overlay(NULL)
 {
@@ -113,4 +113,4 @@ Text::linebreak(std::string s, int col)
   return s;
 }
 
-E_NS_TEXT
+}

@@ -8,7 +8,7 @@
 #include <vector>
 #include <de.h>
 
-B_NS_HUD
+namespace hud {
 
 class ButtonBar : public Bar, public de::Emitter<int>
 {
@@ -29,7 +29,6 @@ public:
   void unmark_all();
 };
 
-
-E_NS_HUD
+}
 
 #endif

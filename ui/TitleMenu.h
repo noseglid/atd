@@ -6,7 +6,7 @@
 
 #include <de.h>
 
-B_NS_UI
+namespace ui {
 
 class TitleMenu : public Menu
 {
@@ -21,6 +21,6 @@ public:
   static TitleMenu& instance();
 };
 
-E_NS_UI
+}
 
 #endif

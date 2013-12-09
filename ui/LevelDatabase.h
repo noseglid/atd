@@ -7,7 +7,7 @@
 #include <pjson.hpp>
 #include <Rocket/Controls/DataSource.h>
 
-B_NS_UI
+namespace ui {
 
 class LevelDatabase : public Rocket::Controls::DataSource
 {
@@ -36,6 +36,6 @@ public:
   static LevelDatabase& instance();
 };
 
-E_NS_UI
+}
 
 #endif

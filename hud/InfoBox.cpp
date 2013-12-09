@@ -1,4 +1,5 @@
 #include "hud/InfoBox.h"
+#include "hud/HUD.h"
 #include "text/Dispatcher.h"
 #include "Bar.h"
 #include "gl/Transform.h"
@@ -7,7 +8,7 @@
 #include <algorithm>
 #include <climits>
 
-B_NS_HUD
+namespace hud {
 
 static int mousex, mousey;
 
@@ -125,4 +126,4 @@ InfoBox::draw()
   gl::Transform::disable2D();
 }
 
-E_NS_HUD
+}

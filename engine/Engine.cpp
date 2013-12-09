@@ -7,7 +7,7 @@
 #include <OpenGL/GL.h>
 #include <sys/time.h>
 
-B_NS_ENGINE
+namespace engine {
 
 Engine::Engine() : running(false)
 {
@@ -122,4 +122,4 @@ Engine::instance()
   return instance;
 }
 
-E_NS_ENGINE
+}

@@ -1,7 +1,7 @@
 #include "ui/System.h"
 #include "Debug.h"
 
-B_NS_UI
+namespace ui {
 
 float
 System::GetElapsedTime()
@@ -26,4 +26,4 @@ System::LogMessage(Rocket::Core::Log::Type type, const Rocket::Core::String& mes
   return true;
 }
 
-E_NS_UI
+}

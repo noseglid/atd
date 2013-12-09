@@ -2,7 +2,6 @@
 #define __VBO_H__
 
 #include "Debug.h"
-#include "gl/GL.h"
 #include "gl/Material.h"
 
 #include <OpenGL/gl.h>
@@ -10,7 +9,7 @@
 #include <vector>
 #include <map>
 
-B_NS_GL
+namespace gl {
 
 class VBO
 {
@@ -78,6 +77,6 @@ public:
   void draw() const;
 };
 
-E_NS_GL
+}
 
 #endif

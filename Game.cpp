@@ -7,10 +7,10 @@
 
 Game::Game() :
   running(false),
-  finishedbox(text::Stream(), HUD::InfoBox::SNAP_CENTER),
+  finishedbox(text::Stream(), hud::InfoBox::SNAP_CENTER),
   ev_done(engine::Engine::instance().invalid_eventid())
 {
-  HUD::HUD::init();
+  hud::HUD::init();
 
   engine::Engine::instance().on(
     "tick_nodepth", std::bind(&Game::tick, this, std::placeholders::_1)
@@ -35,7 +35,7 @@ Game::start(int levelid, const Json::Value& levelspec)
 {
   DBG("Starting a new game");
 
-  HUD::HUD::show();
+  hud::HUD::show();
 
   keyboard      = new KeyboardHandler();
   meta_manager  = new MetaManager();
@@ -81,7 +81,7 @@ Game::stop(bool clear_ev_done)
   delete keyboard;
 
   text::Dispatcher::instance().clear();
-  HUD::HUD::hide();
+  hud::HUD::hide();
   finishedbox.clear();
 
   ui::PauseMenu::instance()._hide();

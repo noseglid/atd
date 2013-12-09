@@ -5,7 +5,7 @@
 #include "ui/UI.h"
 #include "Debug.h"
 
-B_NS_ENGINE
+namespace engine {
 
 Video::Video() : surface(NULL)
 {
@@ -43,7 +43,7 @@ Video::set_resolution(const int& width, const int& height)
     throw Exception("Could not set resolution.");
   }
 
-  HUD::HUD::init();
+  hud::HUD::init();
 }
 
 Video&
@@ -53,4 +53,4 @@ Video::instance()
   return instance;
 }
 
-E_NS_ENGINE
+}

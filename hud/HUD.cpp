@@ -3,7 +3,7 @@
 #include "ButtonBar.h"
 #include "engine/Video.h"
 
-B_NS_HUD
+namespace hud {
 
 int HUD::screen_width  = 0;
 int HUD::screen_height = 0;
@@ -33,4 +33,4 @@ HUD::hide()
   ButtonBar::instance().hide();
 }
 
-E_NS_HUD
+}

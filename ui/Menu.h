@@ -4,7 +4,7 @@
 #include "ui/UI.h"
 #include "Audio.h"
 
-B_NS_UI
+namespace ui {
 
 class Menu
 {
@@ -46,6 +46,6 @@ public:
   void feedback(std::string msg = "", bool error = true);
 };
 
-E_NS_UI
+}
 
 #endif

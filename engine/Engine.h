@@ -1,16 +1,13 @@
 #ifndef __ENGINE__ENGINE_H__
 #define __ENGINE__ENGINE_H__
 
-#define B_NS_ENGINE namespace engine {
-#define E_NS_ENGINE }
-
 #include "engine/Event.h"
 #include "Camera.h"
 #include "Skybox.h"
 
 #include <de.h>
 
-B_NS_ENGINE
+namespace engine {
 
 class Engine : public de::Emitter<engine::Event>
 {
@@ -43,6 +40,6 @@ public:
   static Engine& instance();
 };
 
-E_NS_ENGINE
+}
 
 #endif

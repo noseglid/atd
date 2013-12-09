@@ -1,6 +1,6 @@
 #include "Color.h"
 
-BEGIN_NS_UTILS
+namespace utils {
 
 namespace colors {
   Color red       = Color(1.00f, 0.00f, 0.00f);
@@ -48,4 +48,4 @@ Color::interpolate_progress(float frac)
   return ret;
 }
 
-END_NS_UTILS
+}

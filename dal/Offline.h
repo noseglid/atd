@@ -7,7 +7,7 @@
 #include <soci.h>
 #include <sqlite3/soci-sqlite3.h>
 
-B_NS_DAL
+namespace dal {
 
 class Offline : public DataAccessInterface
 {
@@ -38,6 +38,6 @@ public:
   );
 };
 
-E_NS_DAL
+}
 
 #endif

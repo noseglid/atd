@@ -46,9 +46,9 @@ TowerManager::TowerManager() : selected_tower(towers.end()), btnupgr(NULL), btns
 
   audio_build = Audio::instance().load_sfx("build1.ogg");
 
-  towerinfo   = new HUD::InfoBox(text::Stream(), HUD::InfoBox::SNAP_TOPRIGHT);
-  upgradeinfo = new HUD::InfoBox(text::Stream(), HUD::InfoBox::SNAP_BOTRIGHT, true);
-  sellinfo    = new HUD::InfoBox(text::Stream(), HUD::InfoBox::SNAP_BOTRIGHT, true);
+  towerinfo   = new hud::InfoBox(text::Stream(), hud::InfoBox::SNAP_TOPRIGHT);
+  upgradeinfo = new hud::InfoBox(text::Stream(), hud::InfoBox::SNAP_BOTRIGHT, true);
+  sellinfo    = new hud::InfoBox(text::Stream(), hud::InfoBox::SNAP_BOTRIGHT, true);
 
   dummy_tower_shader = gl::ShaderProgram::create({ "model.v.glsl" }, { "dummy_tower.f.glsl" });
 }
@@ -65,7 +65,7 @@ TowerManager::~TowerManager()
   delete sellinfo;
   delete dummy_tower_shader;
 
-  HUD::ButtonBar::instance().clear_buttons();
+  hud::ButtonBar::instance().clear_buttons();
   btnupgr = NULL;
   btnsell = NULL;
 }
@@ -78,8 +78,8 @@ TowerManager::set_faction(Faction::Faction faction)
     Json::Value jspec = Json::deserialize(IO::file_get_contents(file));
     std::string name = jspec["desc"]["name"].asString();
 
-    HUD::Button *button = new HUD::Button(IL::GL::texture(jspec["hudtex"].asString()));
-    HUD::ButtonBar::instance().add_button(button);
+    hud::Button *button = new hud::Button(IL::GL::texture(jspec["hudtex"].asString()));
+    hud::ButtonBar::instance().add_button(button);
     button->on("leftclick",
                std::bind(&TowerManager::prepare_tower, this, name, std::placeholders::_1));
     button->on("mouseentry",
@@ -138,7 +138,7 @@ void
 TowerManager::build_tower_unset()
 {
   build_tower.erase();
-  HUD::ButtonBar::instance().unmark_all();
+  hud::ButtonBar::instance().unmark_all();
   Game::instance().map->set_highlight(-1, -1);
 }
 
@@ -146,7 +146,7 @@ TowerManager::build_tower_unset()
  * Callback from clicking HUD button to build tower
  */
 void
-TowerManager::prepare_tower(std::string tower, HUD::Button *button)
+TowerManager::prepare_tower(std::string tower, hud::Button *button)
 {
   /* Deselect any selected tower */
   build_tower_unset();
@@ -159,7 +159,7 @@ TowerManager::prepare_tower(std::string tower, HUD::Button *button)
 }
 
 void
-TowerManager::button_mouse_event(bool on, Json::Value spec, HUD::Button *button)
+TowerManager::button_mouse_event(bool on, Json::Value spec, hud::Button *button)
 {
   auto it = browseboxes.find(button);
   if (browseboxes.end() != it) {
@@ -168,7 +168,7 @@ TowerManager::button_mouse_event(bool on, Json::Value spec, HUD::Button *button)
   }
 
   if (on) {
-    using HUD::InfoBox;
+    using hud::InfoBox;
     std::string limit = spec["desc"].objectHasKey("limit") ?
       std::string("Limit: ") + spec["desc"]["limit"].asString() + "\n" : "";
 
@@ -323,7 +323,7 @@ TowerManager::mousedown(const engine::Event& ev)
   SDL_MouseButtonEvent event = ev.ev.button;
 
   if (event.button != SDL_BUTTON_LEFT ||
-      HUD::ButtonBar::instance().in_turf(event.x, event.y)) {
+      hud::ButtonBar::instance().in_turf(event.x, event.y)) {
     return;
   }
 
@@ -418,7 +418,7 @@ TowerManager::set_upgrade_infobox()
 void
 TowerManager::update_hud()
 {
-  HUD::ButtonBar& bar = HUD::ButtonBar::instance();
+  hud::ButtonBar& bar = hud::ButtonBar::instance();
 
   if (NULL != btnupgr) {
     btnupgr->disable("leftclick");
@@ -439,19 +439,19 @@ TowerManager::update_hud()
   std::string tex_upgr = (0 >= upgrades_left(selected_tower)) ?
     TEXTURE_UPGRADE_DISABLED : TEXTURE_UPGRADE;
 
-  btnupgr = new HUD::Button(IL::GL::texture(tex_upgr));
-  btnsell = new HUD::Button(IL::GL::texture(TEXTURE_SELL));
+  btnupgr = new hud::Button(IL::GL::texture(tex_upgr));
+  btnsell = new hud::Button(IL::GL::texture(TEXTURE_SELL));
 
   btnsell->on("leftclick",  std::bind(&TowerManager::sell_tower, this));
   btnsell->on("mouseentry", std::bind(&TowerManager::set_sell_infobox, this));
-  btnsell->on("mouseexit",  std::bind(&HUD::InfoBox::clear, sellinfo));
+  btnsell->on("mouseexit",  std::bind(&hud::InfoBox::clear, sellinfo));
 
   btnupgr->on("leftclick",  std::bind(&TowerManager::upgrade_tower, this));
   btnupgr->on("mouseentry", std::bind(&TowerManager::set_upgrade_infobox, this));
-  btnupgr->on("mouseexit",  std::bind(&HUD::InfoBox::clear, upgradeinfo));
+  btnupgr->on("mouseexit",  std::bind(&hud::InfoBox::clear, upgradeinfo));
 
-  bar.add_button(btnupgr, HUD::Button::LOCATION_RIGHT);
-  bar.add_button(btnsell, HUD::Button::LOCATION_RIGHT);
+  bar.add_button(btnupgr, hud::Button::LOCATION_RIGHT);
+  bar.add_button(btnsell, hud::Button::LOCATION_RIGHT);
 }
 
 void
@@ -502,7 +502,7 @@ TowerManager::mouseup(const engine::Event& ge)
 {
   SDL_MouseButtonEvent event = ge.ev.button;
 
-  if (HUD::ButtonBar::instance().in_turf(event.x, event.y)) return;
+  if (hud::ButtonBar::instance().in_turf(event.x, event.y)) return;
 
   if (event.button == SDL_BUTTON_LEFT &&
       abs(event.x - click.x) < CLICK_FUZZ &&
@@ -527,7 +527,7 @@ TowerManager::tick_nodepth(const engine::Event& ev)
   sellinfo->draw();
   towerinfo->draw();
 
-  for (std::pair<HUD::Button*, HUD::InfoBox*> entry : browseboxes) {
+  for (std::pair<hud::Button*, hud::InfoBox*> entry : browseboxes) {
     entry.second->draw();
   }
 }

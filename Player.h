@@ -9,7 +9,7 @@
 
 class Player : public de::Emitter<>
 {
-  friend class HUD::InfoBar;
+  friend class hud::InfoBar;
 
   int gold;
   int lives, max_lives;

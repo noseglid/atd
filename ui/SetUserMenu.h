@@ -6,7 +6,7 @@
 
 #include <de.h>
 
-B_NS_UI
+namespace ui {
 
 class SetUserMenu : public Menu
 {
@@ -22,6 +22,6 @@ public:
   void evolve();
 };
 
-E_NS_UI
+}
 
 #endif

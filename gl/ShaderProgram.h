@@ -1,14 +1,13 @@
 #ifndef __GL__SHADERPROGRAM_H__
 #define __GL__SHADERPROGRAM_H__
 
-#include "gl/GL.h"
 #include "gl/Shader.h"
 
 #include <stack>
 #include <vector>
 #include <map>
 
-B_NS_GL
+namespace gl {
 
 class ShaderProgram
 {
@@ -56,6 +55,6 @@ public:
   static void pop();
 };
 
-E_NS_GL
+}
 
 #endif

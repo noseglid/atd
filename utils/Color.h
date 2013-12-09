@@ -1,11 +1,9 @@
 #ifndef __UTILS_COLOR_H__
 #define __UTILS_COLOR_H__
 
-#include "utils.h"
-
 #include <SDL/SDL.h>
 
-BEGIN_NS_UTILS
+namespace utils {
 
 class Color
 {
@@ -34,6 +32,6 @@ namespace colors {
   extern Color gold;
 }
 
-END_NS_UTILS
+}
 
 #endif

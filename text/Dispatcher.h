@@ -7,7 +7,7 @@
 
 #include <OpenGL/gl.h>
 
-B_NS_TEXT
+namespace text {
 
 class Dispatcher
 {
@@ -50,6 +50,6 @@ public:
 
 };
 
-E_NS_TEXT
+}
 
 #endif

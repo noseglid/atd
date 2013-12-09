@@ -6,7 +6,7 @@
 #include <functional>
 #include <pjson.hpp>
 
-B_NS_DAL
+namespace dal {
 
 struct level
 {
@@ -70,6 +70,6 @@ public:
   ) = 0;
 };
 
-E_NS_DAL
+}
 
 #endif

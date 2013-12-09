@@ -3,7 +3,7 @@
 #include "engine/Video.h"
 #include "Debug.h"
 
-B_NS_TEXT
+namespace text {
 
 Stream::Stream() : inputx(0.0f), inputy(0.0f), input_ptsize(18.0f),
   input_indent(0.0f), clr(1.0f, 1.0f, 1.0f)
@@ -60,4 +60,4 @@ Stream::empty() const
   return content.empty();
 }
 
-E_NS_TEXT
+}

@@ -7,7 +7,7 @@
 #include <vector>
 #include <string>
 
-B_NS_HUD
+namespace hud {
 
 class InfoBar : public Bar
 {
@@ -26,6 +26,6 @@ public:
   void set_info_text2(text::Stream stream);
 };
 
-E_NS_HUD
+}
 
 #endif

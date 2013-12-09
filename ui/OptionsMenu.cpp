@@ -4,7 +4,7 @@
 #include "Game.h"
 #include "Debug.h"
 
-B_NS_UI
+namespace ui {
 
 class OptionsMenuListener : public Rocket::Core::EventListener
 {
@@ -58,4 +58,4 @@ OptionsMenu::instance()
   return instance;
 }
 
-E_NS_UI
+}

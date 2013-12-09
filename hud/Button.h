@@ -7,7 +7,7 @@
 #include <de.h>
 #include <OpenGL/gl.h>
 
-B_NS_HUD
+namespace hud {
 
 class Button;
 
@@ -48,6 +48,6 @@ public:
   bool point_enclosed(int x, int y) const;
 };
 
-E_NS_HUD
+}
 
 #endif

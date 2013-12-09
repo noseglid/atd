@@ -4,7 +4,7 @@
 #include "ui/UI.h"
 #include <Rocket/Controls/DataFormatter.h>
 
-B_NS_UI
+namespace ui {
 
 class LevelCompletedFormatter : public Rocket::Controls::DataFormatter
 {
@@ -20,6 +20,6 @@ public:
   static LevelCompletedFormatter& instance();
 };
 
-E_NS_UI
+}
 
 #endif

@@ -3,7 +3,7 @@
 #include "gl/Transform.h"
 #include "Game.h"
 
-B_NS_TEXT
+namespace text {
 
 Dispatcher::Dispatcher()
 {
@@ -128,4 +128,4 @@ Dispatcher::tick()
   glEnable(GL_LIGHTING);
 }
 
-E_NS_TEXT
+}

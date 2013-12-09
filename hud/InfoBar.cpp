@@ -1,4 +1,5 @@
-#include "InfoBar.h"
+#include "hud/InfoBar.h"
+#include "hud/HUD.h"
 #include "engine/Engine.h"
 #include "text/Text.h"
 #include "text/Dispatcher.h"
@@ -8,7 +9,7 @@
 #include <sstream>
 #include <algorithm>
 
-B_NS_HUD
+namespace hud {
 
 #define TITLE_PTSIZE 48.0f
 
@@ -84,4 +85,4 @@ InfoBar::tick() const
   gl::Transform::disable2D();
 }
 
-E_NS_HUD
+}

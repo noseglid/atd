@@ -5,9 +5,7 @@
 #include "Exception.h"
 #include "IO.h"
 
-#include <dirent.h>
-
-B_NS_UI
+namespace ui {
 
 LevelDatabase::LevelDatabase() : Rocket::Controls::DataSource("levels")
 {
@@ -84,4 +82,4 @@ LevelDatabase::instance()
   return instance;
 }
 
-E_NS_UI
+}

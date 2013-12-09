@@ -1,9 +1,9 @@
 #ifndef __ENGINE__VIDEO_H__
 #define __ENGINE__VIDEO_H__
 
-#include "engine/Engine.h"
+#include <SDL/SDL.h>
 
-B_NS_ENGINE
+namespace engine {
 
 struct resolution
 {
@@ -25,6 +25,6 @@ public:
   void set_resolution(const int& width, const int& height);
 };
 
-E_NS_ENGINE
+}
 
 #endif

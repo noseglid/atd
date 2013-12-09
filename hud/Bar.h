@@ -1,9 +1,7 @@
 #ifndef __HUD__BAR_H_
 #define __HUD__BAR_H_
 
-#include "HUD.h"
-
-B_NS_HUD
+namespace hud {
 
 #define HUD_BUTTON_WIDTH  64.0f
 #define HUD_BUTTON_HEIGHT 64.0f
@@ -30,6 +28,6 @@ public:
   static void calc_button_vertices(int index, float *left, float *right, float *top, float *bot);
 };
 
-E_NS_HUD
+}
 
 #endif

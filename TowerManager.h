@@ -29,10 +29,10 @@ class TowerManager
   tlist_t towers;
   glm::vec3 click;
 
-  HUD::Button *btnupgr, *btnsell;
+  hud::Button *btnupgr, *btnsell;
 
-  std::map<HUD::Button*, HUD::InfoBox*> browseboxes;
-  HUD::InfoBox *towerinfo, *upgradeinfo, *sellinfo;
+  std::map<hud::Button*, hud::InfoBox*> browseboxes;
+  hud::InfoBox *towerinfo, *upgradeinfo, *sellinfo;
 
   MapEvent last_map_event;
 
@@ -48,8 +48,8 @@ class TowerManager
   void sell_tower();
   void build_tower_unset();
 
-  void prepare_tower(std::string tower, HUD::Button *button);
-  void button_mouse_event(bool on, Json::Value spec, HUD::Button *button);
+  void prepare_tower(std::string tower, hud::Button *button);
+  void button_mouse_event(bool on, Json::Value spec, hud::Button *button);
 
   void map_hover(const MapEvent& me);
 

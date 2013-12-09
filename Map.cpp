@@ -92,7 +92,7 @@ Map::load_level(const Json::Value& levelspec)
   Mix_Music *bgmusic = Audio::instance().load_music(levelspec["bgmusic"].asString());
   Audio::instance().play(bgmusic);
 
-  HUD::InfoBar::instance().set_title(levelspec["name"].asString());
+  hud::InfoBar::instance().set_title(levelspec["name"].asString());
 
   /* Set camera limits */
   Camera::instance().set_limits(

@@ -1,8 +1,6 @@
 #ifndef __GL__GLM_H__
 #define __GL__GLM_H__
 
-#include "gl/GL.h"
-
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wgnu"
 #include <glm/glm.hpp>
@@ -10,7 +8,7 @@
 #include <glm/gtx/vector_angle.hpp>
 #pragma clang diagnostic pop
 
-B_NS_GL
+namespace gl {
 
 class glmvec3cmp
 {
@@ -24,6 +22,6 @@ public:
   }
 };
 
-E_NS_GL
+}
 
 #endif

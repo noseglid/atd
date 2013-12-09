@@ -1,10 +1,7 @@
 #ifndef __HUD__HUD_H__
 #define __HUD__HUD_H__
 
-#define B_NS_HUD namespace HUD {
-#define E_NS_HUD }
-
-B_NS_HUD
+namespace hud {
 
 class HUD
 {
@@ -22,7 +19,6 @@ public:
   static void hide();
 };
 
-
-E_NS_HUD
+}
 
 #endif

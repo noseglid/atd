@@ -5,7 +5,7 @@
 
 #include <OpenGL/glu.h>
 
-B_NS_UI
+namespace ui {
 
 Renderer::Renderer()
 {
@@ -143,4 +143,4 @@ Renderer::ReleaseTexture(Rocket::Core::TextureHandle texture_handle)
   glDeleteTextures(1, (GLuint*) &texture_handle);
 }
 
-E_NS_UI
+}

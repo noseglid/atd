@@ -1,6 +1,6 @@
 #include "ui/LevelCompletedFormatter.h"
 
-B_NS_UI
+namespace ui {
 
 LevelCompletedFormatter::LevelCompletedFormatter() :
   Rocket::Controls::DataFormatter("levelCompleted")
@@ -28,4 +28,4 @@ LevelCompletedFormatter::instance()
   return instance;
 }
 
-E_NS_UI
+}

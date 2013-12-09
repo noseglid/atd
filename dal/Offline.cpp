@@ -5,7 +5,7 @@
 #include "IO.h"
 #include "Debug.h"
 
-B_NS_DAL
+namespace dal {
 
 using namespace soci;
 
@@ -118,4 +118,4 @@ Offline::set_level_completed(int id, std::function<void(bool success)> cb)
   }
 }
 
-E_NS_DAL
+}

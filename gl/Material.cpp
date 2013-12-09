@@ -2,7 +2,7 @@
 
 #include <OpenGL/gl.h>
 
-B_NS_GL
+namespace gl {
 
 Material::Material(
   glm::vec4 diffuse,
@@ -65,4 +65,4 @@ Material::set_from_color(float r, float g, float b, float opacity)
   glMaterialf (GL_FRONT, GL_SHININESS, 0.0f);
 }
 
-E_NS_GL
+}

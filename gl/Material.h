@@ -1,12 +1,11 @@
 #ifndef __GL__MATERIAL_H__
 #define __GL__MATERIAL_H__
 
-#include "gl/GL.h"
 #include "gl/glm.h"
 
 #include <assimp/material.h>
 
-B_NS_GL
+namespace gl {
 
 class Material
 {
@@ -38,6 +37,6 @@ public:
   static void set_from_color(float r, float g, float b, float opacity = 1.0f);
 };
 
-E_NS_GL
+}
 
 #endif

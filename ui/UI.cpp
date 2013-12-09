@@ -11,7 +11,7 @@
 #include <Rocket/Controls.h>
 #include <Rocket/Debugger.h>
 
-B_NS_UI
+namespace ui {
 
 UI::UI()
 {
@@ -156,4 +156,4 @@ UI::res_change(int width, int height)
   load_fonts();
 }
 
-E_NS_UI
+}

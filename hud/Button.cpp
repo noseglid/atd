@@ -4,7 +4,7 @@
 
 #include <OpenGL/gl.h>
 
-B_NS_HUD
+namespace hud {
 
 Button::Button(GLuint texture) : texture(texture), marked(false), mouse_in_turf(false)
 {
@@ -124,4 +124,4 @@ Button::draw() const
   }
 }
 
-E_NS_HUD
+}

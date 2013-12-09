@@ -4,7 +4,7 @@
 
 #include <math.h>
 
-B_NS_UI
+namespace ui {
 
 Menu::Menu(std::string docpath) :
   anim_pending(false),
@@ -130,4 +130,4 @@ Menu::feedback(std::string msg, bool error)
   el->SetClass("success", !error);
 }
 
-E_NS_UI
+}
