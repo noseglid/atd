@@ -39,7 +39,7 @@ Game::start(int levelid, const Json::Value& levelspec)
 
   keyboard      = new KeyboardHandler();
   meta_manager  = new MetaManager();
-  map           = new Map(levelspec);
+  map           = new map::Map(levelspec);
   tower_manager = new TowerManager();
   creep_manager = new CreepManager(levelspec);
   player        = new Player();

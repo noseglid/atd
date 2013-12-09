@@ -1,7 +1,7 @@
 #ifndef __CREEP_H__
 #define __CREEP_H__
 
-#include "Path.h"
+#include "map/Path.h"
 #include "Model.h"
 #include "Targetable.h"
 #include "Projectile.h"
@@ -21,12 +21,12 @@ class Creep : public de::Emitter<>, public Targetable, public Mobile
   Model *model;
   glm::mat4 trafo;
 
-  void travel_to(const PathCoord& target);
+  void travel_to(const map::PathCoord& target);
 
 protected:
-  const Path *path;
+  const map::Path *path;
 
-  PathCoord target;
+  map::PathCoord target;
   glm::vec3 vtarget;
 
   float animinc;

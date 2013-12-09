@@ -41,7 +41,7 @@ TowerManager::TowerManager() : selected_tower(towers.end()), btnupgr(NULL), btns
     e.on("keydown",      std::bind(&TowerManager::keydown,      this, std::placeholders::_1))
   );
 
-  Map *m = Game::instance().map;
+  map::Map *m = Game::instance().map;
   m->on("hover", std::bind(&TowerManager::map_hover, this, std::placeholders::_1));
 
   audio_build = Audio::instance().load_sfx("build1.ogg");
@@ -105,7 +105,7 @@ TowerManager::create_tower(std::string tower, glm::vec3 pos)
 void
 TowerManager::dummy_tower(int x, int y)
 {
-  Map *map = Game::instance().map;
+  map::Map *map = Game::instance().map;
   glm::vec3 pos = map->get_center_of(x, y);
   pos.y = 0.0f;
   int hlx = x, hly = y;
@@ -125,7 +125,7 @@ TowerManager::dummy_tower(int x, int y)
 }
 
 void
-TowerManager::map_hover(const MapEvent& me)
+TowerManager::map_hover(const map::MapEvent& me)
 {
   last_map_event = me;
   if (build_tower.empty())
@@ -334,7 +334,7 @@ TowerManager::mousedown(const engine::Event& ev)
 bool
 TowerManager::tower_purchase_if()
 {
-  Map *map = Game::instance().map;
+  map::Map *map = Game::instance().map;
   glm::vec2 hl = map->get_highlight();
   if (0.0f >= hl.x || 0.0f >= hl.y) return false;
 

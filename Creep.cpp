@@ -1,7 +1,8 @@
 #include "Creep.h"
 #include "Audio.h"
 #include "Game.h"
-#include "Map.h"
+#include "map/Map.h"
+#include "map/NoMoreCoords.h"
 #include "Debug.h"
 #include "Exception.h"
 #include "Player.h"
@@ -24,9 +25,9 @@ Creep::Creep(Json::Value spec, float animinc) :
     "/" + spec["model"]["resource"].asString() + ".dae";
   model = Model::load(modelfile);
 
-  Map *map = Game::instance().map;
+  map::Map *map = Game::instance().map;
   this->path = map->get_path();
-  PathCoord start = path->get_start();
+  map::PathCoord start = path->get_start();
   pos = map->get_center_of(start.x, start.y);
   travel_to(path->next_coord(start));
 
@@ -43,7 +44,7 @@ Creep::~Creep()
 }
 
 void
-Creep::travel_to(const PathCoord& target)
+Creep::travel_to(const map::PathCoord& target)
 {
   this->target = target;
 
@@ -79,7 +80,7 @@ Creep::tick(const float& elapsed)
       pos = vtarget;
       travel_to(path->next_coord(target));
     }
-  } catch (const NoMoreCoords& e) {
+  } catch (const map::NoMoreCoords& e) {
     emit("accomplished");
   }
 }

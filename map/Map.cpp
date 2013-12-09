@@ -1,4 +1,5 @@
-#include "Map.h"
+#include "map/Map.h"
+#include "map/NoMoreCoords.h"
 #include "Debug.h"
 #include "Audio.h"
 #include "gl/Transform.h"
@@ -12,6 +13,8 @@
 #include <pjson.hpp>
 #include <algorithm>
 #include <array>
+
+namespace map {
 
 static GLint texture = 0;
 
@@ -317,4 +320,6 @@ glm::vec2
 Map::get_highlight() const
 {
   return highlighted;
+}
+
 }

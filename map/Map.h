@@ -1,6 +1,7 @@
-#ifndef __MAP_H__
-#define __MAP_H__
+#ifndef __MAP__MAP_H__
+#define __MAP__MAP_H__
 
+#include "map/MapEvent.h"
 #include "engine/Engine.h"
 #include "Path.h"
 #include "Model.h"
@@ -15,12 +16,7 @@
 #include <pjson.hpp>
 #include <de.h>
 
-struct MapEvent
-{
-  struct {
-    int x, y;
-  } hovered;
-};
+namespace map {
 
 class Map : public de::Emitter<MapEvent>
 {
@@ -64,5 +60,7 @@ public:
   void set_highlight(const int& x, const int& y);
   glm::vec2 get_highlight() const;
 };
+
+}
 
 #endif

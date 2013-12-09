@@ -16,11 +16,12 @@ DB = $(shell pwd)/resources/offline.db
 
 # Core
 SRCS += Mobile.cpp Model.cpp Camera.cpp Audio.cpp Debug.cpp Skybox.cpp
-SRCS += Player.cpp User.cpp Game.cpp Map.cpp Path.cpp
+SRCS += Player.cpp User.cpp Game.cpp
 SRCS += KeyboardHandler.cpp MetaManager.cpp
 
 # Namespaces
 SRCS += $(wildcard engine/*.cpp)
+SRCS += $(wildcard map/*.cpp)
 SRCS += $(wildcard dal/*.cpp)
 SRCS += $(wildcard ui/*.cpp)
 SRCS += $(wildcard hud/*.cpp)

@@ -4,7 +4,7 @@
 #include "Camera.h"
 #include "Debug.h"
 #include "Player.h"
-#include "Map.h"
+#include "map/Map.h"
 #include "MetaManager.h"
 #include "KeyboardHandler.h"
 #include "CreepManager.h"
@@ -32,7 +32,7 @@ public:
   MetaManager *meta_manager;
   KeyboardHandler *keyboard;
   Player *player;
-  Map *map;
+  map::Map *map;
   TowerManager *tower_manager;
   CreepManager *creep_manager;
 

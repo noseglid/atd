@@ -3,7 +3,7 @@
 
 #include "Tower.h"
 #include "engine/Event.h"
-#include "Map.h"
+#include "map/Map.h"
 #include "Audio.h"
 #include "Faction.h"
 #include "hud/InfoBox.h"
@@ -34,7 +34,7 @@ class TowerManager
   std::map<hud::Button*, hud::InfoBox*> browseboxes;
   hud::InfoBox *towerinfo, *upgradeinfo, *sellinfo;
 
-  MapEvent last_map_event;
+  map::MapEvent last_map_event;
 
   Mix_Chunk *audio_build;
 
@@ -51,7 +51,7 @@ class TowerManager
   void prepare_tower(std::string tower, hud::Button *button);
   void button_mouse_event(bool on, Json::Value spec, hud::Button *button);
 
-  void map_hover(const MapEvent& me);
+  void map_hover(const map::MapEvent& me);
 
   void set_tower_infobox();
   void set_upgrade_infobox();

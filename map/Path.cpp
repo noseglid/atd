@@ -1,8 +1,11 @@
-#include "Path.h"
+#include "map/Path.h"
+#include "map/NoMoreCoords.h"
 #include "Debug.h"
 #include "Exception.h"
 
 #include <sstream>
+
+namespace map {
 
 static auto clamp1 = [](int n)
 {
@@ -91,8 +94,4 @@ Path::get_start() const
   return coords_order[0];
 }
 
-std::ostream&
-operator<<(std::ostream& out, const PathCoord& v)
-{
-  return out << v.x << "," << v.y;
 }
