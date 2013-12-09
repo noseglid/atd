@@ -113,8 +113,15 @@ main(int argc, char *argv[])
     init_SDL();
     init_OpenGL();
 
-    ui::SetUserMenu::instance().show(200, ui::Menu::ANIM_LEFT);
-
+    char *startlevel = getenv("START_LEVEL");
+    if (NULL == startlevel) {
+      /* No start level specified, get the menus running */
+      ui::SetUserMenu::instance().show(200, ui::Menu::ANIM_LEFT);
+    } else {
+      /* Development tool used. Start the specific level */
+      DBGWRN("Starting level: '" << startlevel << "'");
+      Game::instance().start(0, Json::deserialize(IO::file_get_contents(startlevel)));
+    };
     engine::Engine::instance().run();
 
   } catch (Json::Exception& e) {
