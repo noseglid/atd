@@ -13,9 +13,20 @@
 
 #include <vector>
 
+class towerposcmp
+{
+public:
+  bool operator()(const glm::vec3& lhs, const glm::vec3& rhs) const
+  {
+    if (lhs.z < rhs.z) return true;
+    if (lhs.z == rhs.z && lhs.x < rhs.x) return true;
+    return false;
+  }
+};
+
 class TowerManager
 {
-  typedef std::map<glm::vec3, Tower*, gl::glmvec3cmp > tlist_t;
+  typedef std::map<glm::vec3, Tower*, towerposcmp > tlist_t;
 
   std::vector<engine::Engine::id_t> events;
 

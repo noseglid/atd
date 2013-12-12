@@ -14,6 +14,8 @@
 #include <algorithm>
 #include <array>
 
+#define PREAMBLE 60.0f
+
 namespace map {
 
 static GLint texture = 0;
@@ -23,7 +25,7 @@ static std::map<std::string, std::array<float, 4>> maptex = {
   { "stonepath", { {257.5 / 1024.0, 0.5 / 1024.0, 460.5 / 1024.0, 203.5 / 1024.0} } }
 };
 
-Map::Map(const Json::Value& levelspec)
+Map::Map(const Json::Value& levelspec) : hm("resources/textures/heightmap/default.png", 12.0f)
 {
   highlighted.x = -1;
   highlighted.y = -1;
@@ -108,8 +110,8 @@ Map::load_level(const Json::Value& levelspec)
 void
 Map::generate_map()
 {
-  float xstart = -60.0f, xend = width + 60.0f,  xstep = 1.0f;
-  float zstart = -60.0f, zend = height + 60.0f, zstep = 1.0f;
+  float xstart = -PREAMBLE, xend = width + PREAMBLE,  xstep = 1.0f;
+  float zstart = -PREAMBLE, zend = height + PREAMBLE, zstep = 1.0f;
 
   vbo = new gl::VBO();
 
@@ -120,8 +122,10 @@ Map::generate_map()
   std::array<float, 4> texgrass = maptex["grass"];
   for (float x = xstart; x < xend; x += xstep) {
     for (float z = zstart; z < zend; z += zstep) {
+
+      float height = hm.sample((x - xstart) / (xend - xstart), (z - zstart) / (zend - zstart));
       vertices.push_back(x);
-      vertices.push_back((float)rand()/(float)RAND_MAX / 3.0f);
+      vertices.push_back(height);
       vertices.push_back(z);
 
       texcoords.push_back((0 == (size_t)x % 2) ? texgrass[0] : texgrass[2]);
@@ -272,7 +276,8 @@ Map::draw(const float& elapsed) const
   for (scenery_t entry : scenery) {
     glPushMatrix();
       glm::mat4 m(1.0);
-      m = glm::translate(m, glm::vec3(entry.tx, entry.ty, entry.tz));
+      glm::vec3 center = get_center_of(entry.tx, entry.tz);
+      m = glm::translate(m, glm::vec3(entry.tx, entry.ty + center.y, entry.tz));
       m = glm::rotate(m, entry.angle, glm::vec3(entry.rx, entry.ry, entry.rz));
       m = glm::scale(m, glm::vec3(entry.sx, entry.sy, entry.sz));
       glMultMatrixf(&m[0][0]);
@@ -288,7 +293,13 @@ Map::get_center_of(int x, int y) const
   if (x > width || y > height)
     throw Exception("Can't get center of coords out of map boundaries");
 
-  return glm::vec3((float)x + 0.5f, 0.0, (float)y + 0.5f);
+  float xstart = -PREAMBLE, xend = width + PREAMBLE;
+  float zstart = -PREAMBLE, zend = height + PREAMBLE;
+  float h1sample = hm.sample((x - xstart) / (xend - xstart), (y - xstart) / (zend - zstart));
+  float h2sample = hm.sample((x - xstart + 1.0f) / (xend - xstart), (y - xstart) / (zend - zstart));
+  float h3sample = hm.sample((x - xstart) / (xend - xstart), (y - xstart + 1.0f) / (zend - zstart));
+  float h4sample = hm.sample((x - xstart + 1.0f) / (xend - xstart), (y - xstart + 1.0f) / (zend - zstart));
+  return glm::vec3((float)x + 0.5f, (h1sample + h2sample + h3sample + h4sample) / 4.0f, (float)y + 0.5f);
 }
 
 const Path *

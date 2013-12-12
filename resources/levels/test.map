@@ -1,19 +1,14 @@
 {
-  "name"   : "Kal'mos'ach",
-  "width"  : 16,
+  "name"   : "The test map to use",
+  "width"  : 48,
   "height" : 16,
 
   "bgmusic" : "meadow.ogg",
 
-  "textures" : [
-    "grass.jpg",
-    "stone.jpg"
-  ],
-
   "paths" : [
     {
       "texture" : 1,
-      "path" : "M1,1 L10,1 L10,10 L13,10"
+      "path" : "M1,1 L8,1 L8,3 L1,3 L1,5 L12,5 L12,1"
     }
   ],
 
@@ -56,7 +51,7 @@
         {
           "spec" : "chump",
           "spawninterval" : 1.0,
-          "count" : 50
+          "count" : 40
         }
       ]
     },

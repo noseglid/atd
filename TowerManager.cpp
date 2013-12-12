@@ -107,7 +107,6 @@ TowerManager::dummy_tower(int x, int y)
 {
   map::Map *map = Game::instance().map;
   glm::vec3 pos = map->get_center_of(x, y);
-  pos.y = 0.0f;
   int hlx = x, hly = y;
 
   if (map->get_path()->has_coord(x, y) ||
@@ -339,7 +338,6 @@ TowerManager::tower_purchase_if()
   if (0.0f >= hl.x || 0.0f >= hl.y) return false;
 
   glm::vec3 pos = map->get_center_of(hl.x, hl.y);
-  pos.y = 0.0f;
   bool purchased = purchase_tower(pos);
   if (purchased) {
     Audio::instance().play(audio_build, 3);
@@ -561,9 +559,7 @@ TowerManager::tick(const engine::Event& ev)
     t->set_position(dummy_tower_pos);
 
     glPushMatrix();
-      dummy_tower_shader->use();
-      t->draw(elapsed);
-      dummy_tower_shader->reset();
+      t->draw(elapsed, dummy_tower_shader);
     glPopMatrix();
 
     glDisable(GL_COLOR_MATERIAL);

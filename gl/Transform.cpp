@@ -1,4 +1,5 @@
 #include "gl/Transform.h"
+#include "Debug.h"
 
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
@@ -13,9 +14,13 @@ Transform::billboard()
 
   GLfloat *ptr = reinterpret_cast<GLfloat*>(&m);
 
-  ptr[0] = 1.0f; ptr[1] = 0.0f; ptr[2]  = 0.0f;
-  ptr[4] = 0.0f; ptr[5] = 1.0f; ptr[6]  = 0.0f;
-  ptr[8] = 0.0f; ptr[9] = 0.0f; ptr[10] = 1.0f;
+  float scalex = glm::length(glm::vec3(m[0][0], m[0][1], m[0][2]));
+  float scaley = glm::length(glm::vec3(m[1][0], m[1][1], m[1][2]));
+  float scalez = glm::length(glm::vec3(m[2][0], m[2][1], m[2][2]));
+
+  ptr[0] = scalex; ptr[1] = 0.0f;   ptr[2]  = 0.0f;
+  ptr[4] = 0.0f;   ptr[5] = scaley; ptr[6]  = 0.0f;
+  ptr[8] = 0.0f;   ptr[9] = 0.0f;   ptr[10] = scalez;
 
   glLoadMatrixf(&m[0][0]);
 }

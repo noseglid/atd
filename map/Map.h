@@ -2,8 +2,9 @@
 #define __MAP__MAP_H__
 
 #include "map/MapEvent.h"
+#include "map/Heightmap.h"
+#include "map/Path.h"
 #include "engine/Engine.h"
-#include "Path.h"
 #include "Model.h"
 #include "gl/VBO.h"
 #include "gl/glm.h"
@@ -27,6 +28,7 @@ class Map : public de::Emitter<MapEvent>
     float sx, sy, sz;
   } scenery_t;
 
+  Heightmap hm;
   gl::VBO *vbo;
   std::vector<engine::Engine::id_t> events;
 

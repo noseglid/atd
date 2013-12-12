@@ -1,0 +1,31 @@
+{
+  "name"   : "Endless",
+  "width"  : 16,
+  "height" : 8,
+
+  "bgmusic" : "meadow.ogg",
+
+  "textures" : [
+    "grass.jpg",
+    "stone.jpg"
+  ],
+
+  "paths" : [
+    {
+      "texture" : 1,
+      "path" : "M1,4 L7,4"
+    }
+  ],
+
+  "waves" : [
+    {
+      "creeps" : [
+        {
+          "spec" : "chump",
+          "spawninterval" : 1.0,
+          "count" : 30
+        }
+      ]
+    },
+  ]
+}

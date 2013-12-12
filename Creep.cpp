@@ -31,12 +31,14 @@ Creep::Creep(Json::Value spec, float animinc) :
   pos = map->get_center_of(start.x, start.y);
   travel_to(path->next_coord(start));
 
-  trafo = glm::mat4(
-    spec["model"]["scale"]["x"].asNumber(), 0.0, 0.0, 0.0,
-    0.0, spec["model"]["scale"]["y"].asNumber(), 0.0, 0.0,
-    0.0, 0.0, spec["model"]["scale"]["z"].asNumber(), 0.0,
-    0.0, 0.0, 0.0, 1.0
-  );
+  if (spec["model"].objectHasKey("scale")) {
+    trafo = glm::mat4(
+      spec["model"]["scale"]["x"].asNumber(), 0.0, 0.0, 0.0,
+      0.0, spec["model"]["scale"]["y"].asNumber(), 0.0, 0.0,
+      0.0, 0.0, spec["model"]["scale"]["z"].asNumber(), 0.0,
+      0.0, 0.0, 0.0, 1.0
+    );
+  }
 }
 
 Creep::~Creep()
@@ -106,16 +108,18 @@ Creep::get_distance_moved() const
 void
 Creep::draw(const float& elapsed) const
 {
-  glTranslatef(pos.x, pos.y + 0.5f, pos.z);
-  glRotatef(rotation, 0.0f, 1.0f, 0.0f);
-
   glPushMatrix();
-  glMultMatrixf(&trafo[0][0]);
-  this->model->draw(elapsed + animinc);
+    this->draw_health();
   glPopMatrix();
 
   glPushMatrix();
-  this->draw_health();
+    glm::vec3 min, max;
+    this->model->bounding_box(min, max);
+
+    glTranslatef(pos.x, pos.y, pos.z);
+    glRotatef(rotation, 0.0f, 1.0f, 0.0f);
+    glMultMatrixf(&trafo[0][0]);
+    this->model->draw(elapsed + animinc);
   glPopMatrix();
 }
 
@@ -125,28 +129,33 @@ Creep::draw_health() const
   glDisable(GL_LIGHTING);
   glDisable(GL_TEXTURE_2D);
 
-  GLfloat width = 0.3f;
-  GLfloat cur   = (current_health / total_health) * 0.3f;
+  GLfloat cur = (current_health / total_health);
 
+  glm::vec3 min, max;
+  this->model->bounding_box(min, max);
+  float width = 0.75;
+  float height = 0.1f;
+
+  glTranslatef(pos.x, pos.y, pos.z);
+  glMultMatrixf(&trafo[0][0]);
   gl::Transform::billboard();
-
-  glTranslatef(-width / 2.0f, 0.2f, 0.2f);
+  glTranslatef(-width / 2.0f, height / 2.0f + (max.y - min.y), (max.z - min.z));
 
   gl::ShaderProgram::push(gl::ShaderProgram::PROGRAM_COLOR);
   glColor3f(0.0f, 1.0f, 0.0f);
   glBegin(GL_TRIANGLE_STRIP);
-  glVertex3f(0,    0.03f, 0.0f);
-  glVertex3f(0,   -0.03f, 0.0f);
-  glVertex3f(cur,  0.03f, 0.0f);
-  glVertex3f(cur, -0.03f, 0.0f);
+  glVertex3f(0,            height / 2.0f, 0.0f);
+  glVertex3f(0,           -height / 2.0f, 0.0f);
+  glVertex3f(width * cur,  height / 2.0f, 0.0f);
+  glVertex3f(width * cur, -height / 2.0f, 0.0f);
   glEnd();
 
   glColor3f(1.0f, 0.0f, 0.0f);
   glBegin(GL_TRIANGLE_STRIP);
-  glVertex3f(cur,    0.03f, 0.0f);
-  glVertex3f(cur,   -0.03f, 0.0f);
-  glVertex3f(width,  0.03f, 0.0f);
-  glVertex3f(width, -0.03f, 0.0f);
+  glVertex3f(width * cur,  height / 2.0f, 0.0f);
+  glVertex3f(width * cur, -height / 2.0f, 0.0f);
+  glVertex3f(width,        height / 2.0f, 0.0f);
+  glVertex3f(width,       -height / 2.0f, 0.0f);
   glEnd();
   gl::ShaderProgram::pop();
 

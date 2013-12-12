@@ -2,6 +2,8 @@
 #define MODEL_H
 
 #include "gl/VBO.h"
+#include "gl/ShaderProgram.h"
+#include "gl/glm.h"
 
 #include <SDL/SDL.h>
 #include <OpenGL/gl.h>
@@ -37,13 +39,10 @@ class Model
   static std::map<std::string, Model*> loaded_models;
 
   Assimp::Importer importer;
-  aiVector3D scene_min, scene_max, scene_center;
+  glm::vec3 scene_min, scene_max, scene_center;
   int n_vertices;
 
   std::vector<gl::VBO*> vertex_buffers;
-
-  void get_bounding_box_for_node(const aiNode* nd, aiVector3D& min, aiVector3D& max, aiMatrix4x4* trafo);
-  void get_bounding_box(aiVector3D& min, aiVector3D& max);
 
   const aiScene *scene;
   std::map<unsigned int, GLuint> textures;
@@ -61,6 +60,9 @@ class Model
   void load_bones(const aiScene *scene, const aiMesh* mesh);
   void build_vbo(const aiNode* node);
 
+  void get_bounding_box_for_node(const aiNode* nd, glm::vec3& min, glm::vec3& max, aiMatrix4x4* trafo);
+  void get_bounding_box(glm::vec3& min, glm::vec3& max);
+
   void animate(aiNode *node, float animtime, const aiMatrix4x4& tp);
   void rrender(const aiNode* node);
   void rrenderbones(const aiNode* node);
@@ -73,7 +75,8 @@ public:
   static Model *load(std::string file);
 
   void normalize();
-  void draw(float animtime);
+  void draw(float animtime, gl::ShaderProgram *shader = NULL);
+  void bounding_box(glm::vec3& min, glm::vec3& max) const;
 
   int get_vertex_count() const;
 };

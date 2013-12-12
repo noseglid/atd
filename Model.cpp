@@ -2,14 +2,9 @@
 #include "Debug.h"
 #include "ModelException.h"
 #include "ImageLoader.h"
-#include "gl/Shader.h"
-#include "gl/ShaderProgram.h"
 
 #include <time.h>
 #include <sstream>
-
-#define aisgl_min(x,y) (x<y?x:y)
-#define aisgl_max(x,y) (y>x?y:x)
 
 std::map<std::string, Model*> Model::loaded_models;
 
@@ -32,54 +27,8 @@ Model::VertexBoneInfluence::add(GLint boneid, GLfloat weight)
     }
   }
 
-  /* Ooops, more bones/weightsthan we have room for */
+  /* Ooops, more bones/weights than we have room for */
   throw ModelException("More than 4 bones is not supported");
-}
-
-void
-Model::get_bounding_box_for_node(
-  const aiNode* nd,
-  aiVector3D& min,
-  aiVector3D& max,
-  aiMatrix4x4* trafo)
-{
-  aiMatrix4x4 prev;
-  unsigned int n = 0, t;
-
-  prev = *trafo;
-  *trafo = (*trafo) * (nd->mTransformation);
-
-  for (; n < nd->mNumMeshes; ++n) {
-    const aiMesh* mesh = scene->mMeshes[nd->mMeshes[n]];
-    for (t = 0; t < mesh->mNumVertices; ++t) {
-
-      aiVector3D tmp = mesh->mVertices[t];
-      tmp *= *trafo;
-
-      min.x = aisgl_min(min.x, tmp.x);
-      min.y = aisgl_min(min.y, tmp.y);
-      min.z = aisgl_min(min.z, tmp.z);
-
-      max.x = aisgl_max(max.x, tmp.x);
-      max.y = aisgl_max(max.y, tmp.y);
-      max.z = aisgl_max(max.z, tmp.z);
-    }
-  }
-
-  for (n = 0; n < nd->mNumChildren; ++n) {
-    get_bounding_box_for_node(nd->mChildren[n], min, max, trafo);
-  }
-  *trafo = prev;
-}
-
-void
-Model::get_bounding_box(aiVector3D& min, aiVector3D& max)
-{
-  aiMatrix4x4 trafo;
-
-  min.x = min.y = min.z =  1e10f;
-  max.x = max.y = max.z = -1e10f;
-  get_bounding_box_for_node(scene->mRootNode, min, max, &trafo);
 }
 
 Model::Model(std::string file) : n_vertices(0), bone_index(0)
@@ -257,6 +206,47 @@ Model::build_vbo(const aiNode* node)
   }
 }
 
+void
+Model::get_bounding_box_for_node(
+  const aiNode* nd,
+  glm::vec3& min,
+  glm::vec3& max,
+  aiMatrix4x4* trafo)
+{
+  *trafo = (*trafo) * (nd->mTransformation);
+
+  for (unsigned int n = 0; n < nd->mNumMeshes; ++n) {
+    const aiMesh* mesh = scene->mMeshes[nd->mMeshes[n]];
+    for (unsigned int t = 0; t < mesh->mNumVertices; ++t) {
+
+      aiVector3D tmp = mesh->mVertices[t];
+      tmp *= *trafo;
+
+      min.x = std::min(min.x, tmp.x);
+      min.y = std::min(min.y, tmp.y);
+      min.z = std::min(min.z, tmp.z);
+
+      max.x = std::max(max.x, tmp.x);
+      max.y = std::max(max.y, tmp.y);
+      max.z = std::max(max.z, tmp.z);
+    }
+  }
+
+  for (unsigned int n = 0; n < nd->mNumChildren; ++n) {
+    get_bounding_box_for_node(nd->mChildren[n], min, max, trafo);
+  }
+}
+
+void
+Model::get_bounding_box(glm::vec3& min, glm::vec3& max)
+{
+  aiMatrix4x4 trafo;
+
+  min.x = min.y = min.z =  1e10f;
+  max.x = max.y = max.z = -1e10f;
+  get_bounding_box_for_node(scene->mRootNode, min, max, &trafo);
+}
+
 unsigned int
 find_rotation(float animtime, const aiNodeAnim *nodeanim)
 {
@@ -419,16 +409,17 @@ void
 Model::normalize()
 {
   GLfloat tmp = scene_max.x - scene_min.x;
-  tmp = aisgl_max(scene_max.y - scene_min.y, tmp);
-  tmp = aisgl_max(scene_max.z - scene_min.z, tmp);
+  tmp = std::max(scene_max.y - scene_min.y, tmp);
+  tmp = std::max(scene_max.z - scene_min.z, tmp);
   tmp = 1.f / tmp;
   glScalef(tmp, tmp, tmp);
 }
 
 void
-Model::draw(float elapsed)
+Model::draw(float elapsed, gl::ShaderProgram *shader)
 {
-  shader_program->use();
+  if (NULL == shader) shader = shader_program;
+  shader->use();
 
   if (0 < scene->mNumAnimations) {
     const aiAnimation *anim = scene->mAnimations[0];
@@ -438,12 +429,12 @@ Model::draw(float elapsed)
     for (auto bone : bones) {
       std::stringstream ss;
       ss << "bones[" << bone.second.id << "]";
-      GLint loc = shader_program->getUniformLocation(ss.str());
+      GLint loc = shader->getUniformLocation(ss.str());
       glUniformMatrix4fv(loc, 1, GL_FALSE, (GLfloat*)&bone.second.current);
     }
   } else {
     /* No animations, upload identity matrix as bones[0] */
-    GLint loc = shader_program->getUniformLocation("bones[0]");
+    GLint loc = shader->getUniformLocation("bones[0]");
     aiMatrix4x4 identity;
     glUniformMatrix4fv(loc, 1, GL_FALSE, (GLfloat*)&identity);
   }
@@ -452,7 +443,14 @@ Model::draw(float elapsed)
     vbo->draw();
   }
 
-  shader_program->reset();
+  shader->reset();
+}
+
+void
+Model::bounding_box(glm::vec3& min, glm::vec3& max) const
+{
+  min = scene_min;
+  max = scene_max;
 }
 
 int

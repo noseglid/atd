@@ -1,7 +1,7 @@
 {
-  "name"   : "Morayth'e",
-  "width"  : 32,
-  "height" : 32,
+  "name"   : "Small",
+  "width"  : 4,
+  "height" : 4,
 
   "bgmusic" : "meadow.ogg",
 
@@ -13,23 +13,11 @@
   "paths" : [
     {
       "texture" : 1,
-      "path" : "M1,1 L10,1 L10,10 L13,10"
+      "path" : "M1,1 L1,3"
     }
   ],
 
-  "scenery" : [
-  ],
-
   "waves" : [
-    {
-      "creeps" : [
-        {
-          "spec" : "spherecreep",
-          "spawninterval" : 1.0,
-          "count" : 10
-        }
-      ]
-    },
     {
       "creeps" : [
         {
