@@ -29,9 +29,9 @@ Camera::Camera() :
 void
 Camera::center()
 {
-  pos.x = (limits.xmin + limits.xmax) / 2;
-  pos.y = 8.0f;
-  pos.z = (limits.zmin + limits.zmax) / 2;
+  pos.x = (limits.xmin + limits.xmax) / 2.0f;
+  pos.y = (limits.ymin + limits.ymax) / 2.0f;
+  pos.z = (limits.zmin + limits.zmax) / 2.0f;
   dir.x = -0.87f;
   dir.y = -0.50f;
   dir.z =  0.00f;

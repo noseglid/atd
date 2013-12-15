@@ -15,6 +15,7 @@
 #include <array>
 
 #define PREAMBLE 60.0f
+#define HILLSIZE 16.0f
 
 namespace map {
 
@@ -25,7 +26,7 @@ static std::map<std::string, std::array<float, 4>> maptex = {
   { "stonepath", { {257.5 / 1024.0, 0.5 / 1024.0, 460.5 / 1024.0, 203.5 / 1024.0} } }
 };
 
-Map::Map(const Json::Value& levelspec) : hm("resources/textures/heightmap/default.png", 12.0f)
+Map::Map(const Json::Value& levelspec) : hm("resources/textures/heightmap/default.png", HILLSIZE)
 {
   highlighted.x = -1;
   highlighted.y = -1;
@@ -102,7 +103,7 @@ Map::load_level(const Json::Value& levelspec)
   /* Set camera limits */
   Camera::instance().set_limits(
     1.0f, width - 1.0f,
-    4.0f, 12.0f,
+    HILLSIZE, HILLSIZE * 1.5f,
     1.0f, height - 1.0f
   );
 }
