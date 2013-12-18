@@ -4,12 +4,14 @@ namespace gl {
 
 VBO::VBO() : texture(0), count(0)
 {
-  glGenBuffers(BUFFER_TYPE_END, buffers);
+  memset(buffers, BUFFER_TYPE_END, 0);
 }
 
 VBO::~VBO()
 {
-  glDeleteBuffers(BUFFER_TYPE_END, buffers);
+  for (int i = 0; i < BUFFER_TYPE_END; ++i) {
+    if (0 != get_buffer((BUFFER_TYPE)i)) glDeleteBuffers(1, &buffers[(BUFFER_TYPE)i]);
+  }
 
   for (auto attrib : attribs) {
     glDeleteBuffers(1, &attrib.buffer);
@@ -25,6 +27,8 @@ VBO::get_buffer(BUFFER_TYPE type) const
 void
 VBO::bind_data(BUFFER_TYPE type, const std::vector<GLfloat>& data, GLenum usage)
 {
+  glGenBuffers(1, &buffers[type]);
+
   glBindBuffer(GL_ARRAY_BUFFER, get_buffer(type));
   glBufferData(GL_ARRAY_BUFFER, sizeof(data[0]) * data.size(), &data[0], usage);
 
@@ -34,6 +38,8 @@ VBO::bind_data(BUFFER_TYPE type, const std::vector<GLfloat>& data, GLenum usage)
 void
 VBO::bind_indices(const std::vector<GLushort>& data)
 {
+  glGenBuffers(1, &buffers[INDICE]);
+
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, get_buffer(INDICE));
   glBufferData(GL_ELEMENT_ARRAY_BUFFER,
                sizeof(data[0]) * data.size(),
@@ -86,21 +92,34 @@ VBO::set_material(const Material& mtl)
 void
 VBO::draw() const
 {
-  glBindTexture(GL_TEXTURE_2D, this->texture);
+  if (0 == get_buffer(INDICE)) {
+    DBGWRN("No indices bound to VBO. Nothing to draw");
+    return;
+  }
+
+  if (0 != texture) {
+    glBindTexture(GL_TEXTURE_2D, this->texture);
+  }
+
   this->mtl.use();
 
-  glEnableClientState(GL_VERTEX_ARRAY);
-  glEnableClientState(GL_NORMAL_ARRAY);
-  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+  if (0 != get_buffer(VERTEX)) {
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glBindBuffer(GL_ARRAY_BUFFER, get_buffer(VERTEX));
+    glVertexPointer(3, GL_FLOAT, 0, 0);
+  }
 
-  glBindBuffer(GL_ARRAY_BUFFER, get_buffer(VERTEX));
-  glVertexPointer(3, GL_FLOAT, 0, 0);
+  if (0 != get_buffer(NORMAL)) {
+    glEnableClientState(GL_NORMAL_ARRAY);
+    glBindBuffer(GL_ARRAY_BUFFER, get_buffer(NORMAL));
+    glNormalPointer(GL_FLOAT, 0, 0);
+  }
 
-  glBindBuffer(GL_ARRAY_BUFFER, get_buffer(NORMAL));
-  glNormalPointer(GL_FLOAT, 0, 0);
-
-  glBindBuffer(GL_ARRAY_BUFFER, get_buffer(TEXCOORD));
-  glTexCoordPointer(2, GL_FLOAT, 0, 0);
+  if (0 != get_buffer(TEXCOORD)) {
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glBindBuffer(GL_ARRAY_BUFFER, get_buffer(TEXCOORD));
+    glTexCoordPointer(2, GL_FLOAT, 0, 0);
+  }
 
   for (auto attrib : attribs) {
     glEnableVertexAttribArray(attrib.location);

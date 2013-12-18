@@ -4,23 +4,153 @@
 #include "gl/glm.h"
 #include "Debug.h"
 
-#include <OpenGL/glu.h>
+#include <vector>
+#include <array>
+#include <map>
+
+static std::map<std::string, std::array<float, 4>> texcoords = {
+  { "left",   { {    0.5 / 2400.0,  600.5 / 1800.0,    599.5 / 2400.0,  1199.5 / 1800.0 } } },
+  { "front",  { {  600.5 / 2400.0,  600.5 / 1800.0,   1199.5 / 2400.0,  1199.5 / 1800.0 } } },
+  { "right",  { { 1200.5 / 2400.0,  600.5 / 1800.0,   1799.5 / 2400.0,  1199.5 / 1800.0 } } },
+  { "back",   { { 1800.5 / 2400.0,  600.5 / 1800.0,   2399.5 / 2400.0,  1199.5 / 1800.0 } } },
+  { "top",    { {  600.5 / 2400.0,    0.5 / 1800.0,   1199.5 / 2400.0,   599.5 / 1800.0 } } },
+  { "bottom", { {  600.5 / 2400.0, 1200.5 / 1800.0,   1199.5 / 2400.0,  1799.5 / 1800.0 } } },
+
+};
 
 Skybox::Skybox()
 {
-  back   = IL::GL::texture("skybox/back.png");
-  front  = IL::GL::texture("skybox/front.png");
-  left   = IL::GL::texture("skybox/left.png");
-  right  = IL::GL::texture("skybox/right.png");
-  top    = IL::GL::texture("skybox/top.png");
-  bottom = IL::GL::texture("skybox/bottom.png");
+  GLuint texture = IL::GL::texture("skybox.png");
+
+  /* Rendered in this order:
+   * 0 +-------+ 3
+   *   |\      |
+   *   |  \    |
+   *   |    \  |
+   *   |      \|
+   * 1 +-------+ 2
+   *
+   * Triangle 1: 0 -> 1 -> 2
+   * Triangle 2: 2 -> 3 -> 0
+   *
+   * For each side of box
+   */
+
+  std::vector<GLfloat> vertices {
+    /* Left quad */
+    -0.5f,  0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f,
+    -0.5f, -0.5f,  0.5f,
+    -0.5f,  0.5f,  0.5f,
+
+    /* Front quad */
+    -0.5f,  0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f,  0.5f, -0.5f,
+
+    /* Right quad */
+     0.5f,  0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f,  0.5f,
+     0.5f,  0.5f,  0.5f,
+
+    /* Back quad */
+    -0.5f,  0.5f,  0.5f,
+    -0.5f, -0.5f,  0.5f,
+     0.5f, -0.5f,  0.5f,
+     0.5f,  0.5f,  0.5f,
+
+    /* Top quad */
+    -0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f, -0.5f,
+     0.5f,  0.5f, -0.5f,
+     0.5f,  0.5f,  0.5f,
+
+    /* Bottom quad */
+    -0.5f, -0.5f,  0.5f,
+    -0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f,  0.5f
+  };
+
+  /* Why does this needs to be stored in a variable before accessing?? */
+  std::array<float, 4>
+    left   = texcoords["left"],
+    front  = texcoords["front"],
+    right  = texcoords["right"],
+    back   = texcoords["back"],
+    top    = texcoords["top"],
+    bottom = texcoords["bottom"];
+
+  std::vector<GLfloat> texcoords {
+    /* Left quad */
+    left[2], left[1],
+    left[2], left[3],
+    left[0], left[3],
+    left[0], left[1],
+
+    /* Front quad */
+    front[0], front[1],
+    front[0], front[3],
+    front[2], front[3],
+    front[2], front[1],
+
+    /* Right quad */
+    right[0], right[1],
+    right[0], right[3],
+    right[2], right[3],
+    right[2], right[1],
+
+    /* Back quad */
+    back[2], back[1],
+    back[2], back[3],
+    back[0], back[3],
+    back[0], back[1],
+
+    /* Top quad */
+    top[0], top[1],
+    top[0], top[3],
+    top[2], top[3],
+    top[2], top[1],
+
+    /* Bottom quad */
+    bottom[0], bottom[3],
+    bottom[0], bottom[1],
+    bottom[2], bottom[1],
+    bottom[2], bottom[3],
+  };
+
+  std::vector<GLushort> indices {
+    /* Left quad */
+    0, 3, 2, 2, 1, 0,
+
+    /* Front quad */
+    4, 5, 6, 6, 7, 4,
+
+    /* Right quad */
+    8, 9, 10, 10, 11, 8,
+
+    /* Back quad */
+    12, 15, 14, 14, 13, 12,
+
+    /* Top quad */
+    16, 17, 18, 18, 19, 16,
+
+    /* Bottom quad */
+    20, 23, 22, 22, 21, 20
+  };
+
+  vbo.set_texture(texture);
+  vbo.bind_data(gl::VBO::VERTEX, vertices);
+  vbo.bind_data(gl::VBO::TEXCOORD, texcoords),
+  vbo.bind_indices(indices);
 }
 
 void
 Skybox::draw() const
 {
   glPushMatrix();
-
   glLoadIdentity();
   Camera& c = Camera::instance();
   glm::mat4 matrix = glm::lookAt(glm::vec3(0.0f), c.get_direction(), glm::vec3(0.0, 1.0, 0.0));
@@ -32,66 +162,8 @@ Skybox::draw() const
   glDisable(GL_LIGHTING);
   glDisable(GL_BLEND);
 
-  glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-
-  /* Render the front quad */
-  glBindTexture(GL_TEXTURE_2D, front);
-  glBegin(GL_QUADS);
-    glTexCoord2f(1, 1); glVertex3f(-0.5f, -0.5f, -0.5f);
-    glTexCoord2f(0, 1); glVertex3f( 0.5f, -0.5f, -0.5f);
-    glTexCoord2f(0, 0); glVertex3f( 0.5f,  0.5f, -0.5f);
-    glTexCoord2f(1, 0); glVertex3f(-0.5f,  0.5f, -0.5f);
-  glEnd();
-
-  /* Render the left quad */
-  glBindTexture(GL_TEXTURE_2D, left);
-  glBegin(GL_QUADS);
-    glTexCoord2f(1, 1); glVertex3f( 0.5f, -0.5f, -0.5f);
-    glTexCoord2f(0, 1); glVertex3f( 0.5f, -0.5f,  0.5f);
-    glTexCoord2f(0, 0); glVertex3f( 0.5f,  0.5f,  0.5f);
-    glTexCoord2f(1, 0); glVertex3f( 0.5f,  0.5f, -0.5f);
-  glEnd();
-
-  /* Render the back quad */
-  glBindTexture(GL_TEXTURE_2D, back);
-  glBegin(GL_QUADS);
-    glTexCoord2f(1, 1); glVertex3f(  0.5f, -0.5f,  0.5f );
-    glTexCoord2f(0, 1); glVertex3f( -0.5f, -0.5f,  0.5f );
-    glTexCoord2f(0, 0); glVertex3f( -0.5f,  0.5f,  0.5f );
-    glTexCoord2f(1, 0); glVertex3f(  0.5f,  0.5f,  0.5f );
-  glEnd();
-
-  /* Render the right quad */
-  glBindTexture(GL_TEXTURE_2D, right);
-  glBegin(GL_QUADS);
-    glTexCoord2f(1, 1); glVertex3f( -0.5f, -0.5f,  0.5f );
-    glTexCoord2f(0, 1); glVertex3f( -0.5f, -0.5f, -0.5f );
-    glTexCoord2f(0, 0); glVertex3f( -0.5f,  0.5f, -0.5f );
-    glTexCoord2f(1, 0); glVertex3f( -0.5f,  0.5f,  0.5f );
-  glEnd();
-
-  /* Render the top quad */
-  glBindTexture(GL_TEXTURE_2D, top);
-  glBegin(GL_QUADS);
-    glTexCoord2f(1, 0); glVertex3f( -0.5f,  0.5f,  0.5f );
-    glTexCoord2f(1, 1); glVertex3f( -0.5f,  0.5f, -0.5f );
-    glTexCoord2f(0, 1); glVertex3f(  0.5f,  0.5f, -0.5f );
-    glTexCoord2f(0, 0); glVertex3f(  0.5f,  0.5f,  0.5f );
-  glEnd();
-
-  /* Render the bottom quad */
-  glBindTexture(GL_TEXTURE_2D, bottom);
-  glBegin(GL_QUADS);
-    glTexCoord2f(1, 0); glVertex3f( -0.5f, -0.5f, -0.5f );
-    glTexCoord2f(1, 1); glVertex3f( -0.5f, -0.5f,  0.5f );
-    glTexCoord2f(0, 1); glVertex3f(  0.5f, -0.5f,  0.5f );
-    glTexCoord2f(0, 0); glVertex3f(  0.5f, -0.5f, -0.5f );
-  glEnd();
+  vbo.draw();
 
   glPopAttrib();
   glPopMatrix();
-
-  glEnable(GL_DEPTH_TEST);
-  glEnable(GL_LIGHTING);
-  glEnable(GL_BLEND);
 }
