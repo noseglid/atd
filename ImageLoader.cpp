@@ -31,7 +31,6 @@ GL::texture(std::string path, glm::ivec2& dimensions, bool set_searchdir)
   glGenTextures(1, &texid);
 
   glBindTexture(GL_TEXTURE_2D, texid);
-  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
