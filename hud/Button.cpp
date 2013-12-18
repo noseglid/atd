@@ -6,7 +6,7 @@
 
 namespace hud {
 
-Button::Button(GLuint texture) : texture(texture), marked(false), mouse_in_turf(false)
+Button::Button(GLuint texture) : texture(texture), mouse_in_turf(false)
 {
   engine::Engine& e = engine::Engine::instance();
 
@@ -76,18 +76,6 @@ Button::get_location() const
   return loc;
 }
 
-void
-Button::mark(bool state)
-{
-  marked = state;
-}
-
-bool
-Button::is_marked() const
-{
-  return marked;
-}
-
 bool
 Button::point_enclosed(int x, int y) const
 {
@@ -97,31 +85,35 @@ Button::point_enclosed(int x, int y) const
 void
 Button::draw() const
 {
+  glPushAttrib(GL_ENABLE_BIT);
+  glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
+
+  glEnable(GL_TEXTURE_2D);
+  glDisable(GL_LIGHTING);
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
   glBindTexture(GL_TEXTURE_2D, texture);
 
-  glBegin(GL_TRIANGLE_STRIP);
-  glTexCoord2f(0.0f, 0.0f);
-  glVertex2f(left, top);
+  std::vector<GLfloat> vertices {
+    left, top,
+    left, bot,
+    right, top,
+    right, bot
+  };
 
-  glTexCoord2f(0.0f, 1.0f);
-  glVertex2f(left, bot);
+  const static std::vector<GLfloat> texcoords {
+    0.0f, 0.0f,
+    0.0f, 1.0f,
+    1.0f, 0.0f,
+    1.0f, 1.0f
+  };
 
-  glTexCoord2f(1.0f, 0.0f);
-  glVertex2f(right, top);
+  glVertexPointer(2, GL_FLOAT, 0, (GLfloat*)&vertices[0]);
+  glTexCoordPointer(2, GL_FLOAT, 0, (GLfloat*)&texcoords[0]);
+  glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-  glTexCoord2f(1.0f, 1.0f);
-  glVertex2f(right, bot);
-  glEnd();
-
-  if (is_marked()) {
-    glPointSize(12.0f);
-    glDisable(GL_TEXTURE_2D);
-
-    glBegin(GL_POINTS);
-    glColor3f(1.0f, 0.0f, 0.0f);
-    glVertex2f(right, top);
-    glEnd();
-  }
+  glPopClientAttrib();
+  glPopAttrib();
 }
 
 }

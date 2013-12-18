@@ -4,6 +4,7 @@
 #include "Targetable.h"
 #include "Mobile.h"
 #include "gl/glm.h"
+#include "Model.h"
 
 #include <de.h>
 
@@ -14,6 +15,7 @@ class Projectile : public de::Emitter<>, public Mobile
   float damage;
 
   Emitter::id_t death_event;
+  Model *model;
 
 public:
   Projectile(Targetable *target, glm::vec3 pos, float damage);

@@ -26,7 +26,6 @@ public:
   int add_button(Button *button, Button::LOCATION loc = Button::LOCATION_LEFT);
   void remove_button(Button *button);
   void clear_buttons();
-  void unmark_all();
 };
 
 }

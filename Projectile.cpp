@@ -1,4 +1,5 @@
 #include "Projectile.h"
+#include "engine/Engine.h"
 #include "Debug.h"
 
 #include <OpenGL/gl.h>
@@ -9,7 +10,8 @@ Projectile::Projectile(Targetable *target, glm::vec3 pos, float damage) :
   target(target),
   pos(pos),
   target_pos(target->get_position()),
-  damage(damage)
+  damage(damage),
+  model(Model::load("resources/models/projectiles/bullet.dae"))
 {
 }
 
@@ -70,13 +72,8 @@ Projectile::tick(const float& elapsed)
 void
 Projectile::draw() const
 {
-  glDisable(GL_LIGHTING);
-
-  glPointSize(6.0);
-  glColor3f(0.0f, 0.0f, 0.0f);
-
+  glPushMatrix();
   glTranslatef(pos.x, pos.y, pos.z);
-  glBegin(GL_POINTS);
-  glVertex3f(0.0f, 0.0f, 0.0f);
-  glEnd();
+  model->draw(engine::Engine::instance().get_elapsed());
+  glPopMatrix();
 }

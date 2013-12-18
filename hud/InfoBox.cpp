@@ -91,7 +91,13 @@ InfoBox::draw()
 {
   if (stream.empty()) return;
 
+  glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
+  glPushAttrib(GL_ENABLE_BIT);
   gl::Transform::enable2D();
+
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glEnableClientState(GL_COLOR_ARRAY);
+  glDisable(GL_TEXTURE_2D);
 
   if (followmouse) {
     left = mousex;
@@ -101,29 +107,32 @@ InfoBox::draw()
       case SNAP_TOPLEFT:                                break;
       case SNAP_TOPRIGHT: left -= width;                break;
       case SNAP_BOTRIGHT: left -= width; top -= height; break;
-      case SNAP_CENTER: /* Que? Do nothing here. */     break;
+      case SNAP_CENTER: /* XXX: Fixme */                break;
     }
   }
 
   int basey = HUD::screen_height - top;
   int basex = left;
 
-  glDisable(GL_TEXTURE_2D);
-  glDisable(GL_LIGHTING);
-  glColor4f(0.4f, 0.4f, 0.8f, 0.7f);
-  glTranslatef(0.0f, 2 * BOX_PADDING, 0.0f);
+  std::vector<GLfloat> data {
+    basex,                           basey,                            0.4f, 0.4f, 0.8f, 0.7f,
+    basex,                           basey - height - 2 * BOX_PADDING, 0.4f, 0.4f, 0.8f, 0.7f,
+    basex + width + 2 * BOX_PADDING, basey,                            0.4f, 0.4f, 0.8f, 0.7f,
+    basex + width + 2 * BOX_PADDING, basey - height - 2 * BOX_PADDING, 0.4f, 0.4f, 0.8f, 0.7f
+  };
 
-  glBegin(GL_TRIANGLE_STRIP);
-    glVertex2f(basex,                           basey);
-    glVertex2f(basex,                           basey - height - 2 * BOX_PADDING);
-    glVertex2f(basex + width + 2 * BOX_PADDING, basey);
-    glVertex2f(basex + width + 2 * BOX_PADDING, basey - height - 2 * BOX_PADDING);
-  glEnd();
+  glVertexPointer(2, GL_FLOAT, 6 * sizeof(GLfloat), (GLfloat*)&data[0]);
+  glColorPointer (4, GL_FLOAT, 6 * sizeof(GLfloat), (GLfloat*)&data[2]);
+
+  glTranslatef(0.0f, 2 * BOX_PADDING, 0.0f);
+  glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
   glTranslatef(basex + BOX_PADDING, basey - height - BOX_PADDING, 0.0f);
   stream.draw();
 
   gl::Transform::disable2D();
+  glPopClientAttrib();
+  glPopAttrib();
 }
 
 }

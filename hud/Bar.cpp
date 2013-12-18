@@ -2,7 +2,7 @@
 #include "hud/Bar.h"
 #include "Debug.h"
 
-#include <stdlib.h>
+#include <vector>
 #include <OpenGL/gl.h>
 
 namespace hud {
@@ -36,12 +36,20 @@ Bar::draw_banner(float yoffset) const
 {
   if (!visible) return;
 
-  glBegin(GL_TRIANGLE_STRIP);
-  glVertex2f(BAR_OFFSET,                     yoffset + BAR_HEIGHT);
-  glVertex2f(BAR_OFFSET,                     yoffset             );
-  glVertex2f(HUD::screen_width - BAR_OFFSET, yoffset + BAR_HEIGHT);
-  glVertex2f(HUD::screen_width - BAR_OFFSET, yoffset             );
-  glEnd();
+  glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
+  glEnableClientState(GL_VERTEX_ARRAY);
+
+  std::vector<GLfloat> vertices {
+    BAR_OFFSET, yoffset + BAR_HEIGHT,
+    BAR_OFFSET, yoffset,
+    HUD::screen_width - BAR_OFFSET, yoffset + BAR_HEIGHT,
+    HUD::screen_width - BAR_OFFSET, yoffset
+  };
+
+  glVertexPointer(2, GL_FLOAT, 0, (GLfloat*)&vertices[0]);
+  glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+  glPopClientAttrib();
 }
 
 bool

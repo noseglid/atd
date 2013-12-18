@@ -23,7 +23,6 @@ public:
 private:
   de::Emitter<engine::Event>::id_t mousedown, mousemotion;
   GLuint texture;
-  bool marked;
   int index;
   float left, right, top, bot;
   LOCATION loc;
@@ -43,8 +42,6 @@ public:
   LOCATION get_location() const;
 
   void draw() const;
-  void mark(bool state = true);
-  bool is_marked() const;
   bool point_enclosed(int x, int y) const;
 };
 

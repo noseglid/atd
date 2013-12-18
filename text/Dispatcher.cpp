@@ -34,6 +34,12 @@ Dispatcher::overlay(
   bool offleft
 )
 {
+  glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
+  glPushAttrib(GL_ENABLE_BIT);
+
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+  glEnableClientState(GL_COLOR_ARRAY);
   glEnable(GL_TEXTURE_2D);
 
   if (ptsize > Text::OVERLAY_PTSIZE) {
@@ -49,9 +55,6 @@ Dispatcher::overlay(
     return;
   }
 
-  glBindTexture(GL_TEXTURE_2D, texture);
-  glColor3f(1.0f, 1.0f, 1.0f);
-
   h *= Text::size_factor(ptsize);
   w *= Text::size_factor(ptsize);
 
@@ -59,14 +62,24 @@ Dispatcher::overlay(
   float yoffset = (offbottom) ? 2 * y : res.height;
   float xoffset = (offleft)   ? 2 * x : res.width;
 
-  glBegin(GL_TRIANGLE_STRIP);
-    glTexCoord2f(0.0f, 0.0f); glVertex2f(xoffset - x,     yoffset - y);
-    glTexCoord2f(0.0f, 1.0f); glVertex2f(xoffset - x,     yoffset - y - h);
-    glTexCoord2f(1.0f, 0.0f); glVertex2f(xoffset - x + w, yoffset - y);
-    glTexCoord2f(1.0f, 1.0f); glVertex2f(xoffset - x + w, yoffset - y - h);
-  glEnd();
+  std::vector<GLfloat> data {
+  /*  x                y               u     v     r     g     b */
+    xoffset - x,     yoffset - y,     0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+    xoffset - x,     yoffset - y - h, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+    xoffset - x + w, yoffset - y,     1.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+    xoffset - x + w, yoffset - y - h, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f
+  };
+
+  glBindTexture(GL_TEXTURE_2D, texture);
+  glVertexPointer  (2, GL_FLOAT, 7 * sizeof(GLfloat), (GLfloat*)&data[0]);
+  glTexCoordPointer(2, GL_FLOAT, 7 * sizeof(GLfloat), (GLfloat*)&data[2]);
+  glColorPointer   (3, GL_FLOAT, 7 * sizeof(GLfloat), (GLfloat*)&data[4]);
+  glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
   glDeleteTextures(1, &texture);
+
+  glPopClientAttrib();
+  glPopAttrib();
 }
 
 void
@@ -96,36 +109,54 @@ Dispatcher::scrolling(const std::string& text, const glm::vec3& pos, utils::Colo
 void
 Dispatcher::tick()
 {
+  if (scrollings.begin() == scrollings.end()) {
+    /* No reason to go futher if there is nothing to do */
+    return;
+  }
+
+  glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
+  glPushAttrib(GL_ENABLE_BIT);
+
   glDisable(GL_LIGHTING);
   glEnable(GL_TEXTURE_2D);
+
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
   auto it = scrollings.begin();
   while (it != scrollings.end()) {
     WorldText& wt = *it;
 
     glPushMatrix();
-    glBindTexture(GL_TEXTURE_2D, wt.texture);
     glTranslatef(wt.pos.x + wt.delta.x, wt.pos.y + wt.delta.y, wt.pos.z + wt.delta.z);
     gl::Transform::billboard();
     gl::ShaderProgram::push(gl::ShaderProgram::PROGRAM_TEXTURE);
+
     float height = 0.25f;
     float width = (float)wt.width/(float)wt.height * height;
 
-    glBegin(GL_TRIANGLE_STRIP);
-      glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0f, 0.1f + height, 0.0f);
-      glTexCoord2f(0.0f, 1.0f); glVertex3f(0.0f, 0.1f, 0.0f);
-      glTexCoord2f(1.0f, 0.0f); glVertex3f(width, 0.1f + height, 0.0f);
-      glTexCoord2f(1.0f, 1.0f); glVertex3f(width, 0.1f, 0.0f);
-    glEnd();
+    std::vector<GLfloat> data {
+    /* x           y         z     u     v */
+      0.0f,  0.1f + height, 0.0f, 0.0f, 0.0f,
+      0.0f,  0.1f,          0.0f, 0.0f, 1.0f,
+      width, 0.1f + height, 0.0f, 1.0f, 0.0f,
+      width, 0.1f,          0.0f, 1.0f, 1.0f
+    };
+
+    glVertexPointer  (3, GL_FLOAT, 5 * sizeof(GLfloat), (GLfloat*)&data[0]);
+    glTexCoordPointer(2, GL_FLOAT, 5 * sizeof(GLfloat), (GLfloat*)&data[3]);
+    glBindTexture(GL_TEXTURE_2D, wt.texture);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
     gl::ShaderProgram::pop();
-    wt.delta.y += 0.005;
+    wt.delta += 0.005;
 
     it = (glm::length(wt.delta) >= 0.5f) ? scrollings.erase(it) : it + 1;
     glPopMatrix();
   }
 
-  glEnable(GL_LIGHTING);
+  glPopClientAttrib();
+  glPopAttrib();
 }
 
 }

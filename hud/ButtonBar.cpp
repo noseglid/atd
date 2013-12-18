@@ -69,12 +69,4 @@ ButtonBar::clear_buttons()
   nbuttonsat[Button::LOCATION_RIGHT] = 0;
 }
 
-void
-ButtonBar::unmark_all()
-{
-  for (Button *b : buttons) {
-    b->mark(false);
-  }
-}
-
 }

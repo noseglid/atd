@@ -137,7 +137,6 @@ void
 TowerManager::build_tower_unset()
 {
   build_tower.erase();
-  hud::ButtonBar::instance().unmark_all();
   Game::instance().map->set_highlight(-1, -1);
 }
 
@@ -152,7 +151,6 @@ TowerManager::prepare_tower(std::string tower, hud::Button *button)
   select_tower(towers.end());
 
   build_tower = tower;
-  button->mark();
   Game::instance().map->set_highlight(-1, -1);
   dummy_tower(last_map_event.hovered.x, last_map_event.hovered.y);
 }

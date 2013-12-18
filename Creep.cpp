@@ -126,14 +126,19 @@ Creep::draw(const float& elapsed) const
 void
 Creep::draw_health() const
 {
+  glPushAttrib(GL_ENABLE_BIT);
+  glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
+
   glDisable(GL_LIGHTING);
   glDisable(GL_TEXTURE_2D);
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glEnableClientState(GL_COLOR_ARRAY);
 
   GLfloat cur = (current_health / total_health);
 
   glm::vec3 min, max;
   this->model->bounding_box(min, max);
-  float width = 0.75;
+  float width  = 0.75;
   float height = 0.1f;
 
   glTranslatef(pos.x, pos.y, pos.z);
@@ -143,21 +148,34 @@ Creep::draw_health() const
 
   gl::ShaderProgram::push(gl::ShaderProgram::PROGRAM_COLOR);
   glColor3f(0.0f, 1.0f, 0.0f);
-  glBegin(GL_TRIANGLE_STRIP);
-  glVertex3f(0,            height / 2.0f, 0.0f);
-  glVertex3f(0,           -height / 2.0f, 0.0f);
-  glVertex3f(width * cur,  height / 2.0f, 0.0f);
-  glVertex3f(width * cur, -height / 2.0f, 0.0f);
-  glEnd();
+  std::vector<GLfloat> vertices {
+    0.0f,         height / 2.0f, 0.0f,
+    0.0f,        -height / 2.0f, 0.0f,
+    width * cur,  height / 2.0f, 0.0f,
+    width * cur, -height / 2.0f, 0.0f,
+    width * cur,  height / 2.0f, 0.0f,
+    width * cur, -height / 2.0f, 0.0f,
+    width,        height / 2.0f, 0.0f,
+    width,       -height / 2.0f, 0.0f
+  };
 
-  glColor3f(1.0f, 0.0f, 0.0f);
-  glBegin(GL_TRIANGLE_STRIP);
-  glVertex3f(width * cur,  height / 2.0f, 0.0f);
-  glVertex3f(width * cur, -height / 2.0f, 0.0f);
-  glVertex3f(width,        height / 2.0f, 0.0f);
-  glVertex3f(width,       -height / 2.0f, 0.0f);
-  glEnd();
+  std::vector<GLfloat> colors {
+    0.0f, 1.0f, 0.0f,
+    0.0f, 1.0f, 0.0f,
+    0.0f, 1.0f, 0.0f,
+    0.0f, 1.0f, 0.0f,
+    1.0f, 0.0f, 0.0f,
+    1.0f, 0.0f, 0.0f,
+    1.0f, 0.0f, 0.0f,
+    1.0f, 0.0f, 0.0f
+  };
+
+  glVertexPointer(3, GL_FLOAT, 0, (GLfloat*)&vertices[0]);
+  glColorPointer(3, GL_FLOAT, 0, (GLfloat*)&colors[0]);
+  glDrawArrays(GL_TRIANGLE_STRIP, 0, 8);
+
   gl::ShaderProgram::pop();
 
-  glEnable(GL_LIGHTING);
+  glPopClientAttrib();
+  glPopAttrib();
 }
