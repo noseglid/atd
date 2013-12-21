@@ -21,6 +21,7 @@
 #define DBGWRN(args)           __OUTPUT(std::cout, BYELLOW "[WARNING] " YELLOW << args << RESET)
 #define DBGERR(args)           __OUTPUT(std::cerr, BRED    "[ERROR] "   RED    << args << RESET)
 
+std::ostream& operator<<(std::ostream& out, const glm::vec2& vec);
 std::ostream& operator<<(std::ostream& out, const glm::vec3& vec);
 
 #else
