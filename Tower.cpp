@@ -160,7 +160,7 @@ Tower::shoot_if(const float& elapsed)
 
   Projectile *p = new Projectile(
     target,
-    glm::vec3(pos.x, pos.y + 1.0f, pos.z),
+    glm::vec3(pos.x, pos.y, pos.z),
     damage
   );
 

@@ -12,6 +12,7 @@ class Projectile : public de::Emitter<>, public Mobile
 {
   Targetable *target;
   glm::vec3 pos, target_pos;
+  float max_distance;
   float damage;
 
   Emitter::id_t death_event;
