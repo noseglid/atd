@@ -24,11 +24,8 @@ class Camera
 public:
 
   void set_limits(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax);
-  void set_position(
-    glm::vec3 pos = glm::vec3(0.0f, 0.0f,  2.5f),
-    glm::vec3 dir = glm::vec3(0.0f, 0.0f, -1.0f),
-    glm::vec3 up  = glm::vec3(0.0f, 1.0f,  0.0f)
-  );
+  void set_position(glm::vec3 pos, glm::vec3 dir, glm::vec3 up);
+  glm::vec3 get_position() const;
   glm::vec3 get_direction() const;
   void enable(bool state);
 

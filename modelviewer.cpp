@@ -72,7 +72,7 @@ init_OpenGL()
   glViewport(0, 0, (GLsizei)res.width, (GLsizei)res.height);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective(90, (double)res.width / (double)res.height, 0.1, 10000.0);
+  gluPerspective(45, (double)res.width / (double)res.height, 0.1, 10000.0);
   glMatrixMode(GL_MODELVIEW);
 
   glEnable(GL_LIGHTING);
@@ -85,6 +85,12 @@ init_OpenGL()
 
   glLineWidth(3.0f);
   glPointSize(6.0f);
+
+  glEnable(GL_FOG);
+  GLfloat fog_color[] = { 0.831f, 0.705f, 0.552f, 1.0f };
+  glFogfv(GL_FOG_COLOR, fog_color);
+  glFogf(GL_FOG_START, 9000.0f);
+  glFogf(GL_FOG_END, 10000.0f);
 }
 
 int
@@ -106,7 +112,11 @@ main(int argc, char *argv[])
     int n = 1;
     float current_fps = 0;
     engine::Engine& e = engine::Engine::instance();
-    Camera::instance().set_position();
+    Camera::instance().set_position(
+      glm::vec3(0.0f, 0.0f, -5.0f),
+      glm::vec3(0.0f, 0.0f,  1.0f),
+      glm::vec3(0.0f, 1.0f,  0.0f)
+    );
 
     auto build_helptext = [&argv, &m, &n, &current_fps]() {
       text::Stream helptext;

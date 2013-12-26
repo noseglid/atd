@@ -46,8 +46,6 @@ Camera::set_limits(float xmin, float xmax, float ymin, float ymax, float zmin, f
   limits.ymax = ymax;
   limits.zmin = zmin;
   limits.zmax = zmax;
-
-  center();
 }
 
 void
@@ -56,6 +54,12 @@ Camera::set_position(glm::vec3 pos, glm::vec3 dir, glm::vec3 up)
   this->pos = pos;
   this->dir = dir;
   this->up  = up;
+}
+
+glm::vec3
+Camera::get_position() const
+{
+  return pos;
 }
 
 glm::vec3

@@ -100,12 +100,6 @@ Map::load_level(const Json::Value& levelspec)
 
   hud::InfoBar::instance().set_title(levelspec["name"].asString());
 
-  /* Set camera limits */
-  Camera::instance().set_limits(
-    1.0f, width - 1.0f,
-    HILLSIZE, HILLSIZE * 1.5f,
-    1.0f, height - 1.0f
-  );
 }
 
 void
@@ -250,6 +244,19 @@ Map::generate_map()
 void
 Map::tick(const engine::Event& ge)
 {
+  glm::vec3 pos = Camera::instance().get_position();
+
+  float xstart = -PREAMBLE, xend = width + PREAMBLE;
+  float zstart = -PREAMBLE, zend = height + PREAMBLE;
+  float h =  hm.sample((pos.x - xstart) / (xend - xstart), (pos.z - xstart) / (zend - zstart));
+
+  /* Set camera limits */
+  Camera::instance().set_limits(
+    1.0f, width - 1.0f,
+    h + 2.0f, h + 10.0f,
+    1.0f, height - 1.0f
+  );
+
   this->draw(ge.elapsed);
 }
 
