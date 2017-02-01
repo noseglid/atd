@@ -52,7 +52,7 @@ static std::map<std::string, std::array<float, 4>> texcoords = {
 
 Skybox::Skybox()
 {
-  GLuint texture = IL::GL::texture("skybox.png");
+  GLuint texture = IL::GL::texture("skybox.png", true, GL_NEAREST_MIPMAP_LINEAR);
 
   /* Rendered in this order:
    * 0 +-------+ 3

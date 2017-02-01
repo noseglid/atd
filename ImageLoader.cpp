@@ -14,7 +14,7 @@ BEGIN_NAMESPACE_IL
 static std::map<std::string, GLuint> loaded_textures;
 
 GLuint
-GL::texture(std::string path, glm::ivec2& dimensions, bool set_searchdir)
+GL::texture(std::string path, glm::ivec2& dimensions, bool set_searchdir, GLint minfilter, GLint magfilter)
 {
   if (set_searchdir) {
     path = "resources/textures/" + path;
@@ -31,8 +31,9 @@ GL::texture(std::string path, glm::ivec2& dimensions, bool set_searchdir)
   glGenTextures(1, &texid);
 
   glBindTexture(GL_TEXTURE_2D, texid);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minfilter);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magfilter);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
@@ -76,10 +77,10 @@ GL::texture(std::string path, glm::ivec2& dimensions, bool set_searchdir)
 }
 
 GLuint
-GL::texture(std::string path, bool set_searchdir)
+GL::texture(std::string path, bool set_searchdir, GLint minfilter, GLint magfilter)
 {
   glm::ivec2 v;
-  return GL::texture(path, v, set_searchdir);
+  return GL::texture(path, v, set_searchdir, minfilter, magfilter);
 }
 
 END_NAMESPACE_IL

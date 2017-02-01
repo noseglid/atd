@@ -25,10 +25,5 @@ void main()
              pow(NdotHV, gl_FrontMaterial.shininess);
   }
 
-  if (length(texel.xyz) == 0.0) {
-    /* If we dont have a texture, set the texel color to white */
-    texel = vec4(1.0);
-  }
-
   gl_FragColor = mix(gl_Fog.color, texel * color, fog_factor(pos.z));
 }

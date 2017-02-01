@@ -83,9 +83,6 @@ init_OpenGL()
   GLfloat position[] = { 0.33, 0.33, 0.33, 0.0 };
   glLightfv(GL_LIGHT0, GL_POSITION, position);
 
-  glLineWidth(3.0f);
-  glPointSize(6.0f);
-
   glEnable(GL_FOG);
   GLfloat fog_color[] = { 0.831f, 0.705f, 0.552f, 1.0f };
   glFogfv(GL_FOG_COLOR, fog_color);
@@ -113,7 +110,7 @@ main(int argc, char *argv[])
     float current_fps = 0;
     engine::Engine& e = engine::Engine::instance();
     Camera::instance().set_position(
-      glm::vec3(0.0f, 0.0f, -5.0f),
+      glm::vec3(0.0f, 0.5f, -5.0f),
       glm::vec3(0.0f, 0.0f,  1.0f),
       glm::vec3(0.0f, 1.0f,  0.0f)
     );
@@ -127,6 +124,7 @@ main(int argc, char *argv[])
         << utils::colors::white << "Number of instances: " << utils::colors::green << n << "\n"
         << utils::colors::white << "Zoom with mouse wheel\n\n"
         << utils::colors::yellow << "q" << utils::colors::white << " to quit\n"
+        << utils::colors::yellow << "w" << utils::colors::white << " toggle wireframe\n"
         << utils::colors::yellow << "b" << utils::colors::white << " to toggle bones\n"
         << utils::colors::yellow << "r" << utils::colors::white << " to toggle rotation\n"
         << utils::colors::yellow << "a" << utils::colors::white << " to animate\n"
@@ -179,6 +177,14 @@ main(int argc, char *argv[])
         case SDLK_o: n = n + 100; break;
         case SDLK_p: n = ((n - 100) < 0 ? 0 : n - 100); break;
         case SDLK_q: engine::Engine::instance().stop(); break;
+        case SDLK_w: 
+          GLint polygon_mode[2];
+          glGetIntegerv(GL_POLYGON_MODE, polygon_mode);
+          polygon_mode[0] = (polygon_mode[0] == GL_FILL) ? GL_LINE : GL_FILL;
+          polygon_mode[1] = (polygon_mode[1] == GL_FILL) ? GL_LINE : GL_FILL;
+          glPolygonMode(GL_FRONT, polygon_mode[0]);
+          glPolygonMode(GL_BACK, polygon_mode[1]);
+        break;
         case SDLK_b: bones   = !bones;   break;
         case SDLK_r: rotate  = !rotate;  break;
         case SDLK_a: animate = !animate; break;

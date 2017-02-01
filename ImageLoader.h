@@ -16,8 +16,8 @@ class GL
 {
 public:
 
-  static GLuint texture(std::string path, glm::ivec2& dimensions, bool set_searchdir = true);
-  static GLuint texture(std::string path, bool set_searchdir = true);
+  static GLuint texture(std::string path, glm::ivec2& dimensions, bool set_searchdir = true, GLint minfilter = GL_LINEAR, GLint magfilter = GL_NEAREST);
+  static GLuint texture(std::string path, bool set_searchdir = true, GLint minfilter = GL_LINEAR, GLint magfilter = GL_NEAREST);
 
 private:
   GL();

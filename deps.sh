@@ -16,7 +16,7 @@ FREETYPEVER=2.5.0.1
 SDLTTFVER=2.0.11
 SDLMIXERVER=1.2.12
 SDLIMGVER=1.2.12
-PJSONVER=0.2.1
+PJSONVER=master
 ASSIMPVER=3.0.1270
 DEVER=staging
 DYLIBBUNDLERVER=0.4.3
@@ -201,7 +201,7 @@ build_assimp()
   unzip -q -o $NAME
   ORIGDIR=$(pwd)
   cd assimp-*
-  patch -N -p1 < $RUNDIR/deps/assimp.osx-build.patch
+  #patch -N -p1 < $RUNDIR/deps/assimp.osx-build.patch
 
   mkdir -p build
   cd build
@@ -246,7 +246,7 @@ build_rocket()
   unzip -q -o $NAME
   ORIGDIR=$(pwd)
   cd libRocket-*/Build
-  patch -N -p1 < $RUNDIR/deps/librocket.osx-build.patch
+  #patch -N -p1 < $RUNDIR/deps/librocket.osx-build.patch
   mkdir build
   cd build
   cmake \

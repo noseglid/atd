@@ -94,7 +94,7 @@ Projectile::draw() const
   float distance = 1.0 - glm::distance(target_pos, pos) / max_distance;
   if (0 >= distance) return;
 
-  float height   = trajectory(distance);
+  float height = trajectory(distance);
 
   float isect = height - trajectory_slope(distance) * distance;
   glm::vec2 xzvec = glm::vec2(0.0f, isect) - glm::vec2(distance, height);
